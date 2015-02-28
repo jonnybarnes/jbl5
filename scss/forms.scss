@@ -1,0 +1,14 @@
+//forms.scss
+
+form {
+	width: 100%;
+}
+
+fieldset {
+	min-width: 0;
+	width: 100%;
+}
+
+input[type="text"], input[type="file"], textarea {
+	width: 100%;
+}
