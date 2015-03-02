@@ -11,7 +11,8 @@
 		"guzzlehttp/guzzle": "~5.2",
 		"predis/predis": "~1.0",
 		"league/commonmark": "0.7.*",
-		"filp/whoops": "~1.1"
+		"filp/whoops": "~1.1",
+		"thujohn/twitter": "2.0.x-dev"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "~4.0",

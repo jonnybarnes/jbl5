@@ -150,6 +150,11 @@ return [
 		 */
 		'Barryvdh\Debugbar\ServiceProvider',
 
+		/*
+		 * Thujohn’s Twitter API client
+		 */
+		'Thujohn\Twitter\TwitterServiceProvider',
+
 	],
 
 	/*
@@ -199,6 +204,7 @@ return [
 		'View'      => 'Illuminate\Support\Facades\View',
 
 		'Debugbar'  => 'Barryvdh\Debugbar\Facade',
+		'Twitter'   => 'Thujohn\Twitter\TwitterFacade',
 
 	],
 
