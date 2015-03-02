@@ -18,7 +18,7 @@ class Article extends Model {
 	 */
 	public function webmentions()
 	{
-		return $this->morphMany('WebMention', 'commentable');
+		return $this->morphMany('App\WebMention', 'commentable');
 	}
 
 	/**

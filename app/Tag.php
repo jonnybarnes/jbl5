@@ -2,33 +2,23 @@
 
 use Illuminate\Database\Eloquent\Model;
 
-class Note extends Model {
+class Tag extends Model {
 
 	/**
 	 * The database table used by the model.
 	 *
 	 * @var string
 	 */
-	protected $table = 'notes';
+	protected $table = 'tags';
 
 	/**
 	 * Define the relationship with tags
 	 *
 	 * @var array
 	 */
-	public function tags()
+	public function notes()
 	{
-		return $this->belongsToMany('App\Tag');
-	}
-
-	/**
-	 * Define the relationship with webmentions
-	 *
-	 * @var array
-	 */
-	public function webmentions()
-	{
-		return $this->morphMany('App\WebMention', 'commentable');
+		return $this->belongsToMany('App\Note');
 	}
 
 	/**
@@ -44,12 +34,5 @@ class Note extends Model {
 	 * @var array
 	 */
 	protected $guarded = array('id');
-
-	/**
-	 * For pagination we want 5 articles by default
-	 *
-	 * @var string
-	 */
-	public $per_page = 5;
 
 }

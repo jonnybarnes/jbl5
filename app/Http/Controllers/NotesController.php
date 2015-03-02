@@ -239,8 +239,8 @@ class NotesController extends Controller {
 		$markdown = new CommonMarkConverter();
 		$transformed = $markdown->convertToHtml($codepoints);
 		$hashtags = $this->autoLinkHashtag($transformed, 'notes');
-		//$names = $this->makeHCards($hashtags); not done Contacts yet
-		$abbr = $this->addAbbrTag($hashtags);
+		$names = $this->makeHCards($hashtags);
+		$abbr = $this->addAbbrTag($names);
 
 		return $abbr;
 	}

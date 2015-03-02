@@ -22,7 +22,7 @@ class CreateArticlesTable extends Migration {
 				$table->string('title');
 				$table->longText('main');
 				$table->text('tags');
-				$table->mediumInt('date_time');
+				$table->integer('date_time');
 				$table->tinyInt('deleted')->default(0);
 				$table->tinyInt('published')->default(0);
 			});
