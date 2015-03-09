@@ -37,11 +37,11 @@ class NotesController extends Controller {
 			$url = new URL();
 			$note['nb60id'] = $url->numto60($note['id']);
 			$replies = 0;
-			/*foreach($note->webmentions as $webmention) {
+			foreach($note->webmentions as $webmention) {
 				if($webmention->type == 'reply') {
 					$replies = $replies + 1;
 				}
-			}*/
+			}
 			$note['replies'] = $replies;
 			$note['note'] = $this->TransformNote($note['note']);
 			$note['iso8601_time'] = $carbon->createFromTimeStamp($note['timestamp'])->toISO8601String();

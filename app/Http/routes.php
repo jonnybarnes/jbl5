@@ -103,6 +103,12 @@ Route::group(array('domain' => config('url.longurl')), function() {
 	//Route::get('api/post', 'MicropubController@tokenVeracity');
 
 	//webmention
+	get('webmention', function() {
+		return view('webmention-endpoint');
+	});
+	post('webmention', function() {
+		return response('Temporarily Unavailable', '503');
+	});
 	//Route::post('webmention', 'WebmentionsController@recieve');
 
 	//Contacts
