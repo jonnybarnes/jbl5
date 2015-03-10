@@ -106,10 +106,10 @@ Route::group(array('domain' => config('url.longurl')), function() {
 	get('webmention', function() {
 		return view('webmention-endpoint');
 	});
-	post('webmention', function() {
+	/*post('webmention', function() {
 		return response('Temporarily Unavailable', '503');
-	});
-	//Route::post('webmention', 'WebmentionsController@recieve');
+	});*/
+	post('webmention', 'WebMentionsController@recieve');
 
 	//Contacts
 	get('contacts', 'ContactsController@showAll');

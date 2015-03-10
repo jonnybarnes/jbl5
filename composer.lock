@@ -4,8 +4,63 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "0e395c6ad3aca7fc377cc061e43c1381",
+    "hash": "524798fb060e38ea2c00b5d87c7b5692",
     "packages": [
+        {
+            "name": "chromabits/purifier",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/etcinit/purifier.git",
+                "reference": "64dc2a580d02df5deef25e36b8d335216120c42d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/etcinit/purifier/zipball/64dc2a580d02df5deef25e36b8d335216120c42d",
+                "reference": "64dc2a580d02df5deef25e36b8d335216120c42d",
+                "shasum": ""
+            },
+            "require": {
+                "ezyang/htmlpurifier": "4.6.*",
+                "laravel/framework": "~5.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "dev-master",
+                "phpunit/phpunit": "~4.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Chromabits\\Purifier\\": "src/Chromabits/Purifier/",
+                    "Chromabits\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Muharrem ERIN",
+                    "email": "me@mewebstudio.com"
+                },
+                {
+                    "name": "Eduardo Trujillo",
+                    "email": "ed@chromabits.com"
+                }
+            ],
+            "description": "HTMLPurifier package for Laravel 5",
+            "homepage": "http://github.com/etcinit/purifier",
+            "keywords": [
+                "Purifier",
+                "htmlpurifier",
+                "l5",
+                "laravel",
+                "laravel 5"
+            ],
+            "time": "2015-02-24 20:24:20"
+        },
         {
             "name": "classpreloader/classpreloader",
             "version": "1.2.0",
@@ -221,6 +276,50 @@
                 "string"
             ],
             "time": "2014-12-20 21:24:13"
+        },
+        {
+            "name": "ezyang/htmlpurifier",
+            "version": "v4.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ezyang/htmlpurifier.git",
+                "reference": "6f389f0f25b90d0b495308efcfa073981177f0fd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/6f389f0f25b90d0b495308efcfa073981177f0fd",
+                "reference": "6f389f0f25b90d0b495308efcfa073981177f0fd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "HTMLPurifier": "library/"
+                },
+                "files": [
+                    "library/HTMLPurifier.composer.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Edward Z. Yang",
+                    "email": "admin@htmlpurifier.org",
+                    "homepage": "http://ezyang.com"
+                }
+            ],
+            "description": "Standards compliant HTML filter written in PHP",
+            "homepage": "http://htmlpurifier.org/",
+            "keywords": [
+                "html"
+            ],
+            "time": "2013-11-30 08:25:19"
         },
         {
             "name": "filp/whoops",
@@ -976,6 +1075,59 @@
                 "storage"
             ],
             "time": "2015-01-23 09:43:34"
+        },
+        {
+            "name": "mf2/mf2",
+            "version": "v0.2.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/indieweb/php-mf2.git",
+                "reference": "ad1ee037555be7f3b2ea1d99e063e56207cf2a1d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/indieweb/php-mf2/zipball/ad1ee037555be7f3b2ea1d99e063e56207cf2a1d",
+                "reference": "ad1ee037555be7f3b2ea1d99e063e56207cf2a1d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*"
+            },
+            "suggest": {
+                "barnabywalters/mf-cleaner": "To more easily handle the canonical data php-mf2 gives you"
+            },
+            "bin": [
+                "bin/fetch-mf2",
+                "bin/parse-mf2"
+            ],
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "Mf2/Parser.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Barnaby Walters",
+                    "homepage": "http://waterpigs.co.uk"
+                }
+            ],
+            "description": "A pure, generic microformats2 parser — makes HTML as easy to consume as a JSON API",
+            "keywords": [
+                "html",
+                "microformats",
+                "microformats 2",
+                "parser",
+                "semantic"
+            ],
+            "time": "2014-07-23 09:37:36"
         },
         {
             "name": "monolog/monolog",
