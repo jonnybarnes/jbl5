@@ -12,8 +12,8 @@ use Chromabits\Purifier\Contracts\Purifier;
 use HTMLPurifier_Config;
 use Jonnybarnes\Posse\URL;
 use Jonnybarnes\WebmentionsParser\Parser;
+use Jonnybarnes\WebmentionsParser\ParsingException;
 use App\Esceptions\RemoteContentNotFound;
-use App\Exceptions\ParsingException;
 
 class WebMentionsController extends Controller
 {
