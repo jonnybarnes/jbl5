@@ -106,9 +106,6 @@ Route::group(array('domain' => config('url.longurl')), function() {
 	get('webmention', function() {
 		return view('webmention-endpoint');
 	});
-	/*post('webmention', function() {
-		return response('Temporarily Unavailable', '503');
-	});*/
 	post('webmention', 'WebMentionsController@recieve');
 
 	//Contacts
@@ -121,9 +118,9 @@ Route::group(array('domain' => config('url.longurl')), function() {
 //Short URL
 Route::group(array('domain' => config('url.shorturl')), function() {
 	get('/', 'ShortURLsController@baseURL');
-	get('@', 'ShortURLsController@Twitter');
-	get('+', 'ShortURLsController@GooglePlus');
-	get('α', 'ShortURLsController@AppNet');
+	get('@', 'ShortURLsController@twitter');
+	get('+', 'ShortURLsController@googlePlus');
+	get('α', 'ShortURLsController@appNet');
 
 	get('{type}/{id}', 'ShortURLsController@expandType')->where(
 		array(
