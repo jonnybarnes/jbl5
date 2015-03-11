@@ -188,6 +188,40 @@ class WebMentionsController extends Controller
         }
     }
 
+    /**
+     * Send a webmention
+     */
+    public function send($replyTo, $source)
+    {
+        $success = array();
+        $failure = array();
+        //parse reply to values
+        $urls = explode(' ', $replyTo);
+        foreach ($urls as $url) {
+            $endpoint = $this->discoverWebmentionEndpoint($url);
+
+            if ($endpoint) {
+                $target = $url;
+                if ($this->sendWebmention($endpoint, $source, $target)) {
+                    $success[] = $target;
+                } else {
+                    $failure[] = $target;
+                }
+            } else {
+                $failure[] = $url;
+            }
+        }
+
+        $return = array($success, $failure);
+        return $return;
+    }
+
+    /**
+     * Retreive the remote content from a URL
+     *
+     * @param  string  The URL to retreive content from
+     * @return string  The HTML from the URL
+     */
     public function getRemoteContent($url)
     {
         $client = new Client();
@@ -204,6 +238,28 @@ class WebMentionsController extends Controller
         }
     }
 
+    /**
+     * Create a file path from a URL. This is ued to cache the HTML response
+     *
+     * @param  string  The URL
+     * @return string  The path name
+     */
+    private function URLtoFileName($url)
+    {
+        $url = str_replace(array('https://', 'http://'), array('', ''), $url);
+        if (substr($url, -1) == '/') {
+            $url = $url . 'index.html';
+        }
+
+        return $url;
+    }
+
+    /**
+     * Save a profile image to the local cache
+     *
+     * @param  array  source content
+     * @return bool   wether image was saved or not
+     */
     public function saveImage($content)
     {
         $photo = $content['photo'];
@@ -230,14 +286,27 @@ class WebMentionsController extends Controller
         }
     }
 
-    public function parseHTML($html, $baseurl)
+    /**
+     * A wrapper function for php-mf2’s parse method
+     *
+     * @param  string  The HTML to parse
+     * @param  string  The base URL to resolve relative URLs in the HTML against
+     * @return array   The porcessed microformats
+     */
+    private function parseHTML($html, $baseurl)
     {
         $mf = \Mf2\parse((string) $html, $baseurl);
 
         return $mf;
     }
 
-    public function fileForceContents($dir, $contents)
+    /**
+     * Save a file, and create any necessary folders
+     *
+     * @param string  The directory to save to
+     * @param **      The file to save
+     */
+    private function fileForceContents($dir, $contents)
     {
         $parts = explode('/', $dir);
         $file = array_pop($parts);
@@ -250,11 +319,103 @@ class WebMentionsController extends Controller
         file_put_contents("$dir/$file", $contents);
     }
 
-    public function filterHTML($html, Purifier $purifier)
+    /**
+     * Purify HTML received from a webmention
+     *
+     * @param  string  The HTML to be processed
+     * @param  \Chromabits\Purifier\Contracts\Purifier $purifier
+     * @return string  The processed HTML
+     */
+    private function filterHTML($html, Purifier $purifier)
     {
         $this->purifier = $purifier;
         $htmlClean = $this->purifier->clean($html);
 
         return $htmlClean;
+    }
+
+    /**
+     * Discover if a URL has a webmention endpoint
+     *
+     * @param  string  The URL
+     * @return string  The webmention endpoint URL
+     */
+    private function discoverWebmentionEndpoint($url)
+    {
+        $endpoint = null;
+        $client = new Client();
+
+        try {
+            $response = $client->get($url);
+            //check HTTP Headers for webmention endpoint
+            $links = explode(',', $response->getHeader('Link'));
+            if ($links[0] != '') {
+                $webmentionHeader = null;
+                foreach ($links as $link) {
+                    if (strstr($link, 'webmention')) {
+                        $webmentionHeader = $link;
+                    }
+                }
+            }
+
+            if (isset($webmentionHeader)) {
+                preg_match('/<(.*)>/', $webmentionHeader, $matches);
+                $endpoint = $matches[1];
+                if ($endpoint) {
+                    return $endpoint;
+                }
+            }
+
+            //failed to find a header so parse HTML
+            $html = (string) $response->getBody();
+
+            $mf2 = new \Mf2\Parser($html, $url);
+            $rels = $mf2->parseRelsAndAlternates();
+            if (array_key_exists('webmention', $rels[0])) {
+                $endpoint = $rels[0]['webmention'][0];
+            } elseif (array_key_exists('http://webmention.org/', $rels[0])) {
+                $endpoint = $rels[0]['http://webmention.org/'][0];
+            }
+            if ($endpoint) {
+                if (filter_var($endpoint, FILTER_VALIDATE_URL)) {
+                    return $endpoint;
+                } else {
+                    //it must be a relative url, so resolve with php-mf2
+                    $resolved = $mf2->resolveUrl($endpoint);
+                    return $resolved;
+                }
+            } else {
+                return false;
+            }
+        } catch (GuzzleHttp\Exception\ClientException $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Send the webmention to the given target
+     *
+     * @param  string  The endpoint to send to
+     * @param  string  The source URL
+     * @param  string  The target URL
+     * @return bool
+     */
+    private function sendWebmention($endpoint, $source, $target)
+    {
+        $client = new Client();
+
+        try {
+            $response = $client->post($endpoint, [
+                'body' => [
+                    'source' => $source,
+                    'target' => $target
+                ]
+            ]);
+            return true;
+        } catch (GuzzleHttp\Exception\RequestException $e) {
+            Log::warning("Error sending webmention to $target");
+            return false;
+        }
+
     }
 }
