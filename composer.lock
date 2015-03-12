@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "524798fb060e38ea2c00b5d87c7b5692",
+    "hash": "e695da62682eaeea8e07282487e8bbf5",
     "packages": [
         {
             "name": "chromabits/purifier",
@@ -1075,6 +1075,48 @@
                 "storage"
             ],
             "time": "2015-03-10 11:04:14"
+        },
+        {
+            "name": "martinbean/laravel-sluggable-trait",
+            "version": "0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/martinbean/laravel-sluggable-trait.git",
+                "reference": "8984dc9bc2596814f79baf44aeb9a39c9c07b149"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/martinbean/laravel-sluggable-trait/zipball/8984dc9bc2596814f79baf44aeb9a39c9c07b149",
+                "reference": "8984dc9bc2596814f79baf44aeb9a39c9c07b149",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": ">=4.0",
+                "illuminate/support": ">=4.0",
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MartinBean\\Database\\Eloquent\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Martin Bean",
+                    "email": "martin@martinbean.co.uk"
+                }
+            ],
+            "description": "A trait you can apply to Eloquent models to have slugs automatically generated on save.",
+            "keywords": [
+                "eloquent",
+                "laravel"
+            ],
+            "time": "2015-02-17 22:47:44"
         },
         {
             "name": "mf2/mf2",
