@@ -363,17 +363,19 @@ class AdminController extends Controller
         return view('admin.editnotesuccess', array('id' => $id, 'webmentions' => $webmentionsSent));
     }
 
+    //*** Tokens ***
+
     public function showTokens()
     {
         $t = new TokensController();
         $tokens = $t->getAll();
 
-        return View::make('listtokens', array('tokens' => $tokens));
+        return view('admin.listtokens', array('tokens' => $tokens));
     }
 
     public function deleteToken($id)
     {
-        return View::make('deletetoken', array('id' => $id));
+        return view('admin.deletetoken', array('id' => $id));
     }
 
     public function postDeleteToken($id)
@@ -381,46 +383,49 @@ class AdminController extends Controller
         $t = new TokensController();
         $t->deleteToken($id);
 
-        return View::make('deletetokensuccess', array('id' => $id));
+        return view('admin.deletetokensuccess', array('id' => $id));
     }
+
+    //*** Clients ***
 
     public function listClients()
     {
         $clients = DB::table('clients')->get();
 
-        return View::make('listclients', array('clients' => $clients));
+        return view('admin.listclients', array('clients' => $clients));
     }
 
     public function newClient()
     {
-        return View::make('newclient');
+        return view('admin.newclient');
     }
 
-    public function postNewClient()
+    public function postNewClient(Request $request)
     {
-        $client_url = Input::get('client_url');
-        $client_name = Input::get('client_name');
+        $client_url = $request->input('client_url');
+        $client_name = $request->input('client_name');
         DB::table('clients')->insert(
             array(
                 'client_url' => $client_url,
                 'client_name' => $client_name
-            ));
+            )
+        );
 
-        return View::make('newclientsuccess');
+        return view('admin.newclientsuccess');
     }
 
     public function editClient($id)
     {
         $client = DB::table('clients')->where('id', $id)->first();
 
-        return View::make('editclient', array('id' => $id, 'client_url' => $client['client_url'], 'client_name' => $client['client_name']));
+        return view('admin.editclient', array('id' => $id, 'client_url' => $client['client_url'], 'client_name' => $client['client_name']));
     }
 
-    public function postEditClient($id)
+    public function postEditClient($id, Request $request)
     {
-        if(Input::get('edit')) {
-            $client_url = Input::get('client_url');
-            $client_name = Input::get('client_name');
+        if ($request->input('edit')) {
+            $client_url = $request->input('client_url');
+            $client_name = $request->input('client_name');
 
             DB::table('clients')->where('id', $id)
                 ->update(array(
@@ -428,11 +433,11 @@ class AdminController extends Controller
                     'client_name' => $client_name
                 ));
 
-            return View::make('editclientsuccess');
-        } elseif (Input::get('delete')) {
+            return view('admin.editclientsuccess');
+        } elseif ($request->input('delete')) {
             DB::table('clients')->where('id', $id)->delete();
 
-            return View::make('deleteclientsuccess');
+            return view('admin.deleteclientsuccess');
         }
     }
 
