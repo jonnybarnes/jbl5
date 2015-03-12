@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Filesystem\Filesystem;
 use App\Article;
+use App\Note;
 use Jonnybarnes\Posse\NotePrep;
 use Jonnybarnes\Posse\URL;
 use Imagine\Image\Box;
@@ -123,41 +124,41 @@ class AdminController extends Controller
     }
 
 
-    /*** NOTES ***
+    //*** NOTES ***
     public function newNote()
     {
-        return View::make('admin.newnote');
+        return view('admin.newnote');
     }
 
     public function listNotes()
     {
         $notes = Note::select('id', 'note')->where('deleted', '0')->orderBy('id', 'desc')->get();
-        return View::make('listnotes', array('notes' => $notes));
+        return view('admin.listnotes', array('notes' => $notes));
     }
 
     public function editNote($id)
     {
         $note = Note::find($id);
-        return View::make('editnote', array('id' => $id, 'note' => $note));
+        return view('admin.editnote', array('id' => $id, 'note' => $note));
     }
 
     public function postNewNote($api = false, $note = null, $replyTo = null, $location = null, $sendtweet = null, $client_id = null, $photo = null)
     {
         $noteprep = new NotePrep();
-        if($note) {
+        if ($note) {
             $noteOrig = $note;
         } else {
             $noteOrig = Input::get('note');
         }
         $noteNfc = \Patchwork\Utf8::filter($noteOrig);
-        if(isset($replyTo)) { //this really needs to be refactored
-            if($replyTo == '') {
+        if (isset($replyTo)) { //this really needs to be refactored
+            if ($replyTo == '') {
                 $replyTo = null;
             }
         } else {
             $inputReplyTo = Input::get('reply-to');
-            if($inputReplyTo) {
-                if($inputReplyTo == '') {
+            if ($inputReplyTo) {
+                if ($inputReplyTo == '') {
                     $replyTo = null;
                 } else {
                     $replyTo = $inputReplyTo;
@@ -338,11 +339,11 @@ class AdminController extends Controller
         }
     }
 
-    public function postEditNote($id)
+    public function postEditNote($id, Request $request)
     {
-        $replyTo = Input::get('reply-to');
-        $noteText = Input::get('note');
-        $webmentions = Input::get('webmentions');
+        $replyTo = $request->input('reply-to');
+        $noteText = $request->input('note');
+        $webmentions = $request->input('webmentions');
 
         //update note data
         $note = Note::find($id);
@@ -351,15 +352,15 @@ class AdminController extends Controller
         $note->save();
 
         //send webmentions
-        if(($webmentions == true)  && ($replyTo != '')) {
-            $longurl = 'https://' . Config::get('url.longurl') . '/note/' . $id;
-            $wmc = new WebmentionsController();
+        if (($webmentions == true)  && ($replyTo != '')) {
+            $longurl = 'https://' . config('url.longurl') . '/note/' . $id;
+            $wmc = new WebMentionsController();
             $webmentionsSent = $wmc->send($replyTo, $longurl);
         } else {
             $webmentionsSent = null;
         }
 
-        return View::make('editnotesuccess', array('id' => $id, 'webmentions' => $webmentionsSent));
+        return view('admin.editnotesuccess', array('id' => $id, 'webmentions' => $webmentionsSent));
     }
 
     public function showTokens()
@@ -556,5 +557,5 @@ class AdminController extends Controller
             $note
         );
         return $tweet;
-    }*/
+    }
 }
