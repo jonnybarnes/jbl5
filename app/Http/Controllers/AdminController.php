@@ -5,8 +5,11 @@ use Illuminate\Routing\Controller;
 use Illuminate\Filesystem\Filesystem;
 use App\Article;
 use App\Note;
+use App\Contact;
 use Jonnybarnes\Posse\NotePrep;
 use Jonnybarnes\Posse\URL;
+use GuzzleHttp\Client;
+use Mf2;
 use Imagine\Image\Box;
 use Imagine\Image\ImageInterface;
 use Imagine\Gd\Imagine;
@@ -441,65 +444,67 @@ class AdminController extends Controller
         }
     }
 
+    //*** Contacts ***
+
     public function newContact()
     {
-        return View::make('newcontact');
+        return view('admin.newcontact');
     }
 
     public function listContacts()
     {
         $contacts = Contact::all();
 
-        return View::make('listcontacts', array('contacts' => $contacts));
+        return view('admin.listcontacts', array('contacts' => $contacts));
     }
 
     public function editContact($id)
     {
         $contact = Contact::findOrFail($id);
 
-        return View::make('editcontact', array('contact' => $contact));
+        return view('admin.editcontact', array('contact' => $contact));
     }
 
     public function deleteContact($id)
     {
-        return View::make('deletecontact', array('id' => $id));
+        return view('admin.deletecontact', array('id' => $id));
     }
 
-    public function postNewContact()
+    public function postNewContact(Request $request)
     {
         $contact = new Contact();
-        $contact->name = Input::get('name');
-        $contact->nick = Input::get('nick');
-        $contact->homepage = Input::get('homepage');
-        $contact->twitter = Input::get('twitter');
+        $contact->name = $request->input('name');
+        $contact->nick = $request->input('nick');
+        $contact->homepage = $request->input('homepage');
+        $contact->twitter = $request->input('twitter');
         $contact->save();
         $id = $contact->id;
 
-        return View::make('newcontactsuccess', array('id' => $id));
+        return view('admin.newcontactsuccess', array('id' => $id));
     }
 
-    public function postEditContact($id)
+    public function postEditContact($id, Request $request)
     {
         $contact = Contact::findOrFail($id);
-        $contact->name = Input::get('name');
-        $contact->nick = Input::get('nick');
-        $contact->homepage = Input::get('homepage');
-        $contact->twitter = Input::get('twitter');
+        $contact->name = $request->input('name');
+        $contact->nick = $request->input('nick');
+        $contact->homepage = $request->input('homepage');
+        $contact->twitter = $request->input('twitter');
         $contact->save();
 
-        if(Input::hasFile('avatar')) {
-            if(Input::get('homepage') != '') {
-                $dir = parse_url(Input::get('homepage'))['host'];
+        if ($request->hasFile('avatar')) {
+            if ($request->input('homepage') != '') {
+                $dir = parse_url($request->input('homepage'))['host'];
                 $destination = public_path() . '/assets/profile-images/' . $dir;
-                $fs = new \Illuminate\Filesystem\Filesystem();
-                if($fs->isDirectory($destination) === false) {
+                $fs = new Filesystem();
+                if ($fs->isDirectory($destination) === false) {
                     $fs->makeDirectory($destination);
                 }
-                Input::file('avatar')->move($destination, 'image');
+                $request->file('avatar')->move($destination, 'image');
             }
         }
 
-        return View::make('editcontactsuccess');
+        return view('admin.editcontactsuccess');
     }
 
     public function postDeleteContact($id)
@@ -507,41 +512,41 @@ class AdminController extends Controller
         $contact = Contact::findOrFail($id);
         $contact->delete();
 
-        return View::make('deletecontactsuccess');
+        return view('admin.deletecontactsuccess');
     }
 
     public function getAvatar($id)
     {
         $contact = Contact::findOrFail($id);
         $homepage = $contact->homepage;
-        if(($homepage !== null) && ($homepage !== '')) {
-            $client = new \GuzzleHttp\Client();
+        if (($homepage !== null) && ($homepage !== '')) {
+            $client = new Client();
             try {
                 $response = $client->get($homepage);
-            } catch(\GuzzleHttp\Exception\BadResponseException $e) {
+                $html = (string)$response->getBody();
+                $mf2 = \Mf2\parse($html, $homepage);
+            } catch (\GuzzleHttp\Exception\BadResponseException $e) {
                 return "Bad Response from $homepage";
             }
-            $html = (string)$response->getBody();
-            $mf2 = \Mf2\parse($html, $homepage);
-            $avatarURL = null;
-            foreach($mf2['items'] as $microformat) {
-                if($microformat['type'][0] == 'h-card') {
+            $avatarURL = null; # Initialising
+            foreach ($mf2['items'] as $microformat) {
+                if ($microformat['type'][0] == 'h-card') {
                     $avatarURL = $microformat['properties']['photo'][0];
                     break;
                 }
             }
             try {
                 $avatar = $client->get($avatarURL);
-            } catch(\GuzzleHttp\Exception\BadResponseException $e) {
+            } catch (\GuzzleHttp\Exception\BadResponseException $e) {
                 return "Unable to get $avatarURL";
             }
             $directory = public_path() . '/assets/profile-images/' . parse_url($homepage)['host'];
-            $fs = new \Illuminate\Filesystem\Filesystem();
-            if($fs->isDirectory($directory) === false) {
+            $fs = new Filesystem();
+            if ($fs->isDirectory($directory) === false) {
                 $fs->makeDirectory($directory);
             }
             $fs->put($directory . '/image', $avatar->getBody());
-            return View::make('getavatarsuccess', array('homepage' => parse_url($homepage)['host']));
+            return view('admin.getavatarsuccess', array('homepage' => parse_url($homepage)['host']));
         }
     }
 
@@ -550,10 +555,10 @@ class AdminController extends Controller
         $regex = '/\[.*?\](*SKIP)(*F)|@(\w+)/'; //match @alice but not [@bob](...)
         $tweet = preg_replace_callback(
             $regex,
-            function($matches) {
+            function ($matches) {
                 try {
                     $contact = Contact::where('nick', '=', mb_strtolower($matches[1]))->firstOrFail();
-                } catch(Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                } catch (Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                     return '@' . $matches[1];
                 }
                 $twitterHandle = $contact->twitter;
