@@ -7,6 +7,7 @@ use App\Article;
 use App\Note;
 use App\Contact;
 use App\Tag;
+use DB;
 use Jonnybarnes\Posse\NotePrep;
 use Jonnybarnes\Posse\URL;
 use GuzzleHttp\Client;

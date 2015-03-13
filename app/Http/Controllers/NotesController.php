@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Note;
 use App\Tag;
 use App\Contact;
+use DB;
 use Carbon\Carbon;
 use League\CommonMark\CommonMarkConverter;
 use Jonnybarnes\Posse\NotePrep;
