@@ -188,9 +188,9 @@ class MicropubController extends Controller
                 }
                 $client_id = $token_data['client_id'];
                 $admin = new AdminController();
-                $longurl = $admin->postNewNote(true, $note, $inReplyTo, $location, $tweet, $client_id, $photo);
+                $longurl = $admin->postNewNote($request, true, $note, $inReplyTo, $location, $tweet, $client_id, $photo);
                 $content = 'Note created at ' . $longurl;
-                return (new Reponse($content, 201))
+                return (new Response($content, 201))
                               ->header('Location', $longurl);
             } else {
                 $content = http_build_query(array(
