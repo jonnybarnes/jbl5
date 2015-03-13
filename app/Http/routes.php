@@ -80,8 +80,9 @@ Route::group(array('domain' => config('url.longurl')), function () {
     get('blog/{year}/{month}/{post}', 'ArticlesController@singleArticle');
 
     //micropub new notes page
-    //Route::get('notes/new', 'MicropubController@micropubNewNote');
-    //Route::post('notes/new', 'MicropubController@post');
+    //this needs to be first so `notes/new` doesn't match `notes/{id}`
+    get('notes/new', 'MicropubController@micropubNewNotePage');
+    post('notes/new', 'MicropubController@post');
 
     //Notes pages using NotesController
     get('notes', 'NotesController@showNotes');
@@ -95,9 +96,9 @@ Route::group(array('domain' => config('url.longurl')), function () {
     get('logout', 'AuthController@indieauthLogout');
 
     //micropub endoints
-    //Route::post('api/token', 'MicropubController@tokenEndpoint');
-    //Route::post('api/post', 'MicropubController@note');
-    //Route::get('api/post', 'MicropubController@tokenVeracity');
+    post('api/token', 'MicropubController@tokenEndpoint');
+    post('api/post', 'MicropubController@note');
+    get('api/post', 'MicropubController@tokenValidity');
 
     //webmention
     get('webmention', function () {
