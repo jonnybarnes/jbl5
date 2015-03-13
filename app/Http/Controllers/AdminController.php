@@ -6,6 +6,7 @@ use Illuminate\Filesystem\Filesystem;
 use App\Article;
 use App\Note;
 use App\Contact;
+use App\Tag;
 use Jonnybarnes\Posse\NotePrep;
 use Jonnybarnes\Posse\URL;
 use GuzzleHttp\Client;
@@ -145,13 +146,13 @@ class AdminController extends Controller
         return view('admin.editnote', array('id' => $id, 'note' => $note));
     }
 
-    public function postNewNote($api = false, $note = null, $replyTo = null, $location = null, $sendtweet = null, $client_id = null, $photo = null)
+    public function postNewNote(Request $request, $api = false, $note = null, $replyTo = null, $location = null, $sendtweet = null, $client_id = null, $photo = null)
     {
         $noteprep = new NotePrep();
         if ($note) {
             $noteOrig = $note;
         } else {
-            $noteOrig = Input::get('note');
+            $noteOrig = $request->input('note');
         }
         $noteNfc = \Patchwork\Utf8::filter($noteOrig);
         if (isset($replyTo)) { //this really needs to be refactored
@@ -159,7 +160,7 @@ class AdminController extends Controller
                 $replyTo = null;
             }
         } else {
-            $inputReplyTo = Input::get('reply-to');
+            $inputReplyTo = $request->input('reply-to');
             if ($inputReplyTo) {
                 if ($inputReplyTo == '') {
                     $replyTo = null;
@@ -174,11 +175,11 @@ class AdminController extends Controller
 
 
         //location for a non-API call
-        if(Input::get('confirmlocation')) {
-            if(Input::get('location')) {
-                $formLocation = Input::get('location');
-                if(Input::get('address')) {
-                    $locadd = $formLocation . ':' . Input::get('address');
+        if ($request->input('confirmlocation')) {
+            if ($request->input('location')) {
+                $formLocation = $request->input('location');
+                if ($request->input('address')) {
+                    $locadd = $formLocation . ':' . $request->input('address');
                 } else {
                     $locadd = $formLocation;
                 }
@@ -187,16 +188,16 @@ class AdminController extends Controller
             $locadd = null;
         }
 
-        if($location) {
+        if ($location) {
             $locadd = $location;
         }
         
         $time = time();
 
 
-        if(Input::hasFile('photo')) {
+        if ($request->hasFile('photo')) {
             $hasPhoto = true;
-        } elseif($photo) {
+        } elseif ($photo) {
             $hasPhoto = true;
         } else {
             $hasPhoto = null;
@@ -207,42 +208,40 @@ class AdminController extends Controller
                 array(
                     'note' => $noteNfc,
                     'timestamp' => $time,
-                    //'author' => $username,
                     'reply_to' => $replyTo,
                     'location' => $locadd,
                     'client_id' => $client_id,
                     'photo' => $hasPhoto
                 )
             );
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $msg = $e->getMessage(); //do something
             return 'Error saving note' . $msg;
-            die();
         }
 
         $url = new URL();
         $realid = $url->numto60($id);
         $photoFilename = 'note-' . $realid;
-        if($photo) {
+        if ($photo) {
             $ext = explode('.', $photo)[1];
             $photoFilename .= '.' . $ext;
             $fs = new FileSystem();
             $start = public_path() . '/assets/img/notes/' . $photo;
             $end = public_path() . '/assets/img/notes/' . $photoFilename;
             $fs->move($start, $end);
-        } elseif(Input::hasFile('photo')) {
+        } elseif ($request->hasFile('photo')) {
             $photo = true;
             $path = public_path() . '/assets/img/notes/';
-            $ext = Input::file('photo')->getClientOriginalExtension();
+            $ext = $request->file('photo')->getClientOriginalExtension();
             $photoFilename .= '.' . $ext;
-            Input::file('photo')->move($path, $photoFilename);
+            $request->file('photo')->move($path, $photoFilename);
         }
 
         $tags = $noteprep->getTags($noteNfc);
         $tagsToSave = [];
-        foreach($tags as $tag) {
+        foreach ($tags as $tag) {
             $tag_search = Tag::where('tag', $tag)->get();
-            if(count($tag_search) == 0) {
+            if (count($tag_search) == 0) {
                 $newtag = new Tag;
                 $newtag->tag = $tag;
                 $newtag->save();
@@ -253,33 +252,33 @@ class AdminController extends Controller
             $tagsToSave[$tag_id] = $tag;
         }
         $note = Note::find($id);
-        foreach($tagsToSave as $tag_id => $tag) {
+        foreach ($tagsToSave as $tag_id => $tag) {
             $note->tags()->attach($tag_id);
         }
-        $longurl = 'https://' . Config::get('url.longurl') . '/notes/' . $realid;
+        $longurl = 'https://' . config('url.longurl') . '/notes/' . $realid;
         $webmentions = null; //initialise variable
-        if($replyTo !== null) {
+        if ($replyTo !== null) {
             //now we check if webmentions should be sent
-            if(Input::get('webmentions') || $api == true) {
-                $wm = new WebmentionsController();
+            if ($request->input('webmentions') || $api == true) {
+                $wm = new WebMentionsController();
                 $webmentions = $wm->send($replyTo, $longurl);
             }
         }
 
         $shorturlId = 't/' . $url->numto60($id);
-        $shorturlBase = Config::get('url.shorturl');
+        $shorturlBase = config('url.shorturl');
         $shorturl = 'https://' . $shorturlBase . '/' . $shorturlId;
         $noteNfcNamesSwapped = $this->swapNames($noteNfc);
         $tweet = '';
-        if(Input::get('twitter') || $sendtweet == true) {
+        if ($request->input('twitter') || $sendtweet == true) {
             $tweet = $noteprep->createNote($noteNfcNamesSwapped, $shorturlBase, $shorturlId, 140, true, true);
             $tweet_opts = array('status' => $tweet, 'format' => 'json');
-            if($replyTo) {
+            if ($replyTo) {
                 $tweet_opts['in_reply_to_status_id'] = $noteprep->replyTweetId($replyTo);
             }
-            if($locadd) {
+            if ($locadd) {
                 $explode = explode(':', $locadd);
-                if(count($explode) == 2) {
+                if (count($explode) == 2) {
                     $location = explode(',', $explode[0]);
                 } else {
                     $location = explode(',', $explode);
@@ -291,21 +290,21 @@ class AdminController extends Controller
                 $place_id = $parsePlaceId->result->places[0]->id ?: null;
                 $tweet_opts['lat'] = $lat;
                 $tweet_opts['long'] = $long;
-                if($place_id) {
+                if ($place_id) {
                     $tweet_opts['place_id'] = $place_id;
                 }
             }
-            if($photo) {
+            if ($photo) {
                 $filenameParts = explode('.', $photoFilename);
                 $preExt = count($filenameParts) - 2;
                 $filenameParts[$preExt] .= '-small';
-                $photoFilenameSmall = implode('.', $filenameParts); 
+                $photoFilenameSmall = implode('.', $filenameParts);
                 $imagine = new Imagine();
                 $orig = $imagine->open(public_path() . '/assets/img/notes/' . $photoFilename);
                 $size = array($orig->getSize()->getWidth(), $orig->getSize()->getHeight());
-                if($size[0] > $this->imageResizeLimit || $size[1] > $this->imageResizeLimit) {
+                if ($size[0] > $this->imageResizeLimit || $size[1] > $this->imageResizeLimit) {
                     $ar = $size[0]/$size[1];
-                    if($ar >= 1) {
+                    if ($ar >= 1) {
                         //width > height
                         $newHeight = (int)round($this->imageResizeLimit/$ar);
                         $box = array($this->imageResizeLimit, $newHeight);
@@ -322,7 +321,7 @@ class AdminController extends Controller
                 }
             }
             try {
-                if($photo) {
+                if ($photo) {
                     $response_json = Twitter::postTweetMedia($tweet_opts);
                 } else {
                     $response_json = Twitter::postTweet($tweet_opts);
@@ -330,15 +329,15 @@ class AdminController extends Controller
                 $response = json_decode($response_json);
                 $tweet_id = $response->id;
                 Note::find($id)->update(array('tweet_id' => $tweet_id));
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 $tweet = 'Error sending tweet. <pre>' . $response_json . '</pre>';
             }
         }
 
-        if($api) {
+        if ($api) {
             return $longurl;
         } else {
-            return View::make('newnotesuccess', array('id' => $id, 'shorturl' => $shorturl, 'tweet' => $tweet, 'webmentions' => $webmentions));
+            return view('admin.newnotesuccess', array('id' => $id, 'shorturl' => $shorturl, 'tweet' => $tweet, 'webmentions' => $webmentions));
         }
     }
 
