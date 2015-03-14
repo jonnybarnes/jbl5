@@ -19,7 +19,7 @@
   <link rel="openid.delegate" href="https://jonnybarnes.uk">
   <link rel="authorization_endpoint" href="https://indieauth.com/auth">
   <link rel="token_endpoint" href="https://{{ config('url.longurl') }}/api/token">
-  <link rel="micropub" href="https://{{ confi('url.longurl') }}/api/post">
+  <link rel="micropub" href="https://{{ config('url.longurl') }}/api/post">
   <link rel="webmention" href="https://{{ config('url.longurl') }}/webmention">
   <link rel="shortcut icon" href="/assets/img/jmb-bw.png">
 </head>
