@@ -12,8 +12,9 @@ class MyVerifyCsrfToken extends VerifyCsrfToken
      * @var array
      */
     protected $excluded_urls = [
-        'webmention',
-        'api/post'
+        'api/token',
+        'api/post',
+        'webmention'
     ];
 
     /**

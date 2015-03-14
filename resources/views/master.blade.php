@@ -11,16 +11,16 @@
   <script src="//cdn.jsdelivr.net/html5shiv/3.7.2/html5shiv.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
   <![endif]-->
-  <link rel="stylesheet" href="/assets/css/<?php if(App::environment('local')) { echo 'global'; } else { echo 'style'; }?>.css">
+  <link rel="stylesheet" href="/assets/css/<?php if (App::environment('local')) { echo 'global'; } else { echo 'style'; }?>.css">
   <link rel="stylesheet" href="/assets/css/solarized-dark.css">
   <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.css">
   <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css">
   <link rel="openid.server" href="https://indieauth.com/openid">
   <link rel="openid.delegate" href="https://jonnybarnes.uk">
   <link rel="authorization_endpoint" href="https://indieauth.com/auth">
-  <link rel="token_endpoint" href="/api/token">
-  <link rel="micropub" href="/api/post">
-  <link rel="webmention" href="/webmention">
+  <link rel="token_endpoint" href="https://{{ config('url.longurl') }}/api/token">
+  <link rel="micropub" href="https://{{ confi('url.longurl') }}/api/post">
+  <link rel="webmention" href="https://{{ config('url.longurl') }}/webmention">
   <link rel="shortcut icon" href="/assets/img/jmb-bw.png">
 </head>
 <body>
@@ -47,7 +47,7 @@
 <script>
   twemoji.parse(document.body);
 </script>
-<?php if(App::environment('production')) { ?>
+<?php if (App::environment('production')) { ?>
 <!-- Piwik -->
 <script type="text/javascript">
   var _paq = _paq || [];
