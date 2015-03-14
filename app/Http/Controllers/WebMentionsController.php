@@ -39,7 +39,7 @@ class WebMentionsController extends Controller
         }
 
         //next check the $target is valid
-        $sourceurl = parse_url($source); //what are these for?
+        $sourceurl = parse_url($source);
         $baseurl = $sourceurl['scheme'] . '://' . $sourceurl['host'];
         $path = parse_url($target)['path'];
         $pathParts = explode('/', $path);
@@ -55,7 +55,7 @@ class WebMentionsController extends Controller
                     $parser = new Parser();
                     try {
                         $remoteContent = $this->getRemoteContent($source);
-                        $mf = $this->parseHTML($remoteContent, $source);
+                        $mf = $this->parseHTML($remoteContent, $baseurl);
                         $count = WebMention::where('source', '=', $source)->count();
                         if ($count > 0) {
                             //we already have a webmention from this source
