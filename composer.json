@@ -8,6 +8,7 @@
 		"laravel/framework": "5.0.*",
 		"jonnybarnes/unicode-tools": "dev-master",
 		"jonnybarnes/posse": "dev-master",
+		"jonnybarnes/webmentions-parser": "dev-master",
 		"guzzlehttp/guzzle": "~5.2",
 		"predis/predis": "~1.0",
 		"league/commonmark": "0.7.*",
@@ -55,6 +56,11 @@
 			"name": "jonnybarnes/posse",
 			"type": "git",
 			"url": "https://github.com/jonnybarnes/posse.git"
+		},
+		{
+			"name": "jonnybarnes/webmentions-parser",
+			"type": "git",
+			"url": "https://github.com/jonnybarnes/webmentions-parser"
 		}
 	],
 	"config": {
