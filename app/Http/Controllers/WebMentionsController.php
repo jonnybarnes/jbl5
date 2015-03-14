@@ -258,14 +258,15 @@ class WebMentionsController extends Controller
      * Save a profile image to the local cache
      *
      * @param  array  source content
-     * @return bool   wether image was saved or not
+     * @return bool   wether image was saved or not (we don’t save twitter profiles)
      */
     public function saveImage($content)
     {
         $photo = $content['photo'];
         $home = $content['url'];
         //dont save pbs.twimg.com links
-        if (parse_url($photo)['host'] != 'pbs.twimg.com') {
+        if (parse_url($photo)['host'] != 'pbs.twimg.com'
+              && parse_url($photo)['host'] != 'twitter.com') {
             $client = new Client();
             try {
                 $response = $client->get($photo);
@@ -273,6 +274,8 @@ class WebMentionsController extends Controller
                 $path = public_path() . '/assets/profile-images/' . parse_url($home)['host'] . '/image';
                 $this->fileForceContents($path, $image);
             } catch (Exception $e) {
+                // we are openning and reading the default image so that
+                // fileForceContent work
                 $default = public_path() . '/assets/profile-images/default-image';
                 $handle = fopen($default, "rb");
                 $image = fread($handle, filesize($default));
