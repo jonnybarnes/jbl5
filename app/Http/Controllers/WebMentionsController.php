@@ -55,7 +55,7 @@ class WebMentionsController extends Controller
                     $parser = new Parser();
                     try {
                         $remoteContent = $this->getRemoteContent($source);
-                        $mf = $this->parsHTML($remoteContent);
+                        $mf = $this->parseHTML($remoteContent);
                         $count = WebMention::where('source', '=', $source)->count();
                         if ($count > 0) {
                             //we already have a webmention from this source
