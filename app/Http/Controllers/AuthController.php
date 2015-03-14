@@ -8,6 +8,34 @@ use Cookie;
 
 class AuthController extends Controller
 {
+    /**
+     * Log in a user, set a sesion variable, check credentials against
+     * the .env file.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Routing\RedirectResponse
+     */
+    public function login(Request $request)
+    {
+        $postedName = $request->input('username');
+        $postedPass = $request->input('password');
+
+        if ($postedName == env('ADMIN_USER') && $postedPass == env('ADMIN_PASS')) {
+            session(['loggedin' => true]);
+            return redirect('admin');
+        } else {
+            return redirect()->route('login');
+        }
+    }
+
+    /**
+     * Begin the indie auth process. Here we query the user’s homepage
+     * for their authorisation endpoint, and redirect them there with a
+     * unique secure state value.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Routing\RedirecTResponse
+     */
     public function beginauth(Request $request)
     {
         $domain = $request->input('me');
@@ -32,6 +60,15 @@ class AuthController extends Controller
         }
     }
 
+    
+    /**
+     * Once they have verified themselves through the authorisation endpint
+     * the next step is retreiveing a token from the token endpoint. here
+     * we request a token and then save it in a cookie on the user’s browser.
+     *
+     * @param  \Illuminate\Http\Rrequest $request
+     * @return \Illuminate\Routing\RedirectResponse
+     */
     public function indieauth(Request $request)
     {
         $me = $request->input('me');
@@ -63,6 +100,11 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Log out the user, flush an session data, and overwrite any cookie data
+     *
+     * @return \Illuminate\Routing\RedirectResponse
+     */
     public function indieauthLogout()
     {
         Session::flush();

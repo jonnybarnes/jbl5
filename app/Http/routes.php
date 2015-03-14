@@ -26,7 +26,7 @@ Route::group(array('domain' => config('url.longurl')), function () {
     get('login', ['as' => 'login', function () {
         return view('login');
     }]);
-    post('login', 'MyAuthController@login');
+    post('login', 'AuthController@login');
 
     //Admin pages grouped for filter
     Route::group(['middleware' => 'myauth'], function () {
