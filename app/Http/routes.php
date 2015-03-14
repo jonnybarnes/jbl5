@@ -104,7 +104,7 @@ Route::group(array('domain' => config('url.longurl')), function () {
     get('webmention', function () {
         return view('webmention-endpoint');
     });
-    post('webmention', 'WebMentionsController@recieve');
+    post('webmention', 'WebMentionsController@receive');
 
     //Contacts
     get('contacts', 'ContactsController@showAll');
