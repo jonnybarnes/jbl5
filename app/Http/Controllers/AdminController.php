@@ -8,6 +8,7 @@ use App\Note;
 use App\Contact;
 use App\Tag;
 use DB;
+use Twitter;
 use Jonnybarnes\Posse\NotePrep;
 use Jonnybarnes\Posse\URL;
 use GuzzleHttp\Client;

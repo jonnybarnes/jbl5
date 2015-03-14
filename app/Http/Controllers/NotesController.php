@@ -9,6 +9,7 @@ use App\Note;
 use App\Tag;
 use App\Contact;
 use DB;
+use Twitter;
 use Carbon\Carbon;
 use League\CommonMark\CommonMarkConverter;
 use Jonnybarnes\Posse\NotePrep;
