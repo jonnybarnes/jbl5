@@ -24,7 +24,7 @@ class AuthController extends Controller
             $clientId = 'https://' . config('url.longurl') . '/notes/new';
             $state = $hex;
             $scope = 'post';
-            $authorizationURL = Client::buildAuthorizationURL($authorizationEndpoint, $domain, $redirect_uri, $client_id, $state, $scope);
+            $authorizationURL = Client::buildAuthorizationURL($authorizationEndpoint, $domain, $redirectURL, $clientId, $state, $scope);
         
             return redirect($authorizationURL);
         } else {
@@ -42,13 +42,13 @@ class AuthController extends Controller
             return redirect('notes/new')->with('error', 'Mismatch of <code>state</code> value from indieauth server.');
         }
 
-        $redirect_uri = 'https://' . config('url.longurl') . '/auth';
-        $client_id = 'https://' . config('url.longurl') . '/notes/new';
+        $redirectURL = 'https://' . config('url.longurl') . '/auth';
+        $clientId = 'https://' . config('url.longurl') . '/notes/new';
 
         $tokenEndpoint = Client::discoverTokenEndpoint($me);
 
         if ($tokenEndpoint) {
-            $token = Client::getAccessToken($tokenEndpoint, $code, $me, $redirect_uri, $client_id, $stateInput);
+            $token = Client::getAccessToken($tokenEndpoint, $code, $me, $redirectURL, $clientId, $stateInput);
 
             if (array_key_exists('access_token', $token)) {
                 Cookie::queue('me', $token['me'], 86400);
