@@ -57,9 +57,9 @@ class MicropubController extends Controller
         }
 
         $guzzle = new \GuzzleHttp\Client();
-        $request = $guzzle->createRequest('POST', $micropubEndpoint);
-        $request->setHeader('Authorization', 'Bearer ' . $token);
-        $postBody = $request->getBody();
+        $guzzlerequest = $guzzle->createRequest('POST', $micropubEndpoint);
+        $guzzlerequest->setHeader('Authorization', 'Bearer ' . $token);
+        $postBody = $guzzlerequest->getBody();
         $postBody->setField('h-entry', '');
         $postBody->setField('content', $note);
         if ($replyTo != '') {
@@ -83,7 +83,7 @@ class MicropubController extends Controller
             $postBody->addFile(new \GuzzleHttp\Post\PostFile('photo', fopen(storage_path() . '/' . $filename, 'r')));
         }
         try {
-            $response = $guzzle->send($request);
+            $response = $guzzle->send($guzzlerequest);
         } catch (GuzzleHttp\Exception\RequestException $e) {
             if (isset($filename)) {
                 unlink(storage_path() . '/' . $filename);
