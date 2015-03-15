@@ -13,7 +13,7 @@ class AuthController extends Controller
      * the .env file.
      *
      * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Routing\RedirectResponse
+     * @return \Illuminate\Routing\RedirectResponse redirect
      */
     public function login(Request $request)
     {
@@ -34,7 +34,7 @@ class AuthController extends Controller
      * unique secure state value.
      *
      * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Routing\RedirecTResponse
+     * @return \Illuminate\Routing\RedirecTResponse redirect
      */
     public function beginauth(Request $request)
     {
@@ -67,7 +67,7 @@ class AuthController extends Controller
      * we request a token and then save it in a cookie on the user’s browser.
      *
      * @param  \Illuminate\Http\Rrequest $request
-     * @return \Illuminate\Routing\RedirectResponse
+     * @return \Illuminate\Routing\RedirectResponse redirect
      */
     public function indieauth(Request $request)
     {
@@ -103,7 +103,7 @@ class AuthController extends Controller
     /**
      * Log out the user, flush an session data, and overwrite any cookie data
      *
-     * @return \Illuminate\Routing\RedirectResponse
+     * @return \Illuminate\Routing\RedirectResponse redirect
      */
     public function indieauthLogout()
     {

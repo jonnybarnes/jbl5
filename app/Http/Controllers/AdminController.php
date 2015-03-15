@@ -28,30 +28,55 @@ class AdminController extends Controller
     |
      */
 
+    /**
+     * Set variables
+     *
+     * @var string
+     */
     public function __construct()
     {
         $this->imageResizeLimit = 800;
         $this->username = env('ADMIN_USER');
     }
 
+    /**
+     * Show the main admin CP page
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function showWelcome()
     {
         return view('admin.welcome', array('name' => $this->username));
     }
 
-    //*** ARTICLES ***
+    /**
+     * Show the new article form
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function newArticle()
     {
         $message = session('message');
         return view('admin.newarticle', array('message' => $message));
     }
 
+    /**
+     * List the articles that can be edited
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function listArticles()
     {
         $posts = Article::select('id', 'title', 'published')->where('deleted', '0')->orderBy('id', 'desc')->get();
         return view('admin.listarticles', array('posts' => $posts));
     }
 
+    /**
+     * Show the edit form for an existing article
+     *
+     * @param  string  The article id
+     * @return \Illuminate\View\Factory view
+     */
     public function editArticle($id)
     {
         $post = Article::select(
@@ -64,11 +89,23 @@ class AdminController extends Controller
         return view('admin.editarticle', array('id' => $id, 'post' => $post));
     }
 
+    /**
+     * Show the delete confirmation form for an article
+     *
+     * @param  string  The article id
+     * @return \Illuminate\View\Factory view
+     */
     public function deleteArticle($id)
     {
         return view('admin.deletearticle', array('id' => $id));
     }
 
+    /**
+     * Process an incoming request for a new article and save it.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\View\Factory view
+     */
     public function postNewArticle(Request $request)
     {
         $title = $request->input('title');
@@ -104,6 +141,12 @@ class AdminController extends Controller
         return view('admin.newarticlesuccess', array('id' => $id, 'title' => $title));
     }
 
+    /**
+     * Process an incoming request to edit an article
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate|View\Factory view
+     */
     public function postEditArticle($id, Request $request)
     {
         $title = $request->input('title');
@@ -123,6 +166,12 @@ class AdminController extends Controller
         return view('admin.editarticlesuccess', array('id' => $id));
     }
 
+    /**
+     * Process a request to delete an aricle
+     *
+     * @param  string The article id
+     * @return \Illuminate\View\Factory view
+     */
     public function postDeleteArticle($id)
     {
         Article::where('id', $id)->update(array('deleted' => '1'));
@@ -130,24 +179,44 @@ class AdminController extends Controller
     }
 
 
-    //*** NOTES ***
+    /**
+     * Show the form to make a new note
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function newNote()
     {
         return view('admin.newnote');
     }
 
+    /**
+     * List the notes that can be edited
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function listNotes()
     {
         $notes = Note::select('id', 'note')->where('deleted', '0')->orderBy('id', 'desc')->get();
         return view('admin.listnotes', array('notes' => $notes));
     }
 
+    /**
+     * Display the form to edit a specific note
+     *
+     * @param  string The note id
+     * @return \Illuminate\View\Factory view
+     */
     public function editNote($id)
     {
         $note = Note::find($id);
         return view('admin.editnote', array('id' => $id, 'note' => $note));
     }
 
+    /**
+     * Process a request to make a new note
+     *
+     * @todo  Sort this mess out
+     */
     public function postNewNote(Request $request, $api = false, $note = null, $replyTo = null, $location = null, $sendtweet = null, $client_id = null, $photo = null)
     {
         $noteprep = new NotePrep();
@@ -343,6 +412,13 @@ class AdminController extends Controller
         }
     }
 
+    /**
+     * Process a request to edit a note. Easy since this can only be done
+     * from the admin CP.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\View\Factory view
+     */
     public function postEditNote($id, Request $request)
     {
         $replyTo = $request->input('reply-to');
@@ -367,8 +443,11 @@ class AdminController extends Controller
         return view('admin.editnotesuccess', array('id' => $id, 'webmentions' => $webmentionsSent));
     }
 
-    //*** Tokens ***
-
+    /**
+     * Show all the saved tokens
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function showTokens()
     {
         $t = new TokensController();
@@ -377,11 +456,23 @@ class AdminController extends Controller
         return view('admin.listtokens', array('tokens' => $tokens));
     }
 
+    /**
+     * Show the form to delete a certain token
+     *
+     * @param  string The token id
+     * @return \Illuminate\View\Factory view
+     */
     public function deleteToken($id)
     {
         return view('admin.deletetoken', array('id' => $id));
     }
 
+    /**
+     * Process the request to delete a token
+     *
+     * @param  string The token id
+     * @return \Illuminate\View\Factory view
+     */
     public function postDeleteToken($id)
     {
         $t = new TokensController();
@@ -390,8 +481,11 @@ class AdminController extends Controller
         return view('admin.deletetokensuccess', array('id' => $id));
     }
 
-    //*** Clients ***
-
+    /**
+     * Show a list of known clients
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function listClients()
     {
         $clients = DB::table('clients')->get();
@@ -399,11 +493,22 @@ class AdminController extends Controller
         return view('admin.listclients', array('clients' => $clients));
     }
 
+    /**
+     * Form to add a client name
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function newClient()
     {
         return view('admin.newclient');
     }
 
+    /**
+     * Process the request to adda new client name
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\View\Factory view
+     */
     public function postNewClient(Request $request)
     {
         $client_url = $request->input('client_url');
@@ -418,6 +523,12 @@ class AdminController extends Controller
         return view('admin.newclientsuccess');
     }
 
+    /**
+     * Show a form to edit a client name
+     *
+     * @param  string The client id
+     * @return \Illuminate\View\Factory view
+     */
     public function editClient($id)
     {
         $client = DB::table('clients')->where('id', $id)->first();
@@ -425,6 +536,13 @@ class AdminController extends Controller
         return view('admin.editclient', array('id' => $id, 'client_url' => $client['client_url'], 'client_name' => $client['client_name']));
     }
 
+    /**
+     * Process the request to edit a client name
+     *
+     * @param  string  The client id
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\View\Factory view
+     */
     public function postEditClient($id, Request $request)
     {
         if ($request->input('edit')) {
@@ -445,13 +563,21 @@ class AdminController extends Controller
         }
     }
 
-    //*** Contacts ***
-
+    /**
+     * Display the form to add a new contact
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function newContact()
     {
         return view('admin.newcontact');
     }
 
+    /**
+     * List the currect contacts that can be edited
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function listContacts()
     {
         $contacts = Contact::all();
@@ -459,6 +585,12 @@ class AdminController extends Controller
         return view('admin.listcontacts', array('contacts' => $contacts));
     }
 
+    /**
+     * Show the form to edit an existing contact
+     *
+     * @param  string  The contact id
+     * @return \Illuminate\View\Factory view
+     */
     public function editContact($id)
     {
         $contact = Contact::findOrFail($id);
@@ -466,11 +598,22 @@ class AdminController extends Controller
         return view('admin.editcontact', array('contact' => $contact));
     }
 
+    /**
+     * Show the fomr to confirm deleting a contact
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function deleteContact($id)
     {
         return view('admin.deletecontact', array('id' => $id));
     }
 
+    /**
+     * Process the request to add a new contact
+     *
+     * @param  \Illuminate\Http|request $request
+     * @return \Illuminate\View\Factory view
+     */
     public function postNewContact(Request $request)
     {
         $contact = new Contact();
@@ -484,6 +627,15 @@ class AdminController extends Controller
         return view('admin.newcontactsuccess', array('id' => $id));
     }
 
+    /**
+     * Process the request to edit a contact
+     *
+     * @todo   Allow saving profile pictures for people without homepages
+     *
+     * @param  string  The contact id
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\View\Factory view
+     */
     public function postEditContact($id, Request $request)
     {
         $contact = Contact::findOrFail($id);
@@ -508,6 +660,12 @@ class AdminController extends Controller
         return view('admin.editcontactsuccess');
     }
 
+    /**
+     * Process the request to delete a contact
+     *
+     * @param  string  The contact id
+     * @return \Illuminate\View\Factory view
+     */
     public function postDeleteContact($id)
     {
         $contact = Contact::findOrFail($id);
@@ -516,6 +674,15 @@ class AdminController extends Controller
         return view('admin.deletecontactsuccess');
     }
 
+    /**
+     * Download the avatar for a contact
+     *
+     * This method attempts to find the microformat marked-up profile image
+     * from a given homepage and save it accordingly
+     *
+     * @param  string  The contact id
+     * @return \Illuminate\View\Factory view
+     */
     public function getAvatar($id)
     {
         $contact = Contact::findOrFail($id);
@@ -551,6 +718,16 @@ class AdminController extends Controller
         }
     }
 
+    /**
+     * Swap @names in a note
+     *
+     * When a note is being saved and we are posting it to twitter, we want
+     * to swap our @local_name to Twitter’s @twitter_name so the user get’s
+     * mentioned on Twitter.
+     *
+     * @param  string  The note to process
+     * @return string  The processed note
+     */
     public function swapNames($note)
     {
         $regex = '/\[.*?\](*SKIP)(*F)|@(\w+)/'; //match @alice but not [@bob](...)

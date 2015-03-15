@@ -5,6 +5,11 @@ use Illuminate\Filesystem\Filesystem;
 
 class TokensController extends Controller
 {
+    /**
+     * Return all the tokens
+     *
+     * @return array
+     */
     public function getAll()
     {
         $return = array();
@@ -20,6 +25,15 @@ class TokensController extends Controller
         return $return;
     }
     
+    /**
+     * Save token data to file and generate a random name. This
+     * name is what other pople see *as* the token.
+     *
+     * @param  string  $me A URL of (normally) a personal homepage
+     * @param  string  $client_id  The PAI client that requested the token
+     * @param  array   £scopes The reuested scopes for the token
+     * @return string  The name of the token
+     */
     public function saveToken($me, $client_id, array $scopes)
     {
         $fs = new Filesystem();
@@ -44,6 +58,12 @@ class TokensController extends Controller
         return $hex;
     }
 
+    /**
+     * Check if a supplied token name matches any valid tokens on file.
+     *
+     * @param  string The toke name
+     * @return mixed
+     */
     public function tokenValidity($token)
     {
         $token_data = $this->openToken($token);
@@ -55,6 +75,12 @@ class TokensController extends Controller
         }
     }
 
+    /**
+     * Reead and return the token data for a supplied token name.
+     *
+     * @param  string The token anme
+     * @return mixed
+     */
     public function openToken($token)
     {
         $fs = new Filesystem();
@@ -69,6 +95,12 @@ class TokensController extends Controller
         }
     }
 
+    /**
+     * Delete a token from file
+     *
+     * @param  string The token name
+     * @return bool
+     */
     public function deleteToken($token)
     {
         $fs = new Filesystem();

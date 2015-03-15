@@ -21,8 +21,9 @@ use Jonnybarnes\UnicodeTools\UnicodeTools;
 class NotesController extends Controller
 {
     /**
+     * Show all the notes
      *
-     * Show all notes
+     * @return \Illuminte\View\Factry view
      */
     public function showNotes()
     {
@@ -86,8 +87,10 @@ class NotesController extends Controller
     }
 
     /**
-     *
      * Show a single note
+     *
+     * @param  string The id of the note
+     * @return \Illuminate\View\Factory view
      */
     public function singleNote($id)
     {
@@ -195,6 +198,8 @@ class NotesController extends Controller
     /**
      * Redirect /note/{decID} to /notes/{nb60id}
      *
+     * @param  string The decimal id of he note
+     * @return \Illuminate\Routing\RedirectResponse redirect
      */
     public function singleNoteRedirect($id)
     {
@@ -209,6 +214,8 @@ class NotesController extends Controller
     /**
      * Show all notes tagged with {tag}
      *
+     * @param  string The tag
+     * @return \Illuminate\View\Factory view
      */
     public function taggedNotes($tag)
     {
@@ -227,6 +234,7 @@ class NotesController extends Controller
     /**
      * Pre-process notes for web-view
      *
+     * @param  string
      * @return string
      */
     public function transformNote($text)
@@ -246,7 +254,10 @@ class NotesController extends Controller
      * Note that this method does two things, given @username (NOT [@username](URL)!)
      * we try to create a fancy hcard from our contact info. If this is not possible
      * due to lack of contact info, we assume @username is a twitter handle and link it
-     * as such
+     * as such.
+     *
+     * @param  string  The note’s text
+     * @return string
      */
     public function makeHCards($text)
     {
@@ -277,6 +288,10 @@ class NotesController extends Controller
      * Given a string and section, finds all hashtags matching
      * `#[\-_a-zA-Z0-9]+` and wraps them in an `a` element with
      * `rel=tag` set and a `href` of 'section/tagged/' + tagname without the #.
+     *
+     * @param  string  The note
+     * @param  string  The section (such as blog)
+     * @return string
      */
     public function autoLinkHashtag($text, $section)
     {
@@ -300,8 +315,11 @@ class NotesController extends Controller
         return $text;
     }
 
-    /*
+    /**
      * Add the <abbr> element to known abbr
+     *
+     * @param  string
+     * @return string
      */
     public function addAbbrTag($text)
     {
@@ -337,6 +355,12 @@ class NotesController extends Controller
         return $text;
     }
 
+    /**
+     * Swap a brid.gy URL shim-ing a twitter reply to a real twitter link.
+     *
+     * @param  string
+     * @return string
+     */
     public function bridgyReply($source)
     {
         $url = $source;
@@ -351,6 +375,12 @@ class NotesController extends Controller
         return $url;
     }
 
+    /**
+     * Make any pbs.twimg.com links secure
+     *
+     * @param  string
+     * @return string
+     */
     public function secureTwimgLink($url)
     {
         if (mb_substr($url, 0, 20) == 'http://pbs.twimg.com') {

@@ -11,6 +11,7 @@ class MicropubController extends Controller
     /**
      * Display the new notes form
      *
+     * @return \Illuminate\View\Factory view
      */
     public function micropubNewNotePage()
     {
@@ -42,6 +43,8 @@ class MicropubController extends Controller
     /**
      * Post the notes content to the relavent micropub API endpoint
      *
+     * @param  \Illuminate\Http\Request $request
+     * @return mixed
      */
     public function post(Request $request)
     {
@@ -103,8 +106,10 @@ class MicropubController extends Controller
     }
 
     /**
-     * The micropub API’s token endpoint. Return a token if auth'd
+     * If the user has auth’d via IndieAuth, issue a valid token
      *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
      */
     public function tokenEndpoint(Request $request)
     {
@@ -143,6 +148,8 @@ class MicropubController extends Controller
      * This function receives an API request, verifies the authenticity
      * then passes of the info to the NotesController
      *
+     * @param  \Illuminate\Http\Request request
+     * @return \Illuminate\Http\Response
      */
     public function note(Request $request)
     {
@@ -210,8 +217,10 @@ class MicropubController extends Controller
     /**
      * A GET request has been made to api/post with an accompanying
      * token, here we check wether the token is valid and respond
-     * appropriately
+     * appropriately.
      *
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Response
      */
     public function tokenValidity(Request $request)
     {

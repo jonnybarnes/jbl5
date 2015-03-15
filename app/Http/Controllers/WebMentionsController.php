@@ -22,8 +22,10 @@ class WebMentionsController extends Controller
      */
     protected $purifier;
 
-    /*
+    /**
      * Receive and process a webmention
+     * @param  \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\Respone
      */
     public function receive(Request $request)
     {
@@ -87,14 +89,14 @@ class WebMentionsController extends Controller
                                             if ($parser->checkLikeOf($mf, $target) == false) {
                                                 //it doesn't so delete
                                                 $webmention->delete();
-                                                return Response::make('The webmention has been deleted', 202);
+                                                return (new Response('The webmention has been deleted', 202));
                                             } //note we don't need to do anything if it still is a like
                                             break;
                                         case 'repost':
                                             if ($parser->checkRepostOf($mf, $target) == false) {
                                                 //it doesn't so delete
                                                 $webmention->delete();
-                                                return Response::make('The webmention has been deleted', 202);
+                                                return (new Response('The webmention has been deleted', 202));
                                             } //again, we don't need to do anything if it still is a repost
                                             break;
                                     }
@@ -189,7 +191,11 @@ class WebMentionsController extends Controller
     }
 
     /**
-     * Send a webmention
+     * Send a webmention.
+     *
+     * @param  string  The Urls to reply to, seperated by spaces
+     * @param  string  The source URL on this site
+     * @return array   An array of successful then failed URLs
      */
     public function send($replyTo, $source)
     {
@@ -307,7 +313,7 @@ class WebMentionsController extends Controller
      * Save a file, and create any necessary folders
      *
      * @param string  The directory to save to
-     * @param **      The file to save
+     * @param binary  The file to save
      */
     private function fileForceContents($dir, $contents)
     {

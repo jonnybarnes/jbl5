@@ -68,6 +68,7 @@ class ArticlesController extends Controller
      * We only have the ID, work out post title, year and month
      * and redirect to it.
      *
+     * @return \Illuminte\Routing\RedirectResponse redirect
      */
     public function onlyId($id)
     {
@@ -88,7 +89,7 @@ class ArticlesController extends Controller
     /**
      * Returns the RSS feed
      *
-     * @return Response
+     * @return \Illuminate\Http\Response
      */
     public function makeRSS()
     {
@@ -112,6 +113,7 @@ class ArticlesController extends Controller
      * This applies the dflydev Markdown transform, before though
      * it applies my \uXXXXX\ to chr transform
      *
+     * @param  string
      * @return string
      */
     public function markdown($text)
@@ -129,6 +131,8 @@ class ArticlesController extends Controller
      * Creates a dynamic link to the article.
      * That is a link of the form /blog/1999/11/i-am-a-slug
      *
+     * @param  string  An UNIX epoch timestamp
+     * @param  string  A slug of blog post
      * @return string
      */
     public static function createLink($date_time, $titleurl)
@@ -143,6 +147,7 @@ class ArticlesController extends Controller
      * Find a post-Markdown’ed case of <pre><code>[language] and convert
      * to <pre><code data-language="language">
      *
+     * @param  string
      * @return string
      */
     public function codeBlocksLang($text)

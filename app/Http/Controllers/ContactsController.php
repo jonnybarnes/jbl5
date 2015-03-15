@@ -6,7 +6,11 @@ use App\Contact;
 
 class ContactsController extends Controller
 {
-    //show all contacts
+    /**
+     * Show all the contatcs
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function showAll()
     {
         $fs = new Filesystem();
@@ -24,7 +28,11 @@ class ContactsController extends Controller
         return view('contacts', array('contacts' => $contacts));
     }
 
-    //show single contact
+    /**
+     * Show a single contact
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function showSingle($nick)
     {
         $fs = new Filesystem();
