@@ -13,7 +13,7 @@ Notes « Jonny Barnes
     <a class="h-card vcard mini-h-card p-author" href="{{ $note->reply_to_url }}">
       <img src="{{ $note->reply_to_profile_photo }}" alt="" class="photo u-photo logo"> {{ $note->reply_to_author_name }}
     </a>
-    <div class="e-content p-name">{{ $note->reply_to_text }}</div>
+    <div class="e-content p-name">{!! $note->reply_to_text !!}</div>
   </div>
 @else
   <div class="p-in-reply-to h-cite reply-to">
