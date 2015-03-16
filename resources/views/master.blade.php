@@ -36,7 +36,7 @@
   </header>
 
   <main role="main">
-    <section id="content">
+    <section>
 @yield('content')
     </section>
   </main>

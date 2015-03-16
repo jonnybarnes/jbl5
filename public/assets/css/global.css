@@ -184,7 +184,7 @@ h1 {
 
 /* media queries */
 @media (min-width: 700px) {
-  #content {
+  section {
     margin-left: 10em;
     margin-right: 10em;
   }
@@ -200,7 +200,7 @@ h1 {
   }
 }
 @media (max-width: 699px) {
-  #content {
+  section {
     margin-left: 10px;
     margin-right: 10px;
   }
