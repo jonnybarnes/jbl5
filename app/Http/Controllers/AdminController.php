@@ -713,7 +713,7 @@ class AdminController extends Controller
             function ($matches) {
                 try {
                     $contact = Contact::where('nick', '=', mb_strtolower($matches[1]))->firstOrFail();
-                } catch (Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+                } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
                     return '@' . $matches[1];
                 }
                 $twitterHandle = $contact->twitter;
