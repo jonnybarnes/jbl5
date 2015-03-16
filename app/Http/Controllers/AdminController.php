@@ -220,7 +220,8 @@ class AdminController extends Controller
     public function postNewNote(Request $request, $api = false, $client_id = null)
     {
         $noteprep = new NotePrep();
-        $noteOrig = $request->input('note');
+        $noteOrig = $request->input('content');
+
         $noteNfc = \Patchwork\Utf8::filter($noteOrig);
         $inputReplyTo = $request->input('reply-to');
         if ($inputReplyTo) {

@@ -49,7 +49,7 @@ class MicropubController extends Controller
     public function post(Request $request)
     {
         $replyTo = $request->input('in-reply-to');
-        $note = $request->input('note');
+        $note = $request->input('content');
 
         $domain = Cookie::get('me');
         $token = Cookie::get('token');
