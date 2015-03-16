@@ -146,7 +146,7 @@ class MicropubController extends Controller
 
     /**
      * This function receives an API request, verifies the authenticity
-     * then passes of the info to the NotesController
+     * then passes of the info to the AdminController
      *
      * @param  \Illuminate\Http\Request request
      * @return \Illuminate\Http\Response
@@ -195,7 +195,7 @@ class MicropubController extends Controller
                 }
                 $client_id = $token_data['client_id'];
                 $admin = new AdminController();
-                $longurl = $admin->postNewNote($request, true, $note, $inReplyTo, $location, $tweet, $client_id, $photo);
+                $longurl = $admin->postNewNote($request, true);
                 $content = 'Note created at ' . $longurl;
                 return (new Response($content, 201))
                               ->header('Location', $longurl);

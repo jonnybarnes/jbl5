@@ -217,35 +217,23 @@ class AdminController extends Controller
      *
      * @todo  Sort this mess out
      */
-    public function postNewNote(Request $request, $api = false, $note = null, $replyTo = null, $location = null, $sendtweet = null, $client_id = null, $photo = null)
+    public function postNewNote(Request $request, $api = false)
     {
         $noteprep = new NotePrep();
-        if ($note) {
-            $noteOrig = $note;
-        } else {
-            $noteOrig = $request->input('note');
-        }
+        $noteOrig = $request->input('note');
         $noteNfc = \Patchwork\Utf8::filter($noteOrig);
-        if (isset($replyTo)) { //this really needs to be refactored
-            if ($replyTo == '') {
+        $inputReplyTo = $request->input('reply-to');
+        if ($inputReplyTo) {
+            if ($inputReplyTo == '') {
                 $replyTo = null;
+            } else {
+                $replyTo = $inputReplyTo;
             }
         } else {
-            $inputReplyTo = $request->input('reply-to');
-            if ($inputReplyTo) {
-                if ($inputReplyTo == '') {
-                    $replyTo = null;
-                } else {
-                    $replyTo = $inputReplyTo;
-                }
-            } else {
-                $replyTo = null;
-            }
-        } //This really needs to be refactored
+            $replyTo = null;
+        }
         //so now $replyTo is `null` or has a non-empty value
 
-
-        //location for a non-API call
         if ($request->input('confirmlocation')) {
             if ($request->input('location')) {
                 $formLocation = $request->input('location');
@@ -258,20 +246,14 @@ class AdminController extends Controller
         } else {
             $locadd = null;
         }
-
-        if ($location) {
-            $locadd = $location;
-        }
         
         $time = time();
 
 
         if ($request->hasFile('photo')) {
             $hasPhoto = true;
-        } elseif ($photo) {
-            $hasPhoto = true;
         } else {
-            $hasPhoto = null;
+            $hasPhoto = false;
         }
         
         try {
@@ -292,20 +274,15 @@ class AdminController extends Controller
 
         $url = new URL();
         $realid = $url->numto60($id);
-        $photoFilename = 'note-' . $realid;
-        if ($photo) {
-            $ext = explode('.', $photo)[1];
-            $photoFilename .= '.' . $ext;
-            $fs = new FileSystem();
-            $start = public_path() . '/assets/img/notes/' . $photo;
-            $end = public_path() . '/assets/img/notes/' . $photoFilename;
-            $fs->move($start, $end);
-        } elseif ($request->hasFile('photo')) {
+        if ($request->hasFile('photo')) {
+            $photoFilename = 'note-' . $realid;
             $photo = true;
             $path = public_path() . '/assets/img/notes/';
             $ext = $request->file('photo')->getClientOriginalExtension();
             $photoFilename .= '.' . $ext;
             $request->file('photo')->move($path, $photoFilename);
+        } else {
+            $photo = false;
         }
 
         $tags = $noteprep->getTags($noteNfc);
@@ -341,7 +318,7 @@ class AdminController extends Controller
         $shorturl = 'https://' . $shorturlBase . '/' . $shorturlId;
         $noteNfcNamesSwapped = $this->swapNames($noteNfc);
         $tweet = '';
-        if ($request->input('twitter') || $sendtweet == true) {
+        if ($request->input('twitter')) {
             $tweet = $noteprep->createNote($noteNfcNamesSwapped, $shorturlBase, $shorturlId, 140, true, true);
             $tweet_opts = array('status' => $tweet, 'format' => 'json');
             if ($replyTo) {
