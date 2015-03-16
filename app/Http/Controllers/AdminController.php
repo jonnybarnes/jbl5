@@ -217,7 +217,7 @@ class AdminController extends Controller
      *
      * @todo  Sort this mess out
      */
-    public function postNewNote(Request $request, $api = false)
+    public function postNewNote(Request $request, $api = false, $client_id = null)
     {
         $noteprep = new NotePrep();
         $noteOrig = $request->input('note');
