@@ -249,7 +249,6 @@ class AdminController extends Controller
         
         $time = time();
 
-
         if ($request->hasFile('photo')) {
             $hasPhoto = true;
         } else {
@@ -267,7 +266,7 @@ class AdminController extends Controller
                     'photo' => $hasPhoto
                 )
             );
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $msg = $e->getMessage(); //do something
             return 'Error saving note' . $msg;
         }

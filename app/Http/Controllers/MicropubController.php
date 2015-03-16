@@ -166,33 +166,6 @@ class MicropubController extends Controller
             } //this is a quick hack so the next line doesn't error out
 
             if (in_array('post', $token_data['scopes'])) { //this may need double checking
-                $note = $request->input('content');
-                $inReplyTo = $request->input('in-reply-to');
-                if (strstr($request->input('syndicate-to'), 'twitter.com')) {
-                    $tweet = true;
-                } else {
-                    $tweet = null;
-                }
-                $location = null;
-                if ($request->input('location')) {
-                    $location = explode(':', $request->input('location'))[1];
-                }
-                $address = $request->input('place_name');
-                if ($location != null && $address != '') {
-                    $location .= ':' . $address;
-                }
-                //TODO - manage multiple photo uploads
-                if ($request->hasFile('photo')) {
-                    $path = public_path() . '/assets/img/notes/';
-                    $filename = \Illuminate\Support\Str::random(6);
-                    $file = $request->file('photo');
-                    $ext = $file->getClientOriginalExtension();
-                    $filename .= '.' . $ext;
-                    $file->move($path, $filename);
-                    $photo = $filename;
-                } else {
-                    $photo = null;
-                }
                 $client_id = $token_data['client_id'];
                 $admin = new AdminController();
                 $longurl = $admin->postNewNote($request, true, $client_id);
