@@ -221,9 +221,9 @@ class AdminController extends Controller
     {
         $noteprep = new NotePrep();
         $noteOrig = $request->input('content');
-
         $noteNfc = \Patchwork\Utf8::filter($noteOrig);
-        $inputReplyTo = $request->input('reply-to');
+        
+        $inputReplyTo = $request->input('in-reply-to');
         if ($inputReplyTo) {
             if ($inputReplyTo == '') {
                 $replyTo = null;
@@ -307,7 +307,7 @@ class AdminController extends Controller
         $webmentions = null; //initialise variable
         if ($replyTo !== null) {
             //now we check if webmentions should be sent
-            if ($request->input('webmentions') || $api == true) {
+            if ($request->input('webmentions')) {
                 $wm = new WebMentionsController();
                 $webmentions = $wm->send($replyTo, $longurl);
             }
@@ -317,8 +317,7 @@ class AdminController extends Controller
         $shorturlBase = config('url.shorturl');
         $shorturl = 'https://' . $shorturlBase . '/' . $shorturlId;
         $noteNfcNamesSwapped = $this->swapNames($noteNfc);
-        $tweet = '';
-        if ($request->input('twitter')) {
+        if ($request->input('syndicate-to') == 'twitter.com') {
             $tweet = $noteprep->createNote($noteNfcNamesSwapped, $shorturlBase, $shorturlId, 140, true, true);
             $tweet_opts = array('status' => $tweet, 'format' => 'json');
             if ($replyTo) {
@@ -380,6 +379,8 @@ class AdminController extends Controller
             } catch (Exception $e) {
                 $tweet = 'Error sending tweet. <pre>' . $response_json . '</pre>';
             }
+        } else {
+            $tweet = null;
         }
 
         if ($api) {

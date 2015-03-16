@@ -146,7 +146,7 @@ class MicropubController extends Controller
 
     /**
      * This function receives an API request, verifies the authenticity
-     * then passes of the info to the AdminController
+     * then passes over the info to the AdminController
      *
      * @param  \Illuminate\Http\Request request
      * @return \Illuminate\Http\Response
