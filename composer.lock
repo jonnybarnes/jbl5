@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "d3f3128fc35c17a61e79789d09c34a1c",
+    "hash": "846b2589d937ff2df706ff2db1d8a3b6",
     "packages": [
         {
             "name": "barnabywalters/mf-cleaner",
@@ -45,61 +45,6 @@
             ],
             "description": "Cleans up microformats2 array structures",
             "time": "2014-10-06 23:11:15"
-        },
-        {
-            "name": "chromabits/purifier",
-            "version": "2.1.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/etcinit/purifier.git",
-                "reference": "64dc2a580d02df5deef25e36b8d335216120c42d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/etcinit/purifier/zipball/64dc2a580d02df5deef25e36b8d335216120c42d",
-                "reference": "64dc2a580d02df5deef25e36b8d335216120c42d",
-                "shasum": ""
-            },
-            "require": {
-                "ezyang/htmlpurifier": "4.6.*",
-                "laravel/framework": "~5.0",
-                "php": ">=5.4.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "dev-master",
-                "phpunit/phpunit": "~4.5"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Chromabits\\Purifier\\": "src/Chromabits/Purifier/",
-                    "Chromabits\\Tests\\": "tests/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "LGPL"
-            ],
-            "authors": [
-                {
-                    "name": "Muharrem ERIN",
-                    "email": "me@mewebstudio.com"
-                },
-                {
-                    "name": "Eduardo Trujillo",
-                    "email": "ed@chromabits.com"
-                }
-            ],
-            "description": "HTMLPurifier package for Laravel 5",
-            "homepage": "http://github.com/etcinit/purifier",
-            "keywords": [
-                "Purifier",
-                "htmlpurifier",
-                "l5",
-                "laravel",
-                "laravel 5"
-            ],
-            "time": "2015-02-24 20:24:20"
         },
         {
             "name": "classpreloader/classpreloader",
@@ -2737,6 +2682,61 @@
                 "webprofiler"
             ],
             "time": "2015-02-19 10:26:39"
+        },
+        {
+            "name": "chromabits/purifier",
+            "version": "2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/etcinit/purifier.git",
+                "reference": "64dc2a580d02df5deef25e36b8d335216120c42d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/etcinit/purifier/zipball/64dc2a580d02df5deef25e36b8d335216120c42d",
+                "reference": "64dc2a580d02df5deef25e36b8d335216120c42d",
+                "shasum": ""
+            },
+            "require": {
+                "ezyang/htmlpurifier": "4.6.*",
+                "laravel/framework": "~5.0",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "dev-master",
+                "phpunit/phpunit": "~4.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Chromabits\\Purifier\\": "src/Chromabits/Purifier/",
+                    "Chromabits\\Tests\\": "tests/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Muharrem ERIN",
+                    "email": "me@mewebstudio.com"
+                },
+                {
+                    "name": "Eduardo Trujillo",
+                    "email": "ed@chromabits.com"
+                }
+            ],
+            "description": "HTMLPurifier package for Laravel 5",
+            "homepage": "http://github.com/etcinit/purifier",
+            "keywords": [
+                "Purifier",
+                "htmlpurifier",
+                "l5",
+                "laravel",
+                "laravel 5"
+            ],
+            "time": "2015-02-24 20:24:20"
         },
         {
             "name": "doctrine/instantiator",

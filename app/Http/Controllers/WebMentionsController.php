@@ -8,8 +8,8 @@ use App\Note;
 use App\WebMention;
 use GuzzleHttp\Client;
 use Mf2\parse;
-use Chromabits\Purifier\Contracts\Purifier;
 use HTMLPurifier_Config;
+use HTMLPurifier;
 use Jonnybarnes\Posse\URL;
 use Jonnybarnes\WebmentionsParser\Parser;
 use Jonnybarnes\WebmentionsParser\ParsingException;
@@ -17,11 +17,6 @@ use App\Esceptions\RemoteContentNotFound;
 
 class WebMentionsController extends Controller
 {
-    /**
-     * @var Purifier
-     */
-    protected $purifier;
-
     /**
      * Receive and process a webmention
      * @param  \Illuminate\Http\Request $request
@@ -332,13 +327,14 @@ class WebMentionsController extends Controller
      * Purify HTML received from a webmention
      *
      * @param  string  The HTML to be processed
-     * @param  \Chromabits\Purifier\Contracts\Purifier $purifier
      * @return string  The processed HTML
      */
-    private function filterHTML($html, Purifier $purifier)
+    public function filterHTML($html)
     {
-        $this->purifier = $purifier;
-        $htmlClean = $this->purifier->clean($html);
+        $config = HTMLPurifier_Config::createDefault();
+        $config->set('Cache.SerializerPath', storage_path() . '/HTMLPurifier');
+        $purifier = new HTMLPurifier($config);
+        $htmlClean = $purifier->purify($html);
 
         return $htmlClean;
     }

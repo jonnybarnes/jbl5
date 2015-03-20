@@ -155,11 +155,6 @@ return [
 		 */
 		'Thujohn\Twitter\TwitterServiceProvider',
 
-		/*
-		 * HTML Purifier (adapted for Laravel 5 by `etcinit`)
-		 */
-		'Chromabits\Purifier\PurifierServiceProvider',
-
 	],
 
 	/*
