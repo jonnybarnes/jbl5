@@ -20,10 +20,3 @@ Articles « Jonny Barnes
 @endforeach
 {!! $data->render() !!}
 @stop
-
-@section('scripts')
-<script src="/assets/js/rainbow.min.js"></script>
-<script src="/assets/js/language/php.js"></script>
-<script src="/assets/js/language/shell.js"></script>
-<script src="/assets/js/language/generic.js"></script>
-@stop

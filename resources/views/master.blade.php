@@ -12,9 +12,9 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
   <![endif]-->
   <link rel="stylesheet" href="/assets/css/<?php if (App::environment('local')) { echo 'global'; } else { echo 'style'; }?>.css">
-  <link rel="stylesheet" href="/assets/css/solarized-dark.css">
   <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.css">
   <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/assets/css/prism.css">
   <link rel="openid.server" href="https://indieauth.com/openid">
   <link rel="openid.delegate" href="https://jonnybarnes.uk">
   <link rel="authorization_endpoint" href="https://indieauth.com/auth">
@@ -47,6 +47,7 @@
 <script>
   twemoji.parse(document.body);
 </script>
+<script src="/assets/js/prism.js">
 <?php if (App::environment('production')) { ?>
 <!-- Piwik -->
 <script type="text/javascript">

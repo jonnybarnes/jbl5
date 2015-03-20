@@ -153,7 +153,7 @@ class ArticlesController extends Controller
     public function codeBlocksLang($text)
     {
         $match = '/<pre><code>\[(.*)\]\n/';
-        $replace = '<pre><code data-language="$1">';
+        $replace = '<pre><code class="language-$1">';
 
         $text = preg_replace($match, $replace, $text);
         return $text;
