@@ -6,6 +6,8 @@ use Illuminate\Routing\Controller;
 use Cookie;
 use Carbon\Carbon;
 
+//TODO(MAYBE): split this into micropub endpoint and micropub client
+
 class MicropubController extends Controller
 {
     /**
@@ -17,6 +19,7 @@ class MicropubController extends Controller
     {
         $authed = false;
         $url = '';
+        $syndication = [];
         if (session('error')) {
             $error = session('error');
         } else {
@@ -36,8 +39,12 @@ class MicropubController extends Controller
                     $error = 'Unable to verify if the current token is still valid';
                 }
             }
+            $syndicationTargets = Cookie::get('syndication');
+            if ($syndicationTargets) {
+                $syndication = explode(';', $syndicationTargets);
+            }
         }
-        return view('micropubnewnotepage', array('authed' => $authed, 'url' => $url, 'error' => $error));
+        return view('micropubnewnotepage', array('authed' => $authed, 'url' => $url, 'error' => $error, 'syndication' => $syndication));
     }
 
     /**
@@ -190,12 +197,14 @@ class MicropubController extends Controller
     /**
      * A GET request has been made to api/post with an accompanying
      * token, here we check wether the token is valid and respond
-     * appropriately.
+     * appropriately. Further if the request has the query parameter
+     * synidicate-to we respond with the known syndication endpoints
      *
+     * @todo   Move the syndication endpoints into a .env variable
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function tokenValidity(Request $request)
+    public function getEndpoint(Request $request)
     {
         $httpAuth = $request->header('Authorization');
         if (preg_match('/Bearer (.+)/', $httpAuth, $match)) {
@@ -208,17 +217,60 @@ class MicropubController extends Controller
                 $content = 'Invalid token';
                 return (new Response($content, 400));
             } else {
-                $content = http_build_query(array(
-                    'me' => $valid['me'],
-                    'scopes' => $valid['scopes'],
-                    'client_id' => $valid['client_id']
-                ));
-                return (new Response($content, 200))
-                              ->header('Content-Type', 'application/x-www-form-urlencoded');
+                //we have a valid token, is `syndicate-to` set?
+                if ($request->input('q') === 'syndicate-to') {
+                    $content = http_build_query(array(
+                        'syndicate-to' => 'twitter.com/jonnybarnes',
+                    ));
+                    return (new Response($content, 200))
+                                  ->header('Content-Type', 'application/x-www-form-urlencoded');
+                } else {
+                    //nope, just return the token
+                    $content = http_build_query(array(
+                        'me' => $valid['me'],
+                        'scopes' => $valid['scopes'],
+                        'client_id' => $valid['client_id']
+                    ));
+                    return (new Response($content, 200))
+                                  ->header('Content-Type', 'application/x-www-form-urlencoded');
+                }
             }
         } else {
             $content = 'No OAuth token sent with request.';
             return (new Response($content, 400));
         }
+    }
+
+    /**
+     * We make a request to the micropub endpoint requesting syndication targets
+     * and store these in a cookie.
+     *
+     * @return \Illuminate\Routing\Redirector redirect
+     */
+    public function refreshSyndicationTargets()
+    {
+        $domain = Cookie::get('me');
+        $token = Cookie::get('token');
+        $micropubEndpoint = \IndieAuth\Client::discoverMicropubEndpoint($domain);
+
+        if (!$micropubEndpoint) {
+            return redirect('notes/new')->with('error', 'Unable to determine micropub API endpoint');
+        }
+
+        $client = new \GuzzleHttp\Client();
+        $request = $client->createRequest('GET', $micropubEndpoint);
+        $query = $request->getQuery();
+        $query['q'] = 'synidicate-to';
+
+        try {
+            $response = $client->send($request);
+        } catch (\GuzzleHttp\Exception\BadResponsetException $e) {
+            return redirect('notes/new')->with('error', 'Bad response when refreshing syndication targets');
+        }
+        $body = $response->getBody();
+        $syndicate = str_replace(['&', '[]'], [';', ''], $body);
+        
+        Cookie::queue('syndicate', $syndicate);
+        return redirect('notes/new');
     }
 }

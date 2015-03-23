@@ -98,7 +98,10 @@ Route::group(array('domain' => config('url.longurl')), function () {
     //micropub endoints
     post('api/token', 'MicropubController@tokenEndpoint');
     post('api/post', 'MicropubController@note');
-    get('api/post', 'MicropubController@tokenValidity');
+    get('api/post', 'MicropubController@getEndpoint');
+
+    //micropub refresh syndication targets
+    get('refresh-syndication-targets', 'MicropubController@refreshSyndicationTargets');
 
     //webmention
     get('webmention', function () {
