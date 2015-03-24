@@ -260,7 +260,7 @@ class MicropubController extends Controller
         $client = new \GuzzleHttp\Client();
         $request = $client->createRequest('GET', $micropubEndpoint);
         $query = $request->getQuery();
-        $query['q'] = 'synidicate-to';
+        $query['q'] = 'syndicate-to';
 
         try {
             $response = $client->send($request);
