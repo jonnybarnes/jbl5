@@ -27,7 +27,7 @@ New Note « Jonny Barnes
     <label for="content" accesskey="n">Note: </label><textarea name="content" id="content" placeholder="Note"></textarea>
     <label for="webmentions" accesskey="w">Send webmentions: </label><input type="checkbox" name="webmentions" id="webmentions" checked="checked"><br>
     <label for="syndication" accesskey="s">Syndication: </label>@foreach($syndication as $target)<input type="checkbox" name="{{ $target }}" id="{{ $target }}" checked="checked"> {{ $target }}<br>@endforeach
-    <a href="/refreshsyndicationtargets">Refresh Syndication Targets</a><br>
+    <a href="/refresh-syndication-targets">Refresh Syndication Targets</a><br>
     <label for="photo" accesskey="p">Photo: </label><input type="file" accept="image/*" value="Upload" name="photo" id="photo">
     <label for="locate" accesskey="l"></label><input type="button" name="locate" id="locate" value="Locate">
     <label for="kludge"></label><input type="submit" value="Submit">
