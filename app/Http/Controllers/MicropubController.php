@@ -259,6 +259,7 @@ class MicropubController extends Controller
 
         $client = new \GuzzleHttp\Client();
         $request = $client->createRequest('GET', $micropubEndpoint);
+        $request->setHeader('Authorization', 'Bearer ' . $token);
         $query = $request->getQuery();
         $query['q'] = 'syndicate-to';
 
