@@ -41,7 +41,11 @@ class MicropubController extends Controller
             }
             $syndicationTargets = Cookie::get('syndication');
             if ($syndicationTargets) {
-                $syndication = explode(';', $syndicationTargets);
+                $parts = explode(';', $syndicationTargets);
+                foreach ($parts as $part) {
+                    $target = explode('=', $part);
+                    $syndication[] = urldecode($target[1]);
+                }
             }
         }
         return view('micropubnewnotepage', array('authed' => $authed, 'url' => $url, 'error' => $error, 'syndication' => $syndication));
@@ -268,10 +272,10 @@ class MicropubController extends Controller
         } catch (\GuzzleHttp\Exception\BadResponsetException $e) {
             return redirect('notes/new')->with('error', 'Bad response when refreshing syndication targets');
         }
-        $body = $response->getBody();
-        $syndicate = str_replace(['&', '[]'], [';', ''], $body);
+        $body = (string) $response->getBody();
+        $syndication = str_replace(['&', '[]'], [';', ''], $body);
         
-        Cookie::queue('syndicate', $syndicate);
+        Cookie::queue('syndication', $syndicate);
         return redirect('notes/new');
     }
 }
