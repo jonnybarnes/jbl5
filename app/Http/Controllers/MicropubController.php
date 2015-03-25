@@ -84,7 +84,9 @@ class MicropubController extends Controller
             $postBody->setField('in-reply-to', $replyTo);
         }
         if ($request->input('syndicate-to')) {
-            $postBody->setField('syndicate-to', $request->input('syndicate-to'));
+            foreach ($request->input('syndicate-to') as $syn) {
+                $postBody->setField('syndicate-to[]', $syn);
+            }
         }
         if ($request->input('confirmlocation')) {
             $latLng = $request->input('location');
