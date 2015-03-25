@@ -2,9 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Cookie\CookieJar;
 use IndieAuth\Client;
 use Session;
-use Cookie;
 
 class AuthController extends Controller
 {
@@ -66,10 +66,11 @@ class AuthController extends Controller
      * the next step is retreiveing a token from the token endpoint. here
      * we request a token and then save it in a cookie on the user’s browser.
      *
+     * @param  \Illuminate\Cookie\CookieJar $cookie
      * @param  \Illuminate\Http\Rrequest $request
      * @return \Illuminate\Routing\RedirectResponse redirect
      */
-    public function indieauth(Request $request)
+    public function indieauth(CookieJar $cookie, Request $request)
     {
         $me = $request->input('me');
         $code = $request->input('code');
@@ -88,9 +89,9 @@ class AuthController extends Controller
             $token = Client::getAccessToken($tokenEndpoint, $code, $me, $redirectURL, $clientId, $stateInput);
 
             if (array_key_exists('access_token', $token)) {
-                Cookie::queue('me', $token['me'], 86400);
-                Cookie::queue('token', $token['access_token'], 86400);
-                Cookie::queue('token_last_verified', date('Y-m-d'), 86400);
+                $cookie->queue('me', $token['me'], 86400);
+                $cookie->queue('token', $token['access_token'], 86400);
+                $cookie->queue('token_last_verified', date('Y-m-d'), 86400);
                 return redirect('/notes/new');
             } else {
                 return redirect('notes/new')->with('error', 'Error getting token from the token endpoint');
@@ -103,12 +104,13 @@ class AuthController extends Controller
     /**
      * Log out the user, flush an session data, and overwrite any cookie data
      *
+     * @param  \Illuminate\Cookie\CookieJar $cookie
      * @return \Illuminate\Routing\RedirectResponse redirect
      */
-    public function indieauthLogout()
+    public function indieauthLogout(CookieJar $cookie)
     {
         Session::flush();
-        Cookie::queue('me', 'loggedout', 5);
+        $cookie->queue('me', 'loggedout', 5);
 
         return redirect('/notes/new');
     }
