@@ -43,10 +43,21 @@ class MicropubController extends Controller
             }
             $syndicationTargets = $request->cookie('syndication');
             if ($syndicationTargets) {
+                $syndicateTo = [];
+                $mpSyndicateTo = [];
                 $parts = explode(';', $syndicationTargets);
                 foreach ($parts as $part) {
                     $target = explode('=', $part);
-                    $syndication[] = urldecode($target[1]);
+                    if ($target[0] == 'syndicate-to') {
+                        $syndicateTo[] = urldecode($target[1]);
+                    } elseif ($target[0] == 'mp-syndicate-to') {
+                        $mpSyndicateTo[] = urldecode($target[1]);
+                    }
+                }
+                if (count($mpSyndicateTo) != 0) {
+                    $syndication = $mpSyndicateTo;
+                } elseif (count($syndicateTo) != 0) {
+                    $syndication = $syndicateTo;
                 }
             }
         }
