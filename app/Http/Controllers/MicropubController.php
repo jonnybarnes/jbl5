@@ -247,7 +247,7 @@ class MicropubController extends Controller
                 //we have a valid token, is `syndicate-to` set?
                 if ($request->input('q') === 'syndicate-to') {
                     $content = http_build_query(array(
-                        'syndicate-to' => 'twitter.com/jonnybarnes',
+                        'mp-syndicate-to' => 'twitter.com/jonnybarnes',
                     ));
                     return (new Response($content, 200))
                                   ->header('Content-Type', 'application/x-www-form-urlencoded');
