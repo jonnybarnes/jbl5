@@ -56,6 +56,8 @@ class MicropubController extends Controller
     /**
      * Post the notes content to the relavent micropub API endpoint
      *
+     * @todo   make sure this works with multiple syndication targets
+     *
      * @param  \Illuminate\Http\Request $request
      * @return mixed
      */
@@ -81,8 +83,8 @@ class MicropubController extends Controller
         if ($replyTo != '') {
             $postBody->setField('in-reply-to', $replyTo);
         }
-        if ($request->input('twitter')) {
-            $postBody->setField('syndicate-to', 'twitter.com');
+        if ($request->input('syndicate-to')) {
+            $postBody->setField('syndicate-to', $request->input('syndicate-to'));
         }
         if ($request->input('confirmlocation')) {
             $latLng = $request->input('location');

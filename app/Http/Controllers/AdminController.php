@@ -317,7 +317,7 @@ class AdminController extends Controller
         $shorturlBase = config('url.shorturl');
         $shorturl = 'https://' . $shorturlBase . '/' . $shorturlId;
         $noteNfcNamesSwapped = $this->swapNames($noteNfc);
-        if ($request->input('syndicate-to') == 'twitter.com') {
+        if ($request->input('syndicate-to') == 'twitter.com/jonnybarnes') {
             $tweet = $noteprep->createNote($noteNfcNamesSwapped, $shorturlBase, $shorturlId, 140, true, true);
             $tweet_opts = array('status' => $tweet, 'format' => 'json');
             if ($replyTo) {
