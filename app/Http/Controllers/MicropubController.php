@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use Cookie;
+use Illuminate\Cookie\CookieJar;
 use Carbon\Carbon;
 
 //TODO(MAYBE): split this into micropub endpoint and micropub client
@@ -13,9 +13,11 @@ class MicropubController extends Controller
     /**
      * Display the new notes form
      *
+     * @param  \Illuminate\Cookie\CookieJar $cookie
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\View\Factory view
      */
-    public function micropubNewNotePage()
+    public function micropubNewNotePage(CookieJar $cookie, Request $request)
     {
         $authed = false;
         $url = '';
@@ -25,21 +27,21 @@ class MicropubController extends Controller
         } else {
             $error = false;
         }
-        if (Cookie::get('me') && Cookie::get('me') != 'loggedout') {
+        if ($request->cookie('me') && $request->cookie('me') != 'loggedout') {
             $authed = true;
-            $url = Cookie::get('me');
-            $lastChecked = Cookie::get('token_last_verified');
+            $url = $request->cookie('me');
+            $lastChecked = $request->cookie('token_last_verified');
             $then = Carbon::createFromFormat('Y-m-d', $lastChecked, 'Europe/London');
             $diff = $then->diffInDays(Carbon::now());
             if ($diff >= 31) {
-                $valid = $this->checkTokenValidity(Cookie::get('token'));
+                $valid = $this->checkTokenValidity($request->cookie('token'));
                 if ($valid == true) {
-                    Cookie::queue('token_last_verified', date('Y-m-d'), 86400);
+                    $cookie->queue('token_last_verified', date('Y-m-d'), 86400);
                 } else {
                     $error = 'Unable to verify if the current token is still valid';
                 }
             }
-            $syndicationTargets = Cookie::get('syndication');
+            $syndicationTargets = $request->cookie('syndication');
             if ($syndicationTargets) {
                 $parts = explode(';', $syndicationTargets);
                 foreach ($parts as $part) {
@@ -62,8 +64,8 @@ class MicropubController extends Controller
         $replyTo = $request->input('in-reply-to');
         $note = $request->input('content');
 
-        $domain = Cookie::get('me');
-        $token = Cookie::get('token');
+        $domain = $request->cookie('me');
+        $token = $request->cookie('token');
 
         $micropubEndpoint = \IndieAuth\Client::discoverMicropubEndpoint($domain);
         if (!$micropubEndpoint) {
@@ -249,12 +251,14 @@ class MicropubController extends Controller
      * We make a request to the micropub endpoint requesting syndication targets
      * and store these in a cookie.
      *
+     * @param  \Illuminate\Cookie\CookieJar $cookie
+     * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Routing\Redirector redirect
      */
-    public function refreshSyndicationTargets()
+    public function refreshSyndicationTargets(CookieJar $cookie, Request $request)
     {
-        $domain = Cookie::get('me');
-        $token = Cookie::get('token');
+        $domain = $request->cookie('me');
+        $token = $request->cookie('token');
         $micropubEndpoint = \IndieAuth\Client::discoverMicropubEndpoint($domain);
 
         if (!$micropubEndpoint) {
@@ -275,7 +279,7 @@ class MicropubController extends Controller
         $body = (string) $response->getBody();
         $syndication = str_replace(['&', '[]'], [';', ''], $body);
         
-        Cookie::queue('syndication', $syndication);
+        $cookie->queue('syndication', $syndication);
         return redirect('notes/new');
     }
 }
