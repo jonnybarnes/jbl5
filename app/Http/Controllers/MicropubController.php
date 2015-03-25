@@ -22,6 +22,7 @@ class MicropubController extends Controller
         $authed = false;
         $url = '';
         $syndication = [];
+        $syndicationType = null;
         if (session('error')) {
             $error = session('error');
         } else {
@@ -56,12 +57,13 @@ class MicropubController extends Controller
                 }
                 if (count($mpSyndicateTo) != 0) {
                     $syndication = $mpSyndicateTo;
+                    $syndicationType = 'mp';
                 } elseif (count($syndicateTo) != 0) {
                     $syndication = $syndicateTo;
                 }
             }
         }
-        return view('micropubnewnotepage', array('authed' => $authed, 'url' => $url, 'error' => $error, 'syndication' => $syndication));
+        return view('micropubnewnotepage', array('authed' => $authed, 'url' => $url, 'error' => $error, 'syndication' => $syndication, 'syndicationType' => $syndicationType));
     }
 
     /**
@@ -94,7 +96,11 @@ class MicropubController extends Controller
         if ($replyTo != '') {
             $postBody->setField('in-reply-to', $replyTo);
         }
-        if ($request->input('syndicate-to')) {
+        if ($request->input('mp-syndicate-to')) {
+            foreach ($request->input('mp-syndicate-to') as $syn) {
+                $postBody->setField('mp-syndicate-to[]', $syn);
+            }
+        } elseif ($request->input('syndicate-to')) {
             foreach ($request->input('syndicate-to') as $syn) {
                 $postBody->setField('syndicate-to[]', $syn);
             }
