@@ -31,28 +31,30 @@ New Article « Admin CP
 <script src="/assets/js/Markdown.Sanitizer.js"></script>
 <script>
 (function() {
-// When using more than one `textarea` on your page, change the following line to match the one you’re after
-var textarea = document.getElementsByTagName('textarea')[0];
-var section = document.getElementById('content');
+  // When using more than one `textarea` on your page, change the following line to match the one you’re after
+  var textarea = document.getElementsByTagName('textarea')[0];
+  var section = document.getElementsByTagName('section')[0];
   var preview = document.createElement('div');
   var convert = new Markdown.getSanitizingConverter().makeHtml;
-function update() {
-preview.innerHTML = convert(textarea.value);
-}
-// Continue only if the `textarea` is found
-if (textarea) {
-preview.id = 'preview';
-// Insert the preview `div` at end of document
-section.appendChild(preview);
-textarea.oninput = function() {
-textarea.onkeyup = null;
-update();
-};
-textarea.onkeyup = update;
-// Trigger the `onkeyup` event
-textarea.onkeyup.call(textarea);
-};
-}());
+  function update() {
+    preview.innerHTML = convert(textarea.value);
+  }
+  // Continue only if the `textarea` is found
+  if (textarea) {
+    preview.id = 'preview';
+    // Insert the preview `div` at end of document
+    section.appendChild(preview);
+    textarea.oninput = function() {
+      textarea.onkeyup = null;
+      update();
+    }
+    textarea.onkeyup = update;
+    // Trigger the `onkeyup` event
+    textarea.onkeyup.call(textarea);
+  } else {
+  	console.log('no textarea found');
+  }
+}())
 </script>
 <script src="/assets/js/store2.min.js"></script>
 <script src="/assets/js/alertify.min.js"></script>
