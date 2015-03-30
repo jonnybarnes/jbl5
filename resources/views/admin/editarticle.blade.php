@@ -17,8 +17,6 @@ Edit Article « Admin CP
 <br>
 <textarea name="main" id="main">{{ $post['0']['main'] }}</textarea>
 <br>
-<input type="text" name="tags" value="{!! $post['0']['tags'] !!}">
-<br>
 <label for"time">Time: </label><input type="text" name="time" id="time" value="{{ date("F j Y H:i:s", $post['0']['date_time']) }}"><button type="button" onClick="upTime();">Update to now</button>
 <br>
 <label for="published">Published:</label><input type="checkbox" name="published" value="1"@if($post['0']['published'] == '1') checked="checked"@endif>
@@ -34,28 +32,30 @@ Edit Article « Admin CP
 <script src="/assets/js/Markdown.Sanitizer.js"></script>
 <script>
 (function() {
-// When using more than one `textarea` on your page, change the following line to match the one you’re after
-var textarea = document.getElementsByTagName('textarea')[0];
-var section = document.getElementById('content');
+  // When using more than one `textarea` on your page, change the following line to match the one you’re after
+  var textarea = document.getElementsByTagName('textarea')[0];
+  var section = document.getElementsByTagName('section')[0];
   var preview = document.createElement('div');
   var convert = new Markdown.getSanitizingConverter().makeHtml;
-function update() {
-preview.innerHTML = convert(textarea.value);
-}
-// Continue only if the `textarea` is found
-if (textarea) {
-preview.id = 'preview';
-// Insert the preview `div` at end of document
-section.appendChild(preview);
-textarea.oninput = function() {
-textarea.onkeyup = null;
-update();
-};
-textarea.onkeyup = update;
-// Trigger the `onkeyup` event
-textarea.onkeyup.call(textarea);
-};
-}());
+  function update() {
+    preview.innerHTML = convert(textarea.value);
+  }
+  // Continue only if the `textarea` is found
+  if (textarea) {
+    preview.id = 'preview';
+    // Insert the preview `div` at end of document
+    section.appendChild(preview);
+    textarea.oninput = function() {
+      textarea.onkeyup = null;
+      update();
+    }
+    textarea.onkeyup = update;
+    // Trigger the `onkeyup` event
+    textarea.onkeyup.call(textarea);
+  } else {
+  	console.log('no textarea found');
+  }
+}())
 </script>
 <script>
 function upTime() {
