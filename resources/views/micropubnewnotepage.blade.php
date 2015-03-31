@@ -6,7 +6,7 @@ New Note « Jonny Barnes
 
 @section('content')
 <p>This is my UI for posting new notes, hopefully you’ll soon be able to use this if your site supports the micropub API.</p>
-@if($error)<p class="error">{{ $error }}</p>@endif
+@if(isset(session('error')))<p class="error">{{ session('error') }}</p>@endif
 @if(!$authed)
 <form action="/beginauth" method="post" id="login">
   <input type="hidden" name="_token" value="{{ csrf_token() }}">
