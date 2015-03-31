@@ -289,13 +289,13 @@ class MicropubController extends Controller
         }
 
         $client = new \GuzzleHttp\Client();
-        $request = $client->createRequest('GET', $micropubEndpoint);
-        $request->setHeader('Authorization', 'Bearer ' . $token);
-        $query = $request->getQuery();
+        $guzzleRequest = $client->createRequest('GET', $micropubEndpoint);
+        $guzzleRequest->setHeader('Authorization', 'Bearer ' . $token);
+        $query = $guzzleRequest->getQuery();
         $query['q'] = 'syndicate-to';
 
         try {
-            $response = $client->send($request);
+            $response = $client->send($guzzleRequest);
         } catch (\GuzzleHttp\Exception\BadResponsetException $e) {
             return redirect('notes/new')->with('error-message', 'Bad response when refreshing syndication targets');
         }
