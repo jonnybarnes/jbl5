@@ -5,6 +5,7 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Cookie\CookieJar;
 use Carbon\Carbon;
+use Session;
 
 //TODO(MAYBE): split this into micropub endpoint and micropub client
 
@@ -23,10 +24,10 @@ class MicropubController extends Controller
         $url = '';
         $syndication = [];
         $syndicationType = null;
-        if (session('error')) {
-            $error = session('error');
+        if (Session::has('error-message')) {
+            $errorMessage = session('error-message');
         } else {
-            $error = false;
+            $errorMessage = false;
         }
         if ($request->cookie('me') && $request->cookie('me') != 'loggedout') {
             $authed = true;
@@ -63,7 +64,7 @@ class MicropubController extends Controller
                 }
             }
         }
-        return view('micropubnewnotepage', array('authed' => $authed, 'url' => $url, 'error' => $error, 'syndication' => $syndication, 'syndicationType' => $syndicationType));
+        return view('micropubnewnotepage', array('authed' => $authed, 'url' => $url, 'error-message' => $errorMessage, 'syndication' => $syndication, 'syndicationType' => $syndicationType));
     }
 
     /**
@@ -296,7 +297,7 @@ class MicropubController extends Controller
         try {
             $response = $client->send($request);
         } catch (\GuzzleHttp\Exception\BadResponsetException $e) {
-            return redirect('notes/new')->with('error', 'Bad response when refreshing syndication targets');
+            return redirect('notes/new')->with('error-message', 'Bad response when refreshing syndication targets');
         }
         $body = (string) $response->getBody();
         $syndication = str_replace(['&', '[]'], [';', ''], $body);
