@@ -64,7 +64,7 @@ class MicropubController extends Controller
                 }
             }
         }
-        return view('micropubnewnotepage', array('authed' => $authed, 'url' => $url, 'error-message' => $errorMessage, 'syndication' => $syndication, 'syndicationType' => $syndicationType));
+        return view('micropubnewnotepage', array('authed' => $authed, 'url' => $url, 'errorMessage' => $errorMessage, 'syndication' => $syndication, 'syndicationType' => $syndicationType));
     }
 
     /**
