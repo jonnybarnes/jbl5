@@ -47,7 +47,7 @@
 <script>
   twemoji.parse(document.body);
 </script>
-<script src="/assets/js/prism.js">
+<script src="/assets/js/prism.js"></script>
 <?php if (App::environment('production')) { ?>
 <!-- Piwik -->
 <script type="text/javascript">
