@@ -156,6 +156,8 @@ class ArticlesController extends Controller
         $replace = '<pre><code class="language-$1">';
 
         $text = preg_replace($match, $replace, $text);
-        return $text;
+
+        $default = preg_replace('/<pre><code>/', '<pre><code class="language-markdown">', $text);
+        return $default;
     }
 }
