@@ -6,13 +6,13 @@
   <meta name="viewport" content="width=device-width">
   <script type="text/javascript" src="//use.typekit.net/kmb3cdb.js"></script>
   <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-  <script type="text/javascript" src="https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.js"></script>
+  <script type="text/javascript" src="/assets/js/mapbox.js"></script>
   <!--[if lt IE 9]>
   <script src="//cdn.jsdelivr.net/html5shiv/3.7.2/html5shiv.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js"></script>
   <![endif]-->
   <link rel="stylesheet" href="/assets/css/<?php if (App::environment('local')) { echo 'global'; } else { echo 'style'; }?>.css">
-  <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/v2.1.5/mapbox.css">
+  <link rel="stylesheet" href="/assets/css/mapbox.css">
   <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css">
   <link rel="stylesheet" href="/assets/css/prism.css">
   <link rel="openid.server" href="https://indieauth.com/openid">
