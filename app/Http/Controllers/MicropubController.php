@@ -271,6 +271,23 @@ class MicropubController extends Controller
     }
 
     /**
+     * Check the token is still a valid token
+     *
+     * @param  string The token
+     * @return bool
+     */
+    public function checkTokenValidity($token)
+    {
+        $t = new TokensController();
+
+        if ($t->tokenValidity($token) === false) {
+            return false;
+        } else {
+            return true; //we don't want to return the token data, just bool
+        }
+    }
+
+    /**
      * We make a request to the micropub endpoint requesting syndication targets
      * and store these in a cookie.
      *
