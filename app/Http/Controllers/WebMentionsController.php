@@ -71,7 +71,7 @@ class WebMentionsController extends Controller
                                             } else {
                                                 //webmenion is still a reply, so update content
                                                 try {
-                                                    $content = $this->replyContent($mf);
+                                                    $content = $parser->replyContent($mf);
                                                     $webmention->content = $content;
                                                     $webmention->save();
                                                     return (new Response('The webmention has been updated', 202));
