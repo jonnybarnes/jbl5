@@ -72,6 +72,9 @@ class WebMentionsController extends Controller
                                                 //webmenion is still a reply, so update content
                                                 try {
                                                     $content = $parser->replyContent($mf);
+                                                    $this->saveImage($content);
+                                                    $content['reply'] = $this->filterHTML($content['reply']);
+                                                    $content = serialize($content);
                                                     $webmention->content = $content;
                                                     $webmention->save();
                                                     return (new Response('The webmention has been updated', 202));
