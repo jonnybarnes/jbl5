@@ -319,7 +319,7 @@ class MicropubController extends Controller
         $body = (string) $response->getBody();
         $syndication = str_replace(['&', '[]'], [';', ''], $body);
         
-        $cookie->queue('syndication', $syndication);
+        $cookie->queue('syndication', $syndication, 44640);
         return redirect('notes/new');
     }
 }
