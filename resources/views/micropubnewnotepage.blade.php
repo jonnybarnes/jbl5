@@ -24,7 +24,7 @@ New Note « Jonny Barnes
   <fieldset class="note-ui">
   	<legend>New Note</legend>
     <label for="in-reply-to" accesskey="r">Reply-to: </label><input type="text" name="in-reply-to" id="in-reply-to" placeholder="in-reply-to-1 in-reply-to-2 …">
-    <label for="content" accesskey="n">Note: </label><textarea name="content" id="content" placeholder="Note"></textarea>
+    <label for="content" accesskey="n">Note: </label><textarea name="content" id="content" placeholder="Note" autofocus></textarea>
     <label for="webmentions" accesskey="w">Send webmentions: </label><input type="checkbox" name="webmentions" id="webmentions" checked="checked"><br>
     <label for="syndication" accesskey="s">Syndication: </label><ul class="syndication-targets-list" name="syndication">@foreach($syndication as $target)<li><input type="checkbox" name="<?php if ($syndicationType === 'mp') echo 'mp-'; ?>syndicate-to[]" id="{{ $target }}" value="{{ $target }}" checked="checked"> <label for="{{ $target }}">{{ $target }}</label></li>@endforeach</ul>
     <a href="/refresh-syndication-targets">Refresh Syndication Targets</a><br>
