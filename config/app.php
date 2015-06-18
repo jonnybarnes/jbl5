@@ -203,7 +203,7 @@ return [
         'View'      => Illuminate\Support\Facades\View::class,
 
 				'Debugbar'  => Barryvdh\Debugbar\Facade::class,
-				'Twitter'   => Thujohn\Twitter\TwitterFacade::class,
+				'Twitter'   => Thujohn\Twitter\Facades\Twitter::class,
 
     ],
 
