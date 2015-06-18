@@ -244,4 +244,12 @@ input[type="text"], input[type="file"], textarea {
   width: 100%;
 }
 
+input, textarea {
+  color: white;
+}
+
+#photo {
+  color: inherit;
+}
+
 /*# sourceMappingURL=global.css.map */
