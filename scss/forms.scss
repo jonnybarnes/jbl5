@@ -28,7 +28,12 @@ button:hover {
 	color: $base03;
 }
 
+input[type="checkbox"]:checked {
+	color: $base3;
+}
+
 #photo {
 	background: inherit;
 	color: inherit;
+	border: none;
 }

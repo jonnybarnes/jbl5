@@ -259,9 +259,14 @@ button:hover {
   color: #002b36;
 }
 
+input[type="checkbox"]:checked {
+  color: #fdf6e3;
+}
+
 #photo {
   background: inherit;
   color: inherit;
+  border: none;
 }
 
 /*# sourceMappingURL=global.css.map */
