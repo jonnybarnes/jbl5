@@ -262,6 +262,7 @@ button:hover {
 
 input[type="checkbox"]:checked:before {
   content: '✔';
+  text-align: center;
 }
 
 #photo {
