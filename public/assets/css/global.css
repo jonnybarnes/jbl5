@@ -260,9 +260,8 @@ button:hover {
   color: #002b36;
 }
 
-input[type="checkbox"]:checked:before {
+input[type="checkbox"]:checked {
   content: '✔';
-  vertical-align: top;
 }
 
 #photo {
