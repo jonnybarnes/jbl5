@@ -245,10 +245,22 @@ input[type="text"], input[type="file"], textarea {
 }
 
 input, button, textarea {
-  color: white;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: #002b36;
+  color: #fdf6e3;
+  border: 1px solid #fdf6e3;
+  transition: 0.5s ease-in-out;
+  border-radius: 4px;
+}
+
+button:hover {
+  background-color: #fdf6e3;
+  color: #002b36;
 }
 
 #photo {
+  background: inherit;
   color: inherit;
 }
 
