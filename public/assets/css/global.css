@@ -1,4 +1,3 @@
-@charset "UTF-8";
 @import url("/assets/css/normalize.css");
 body {
   background: url("/assets/img/escheresque.png");
@@ -260,8 +259,8 @@ button:hover {
   color: #002b36;
 }
 
-input[type="checkbox"]:checked {
-  content: '✔';
+input[type="checkbox"] {
+  -webkit-appearance: checkbox;
 }
 
 #photo {

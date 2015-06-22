@@ -28,8 +28,8 @@ button:hover {
 	color: $base03;
 }
 
-input[type="checkbox"]:checked {
-	content: '✔';
+input[type="checkbox"] {
+	-webkit-appearance: checkbox;
 }
 
 #photo {
