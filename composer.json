@@ -12,13 +12,13 @@
 		"jonnybarnes/webmentions-parser": "dev-master",
 		"guzzlehttp/guzzle": "~5.2",
 		"predis/predis": "~1.0",
-		"league/commonmark": "0.7.*",
 		"filp/whoops": "~1.1",
 		"thujohn/twitter": "~2.0",
 		"mf2/mf2": "0.2.*",
 		"martinbean/laravel-sluggable-trait": "0.2.*",
 		"indieauth/client": "0.1.*",
-		"ezyang/htmlpurifier": "~4.6"
+		"ezyang/htmlpurifier": "~4.6",
+		"league/commonmark": "^0.9.0"
 	},
 	"require-dev": {
 		"fzaninotto/faker": "~1.4",
