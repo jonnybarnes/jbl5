@@ -22,11 +22,8 @@ input, button, textarea {
 	border-radius: 4px;
 }
 
-button {
-	transition: 0.5s ease-in-out;
-}
-
 button:hover {
+	transition: 0.5s ease-in-out;
 	background-color: $base3;
 	color: $base03;
 }
