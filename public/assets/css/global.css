@@ -250,8 +250,11 @@ input, button, textarea {
   background-color: #002b36;
   color: #fdf6e3;
   border: 1px solid #fdf6e3;
-  transition: 0.5s ease-in-out;
   border-radius: 4px;
+}
+
+button {
+  transition: 0.5s ease-in-out;
 }
 
 button:hover {
