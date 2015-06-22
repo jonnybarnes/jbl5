@@ -13,7 +13,7 @@ New Note « Jonny Barnes
   <fieldset>
     <legend>IndieAuth</legend>
     <label for="indie_auth_url" accesskey="a">Web Address: </label><input type="text" name="me" id="indie_auth_url" placeholder="yourdomain.com">
-    <label for="kludge"></label><input type="submit" value="Sign in">
+    <label for="kludge"></label><button type="submit" value="Sign in">
   </fieldset>
 </form>
 @else
@@ -29,8 +29,8 @@ New Note « Jonny Barnes
     <label for="syndication" accesskey="s">Syndication: </label><ul class="syndication-targets-list" name="syndication">@foreach($syndication as $target)<li><input type="checkbox" name="<?php if ($syndicationType === 'mp') echo 'mp-'; ?>syndicate-to[]" id="{{ $target }}" value="{{ $target }}" checked="checked"> <label for="{{ $target }}">{{ $target }}</label></li>@endforeach</ul>
     <a href="/refresh-syndication-targets">Refresh Syndication Targets</a><br>
     <label for="photo" accesskey="p">Photo: </label><input type="file" accept="image/*" value="Upload" name="photo" id="photo">
-    <label for="locate" accesskey="l"></label><input type="button" name="locate" id="locate" value="Locate">
-    <label for="kludge"></label><input type="submit" value="Submit">
+    <label for="locate" accesskey="l"></label><button type="button" name="locate" id="locate" value="Locate">
+    <label for="kludge"></label><button type="submit" value="Submit">
   </fieldset>
 </form>
 @stop
