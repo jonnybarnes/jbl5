@@ -45,11 +45,4 @@ class Note extends Model {
 	 */
 	protected $guarded = array('id');
 
-	/**
-	 * For pagination we want 5 articles by default
-	 *
-	 * @var string
-	 */
-	public $per_page = 5;
-
 }
