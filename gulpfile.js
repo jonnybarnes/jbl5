@@ -4,6 +4,21 @@ var prefix = require('gulp-autoprefixer');
 var minifycss = require('gulp-minify-css');
 var rename = require('gulp-rename');
 
+/*
+ |--------------------------------------------------------------------------
+ | Elixir Asset Management
+ |--------------------------------------------------------------------------
+ |
+ | Elixir provides a clean, fluent API for defining some basic Gulp tasks
+ | for your Laravel application. By default, we are compiling the Less
+ | file for our application, as well as publishing vendor resources.
+ |
+ */
+
+elixir(function(mix) {
+    mix.sass('app.scss');
+});
+
 gulp.task('sass', function() {
 	return gulp.src('scss/global.scss')
 		.pipe(sass({ style: 'expanded'}))
