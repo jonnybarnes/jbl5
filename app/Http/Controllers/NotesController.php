@@ -52,7 +52,6 @@ class NotesController extends Controller
                     $note['reply_to_author_name'] = $tweet->user->name;
                     $note['reply_to_screen_name'] = $tweet->user->screen_name;
                     $note['reply_to_profile_photo'] = $this->secureTwimgLink($tweet->user->profile_image_url);
-
                 }
             }
             if ($note['location']) {
@@ -65,10 +64,10 @@ class NotesController extends Controller
                 }
             }
             if ($note['photo'] == true) {
-                $fs = new Filesystem();
+                $filesystem = new Filesystem();
                 $photoDir = public_path() . '/assets/img/notes';
                 $idname = 'note-' . $note['nb60id'];
-                $files = $fs->files($photoDir);
+                $files = $filesystem->files($photoDir);
                 foreach ($files as $file) {
                     $parts = explode('.', $file);
                     $name = $parts[0];
@@ -92,18 +91,18 @@ class NotesController extends Controller
      * @param  string The id of the note
      * @return \Illuminate\View\Factory view
      */
-    public function singleNote($id)
+    public function singleNote($noteId)
     {
         $url = new URL();
-        $realid = $url->b60tonum($id);
+        $realId = $url->b60tonum($noteId);
         $carbon = new Carbon();
         $noteprep = new NotePrep();
-        $note = Note::find($realid);
-        $note->nb60id = $id;
+        $note = Note::find($realId);
+        $note->nb60id = $noteId;
         if ($note->client_id) {
-            $client_name = DB::table('clients')->where('client_url', $note->client_id)->pluck('client_name');
-            if ($client_name) {
-                $note->client_name = $client_name;
+            $clientName = DB::table('clients')->where('client_url', $note->client_id)->pluck('client_name');
+            if ($clientName) {
+                $note->client_name = $clientName;
             } else {
                 $url = parse_url($note->client_id);
                 $note->client_name = $url['host'];
@@ -174,10 +173,10 @@ class NotesController extends Controller
             }
         }
         if ($note->photo == true) {
-            $fs = new Filesystem();
+            $filesystem = new Filesystem();
             $photoDir = public_path() . '/assets/img/notes';
             $idname = 'note-' . $id;
-            $files = $fs->files($photoDir);
+            $files = $filesystem->files($photoDir);
             foreach ($files as $file) {
                 $parts = explode('.', $file);
                 $name = $parts[0];

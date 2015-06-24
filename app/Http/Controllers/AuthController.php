@@ -53,14 +53,14 @@ class AuthController extends Controller
             $state = $hex;
             $scope = 'post';
             $authorizationURL = Client::buildAuthorizationURL($authorizationEndpoint, $domain, $redirectURL, $clientId, $state, $scope);
-        
+
             return redirect($authorizationURL);
         } else {
             return redirect('notes/new')->with('error', 'Unable to determine authorisation endpoint.');
         }
     }
 
-    
+
     /**
      * Once they have verified themselves through the authorisation endpint
      * the next step is retreiveing a token from the token endpoint. here
@@ -92,13 +92,12 @@ class AuthController extends Controller
                 $cookie->queue('me', $token['me'], 86400);
                 $cookie->queue('token', $token['access_token'], 86400);
                 $cookie->queue('token_last_verified', date('Y-m-d'), 86400);
+
                 return redirect('/notes/new');
-            } else {
-                return redirect('notes/new')->with('error', 'Error getting token from the token endpoint');
             }
-        } else {
-            return redirect('notes/new')->with('error', 'Unable to discover your token endpoint');
+            return redirect('notes/new')->with('error', 'Error getting token from the token endpoint');
         }
+        return redirect('notes/new')->with('error', 'Unable to discover your token endpoint');
     }
 
     /**

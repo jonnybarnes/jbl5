@@ -21,20 +21,15 @@ class ArticlesController extends Controller
         $carbon = new Carbon();
         $start = null;
         if (isset($year)) {
+            $start = mktime(0, 0, 0, 1, 1, $year);
+            $end= mktime(23, 59, 59, 12, 31, $year);
             if (isset($month)) {
                 $start = mktime(0, 0, 0, $month, 1, $year);
                 $end = mktime(23, 59, 59, $month+1, 0, $year);
-            } else {
-                $start = mktime(0, 0, 0, 1, 1, $year);
-                $end= mktime(23, 59, 59, 12, 31, $year);
             }
         }
 
-        if ($start == null) {
-            $articles = Article::where('deleted', '0')->where('published', '1')->orderBy('date_time', 'desc')->simplePaginate(5);
-        } else {
-            $articles = Article::where('deleted', '0')->where('published', '1')->orderBy('date_time', 'desc')->whereBetween('date_time', array($start, $end))->simplePaginate(5);
-        }
+        $articles = ($start ? Article::where('deleted', '0')->where('published', '1')->orderBy('date_time', 'desc')->whereBetween('date_time', array($start, $end))->simplePaginate(5) : Article::where('deleted', '0')->where('published', '1')->orderBy('date_time', 'desc')->simplePaginate(5));
 
         foreach ($articles as $article) {
             $article['main'] = $this->markdown($article['main']);
@@ -51,10 +46,10 @@ class ArticlesController extends Controller
      *
      * @return view
      */
-    public function singleArticle($year, $month, $post)
+    public function singleArticle($slug)
     {
         $carbon = new Carbon();
-        $article = Article::where('titleurl', $post)->get();
+        $article = Article::where('titleurl', $slug)->get();
         foreach ($article as $row) {
             $row['main'] = $this->markdown($row['main']);
             $row['w3c_time'] = $carbon->createFromTimeStamp($row['date_time'])->toW3CString();
@@ -70,17 +65,17 @@ class ArticlesController extends Controller
      *
      * @return \Illuminte\Routing\RedirectResponse redirect
      */
-    public function onlyId($id)
+    public function onlyId($postId)
     {
         $url = new URL();
-        $id = $url->b60tonum($id);
-        $article = Article::find($id);
+        $realId = $url->b60tonum($postId);
+        $article = Article::find($realId);
         $slug = $article['titleurl'];
         $published = $article['date_time'];
         $carbon = new Carbon();
-        $dt = $carbon->createFromTimeStamp($published);
-        $year = $dt->year;
-        $month = $dt->month;
+        $datetime = $carbon->createFromTimeStamp($published);
+        $year = $datetime->year;
+        $month = $datetime->month;
         $redirect = '/blog/' . $year . '/' . $month . '/' . $slug;
 
         return redirect($redirect);
@@ -110,7 +105,7 @@ class ArticlesController extends Controller
     }
 
     /**
-     * This applies the dflydev Markdown transform, before though
+     * This applies the Commonmark Markdown transform, before though
      * it applies my \uXXXXX\ to chr transform
      *
      * @param  string
@@ -123,7 +118,7 @@ class ArticlesController extends Controller
         $markdown = new CommonMarkConverter();
         $transformed = $markdown->convertToHtml($codepoints);
         $codeblocks = $this->codeBlocksLang($transformed);
-        
+
         return $codeblocks;
     }
 
@@ -135,10 +130,10 @@ class ArticlesController extends Controller
      * @param  string  A slug of blog post
      * @return string
      */
-    public static function createLink($date_time, $titleurl)
+    public static function createLink($datetime, $titleurl)
     {
-        $linkyear = date("Y", $date_time);
-        $linkmonth = date("m", $date_time);
+        $linkyear = date("Y", $datetime);
+        $linkmonth = date("m", $datetime);
         $link = '/blog/' . $linkyear . '/' . $linkmonth . '/' . $titleurl;
         return $link;
     }

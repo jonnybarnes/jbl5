@@ -222,7 +222,7 @@ class AdminController extends Controller
         $noteprep = new NotePrep();
         $noteOrig = $request->input('content');
         $noteNfc = \Patchwork\Utf8::filter($noteOrig);
-        
+
         $inputReplyTo = $request->input('in-reply-to');
         if ($inputReplyTo) {
             if ($inputReplyTo == '') {
@@ -247,7 +247,7 @@ class AdminController extends Controller
         } else {
             $locadd = null;
         }
-        
+
         $time = time();
 
         if ($request->hasFile('photo')) {
@@ -255,7 +255,7 @@ class AdminController extends Controller
         } else {
             $hasPhoto = false;
         }
-        
+
         try {
             $id = Note::insertGetId(
                 array(
@@ -308,8 +308,8 @@ class AdminController extends Controller
         if ($replyTo !== null) {
             //now we check if webmentions should be sent
             if ($request->input('webmentions')) {
-                $wm = new WebMentionsController();
-                $webmentions = $wm->send($replyTo, $longurl);
+                $wmc = new WebMentionsController();
+                $webmentions = $wmc->send($replyTo, $longurl);
             }
         }
 
@@ -385,9 +385,8 @@ class AdminController extends Controller
 
         if ($api) {
             return $longurl;
-        } else {
-            return view('admin.newnotesuccess', array('id' => $id, 'shorturl' => $shorturl, 'tweet' => $tweet, 'webmentions' => $webmentions));
         }
+        return view('admin.newnotesuccess', array('id' => $id, 'shorturl' => $shorturl, 'tweet' => $tweet, 'webmentions' => $webmentions));
     }
 
     /**
@@ -397,25 +396,24 @@ class AdminController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\View\Factory view
      */
-    public function postEditNote($id, Request $request)
+    public function postEditNote($noteId, Request $request)
     {
         $replyTo = $request->input('reply-to');
         $noteText = $request->input('note');
         $webmentions = $request->input('webmentions');
 
         //update note data
-        $note = Note::find($id);
+        $note = Note::find($noteId);
         $note->note = $noteText;
         $note->reply_to = $replyTo;
         $note->save();
 
         //send webmentions
+        $webmentionsSent = null;
         if (($webmentions == true)  && ($replyTo != '')) {
-            $longurl = 'https://' . config('url.longurl') . '/note/' . $id;
+            $longurl = 'https://' . config('url.longurl') . '/note/' . $noteId;
             $wmc = new WebMentionsController();
             $webmentionsSent = $wmc->send($replyTo, $longurl);
-        } else {
-            $webmentionsSent = null;
         }
 
         return view('admin.editnotesuccess', array('id' => $id, 'webmentions' => $webmentionsSent));
@@ -428,8 +426,8 @@ class AdminController extends Controller
      */
     public function showTokens()
     {
-        $t = new TokensController();
-        $tokens = $t->getAll();
+        $tokensController = new TokensController();
+        $tokens = $tokensController->getAll();
 
         return view('admin.listtokens', array('tokens' => $tokens));
     }
@@ -440,9 +438,9 @@ class AdminController extends Controller
      * @param  string The token id
      * @return \Illuminate\View\Factory view
      */
-    public function deleteToken($id)
+    public function deleteToken($tokenId)
     {
-        return view('admin.deletetoken', array('id' => $id));
+        return view('admin.deletetoken', array('id' => $tokenId));
     }
 
     /**
@@ -451,12 +449,12 @@ class AdminController extends Controller
      * @param  string The token id
      * @return \Illuminate\View\Factory view
      */
-    public function postDeleteToken($id)
+    public function postDeleteToken($tokenId)
     {
-        $t = new TokensController();
-        $t->deleteToken($id);
+        $tokensController = new TokensController();
+        $tokensController->deleteToken($tokenId);
 
-        return view('admin.deletetokensuccess', array('id' => $id));
+        return view('admin.deletetokensuccess', array('id' => $tokenId));
     }
 
     /**
@@ -489,12 +487,12 @@ class AdminController extends Controller
      */
     public function postNewClient(Request $request)
     {
-        $client_url = $request->input('client_url');
-        $client_name = $request->input('client_name');
+        $clientUrl = $request->input('client_url');
+        $clientName = $request->input('client_name');
         DB::table('clients')->insert(
             array(
-                'client_url' => $client_url,
-                'client_name' => $client_name
+                'client_url' => $clientUrl,
+                'client_name' => $clientName
             )
         );
 
@@ -507,11 +505,11 @@ class AdminController extends Controller
      * @param  string The client id
      * @return \Illuminate\View\Factory view
      */
-    public function editClient($id)
+    public function editClient($clientId)
     {
-        $client = DB::table('clients')->where('id', $id)->first();
+        $client = DB::table('clients')->where('id', $clientId)->first();
 
-        return view('admin.editclient', array('id' => $id, 'client_url' => $client['client_url'], 'client_name' => $client['client_name']));
+        return view('admin.editclient', array('id' => $clientId, 'client_url' => $client['client_url'], 'client_name' => $client['client_name']));
     }
 
     /**
@@ -521,21 +519,21 @@ class AdminController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\View\Factory view
      */
-    public function postEditClient($id, Request $request)
+    public function postEditClient($clientId, Request $request)
     {
         if ($request->input('edit')) {
-            $client_url = $request->input('client_url');
-            $client_name = $request->input('client_name');
+            $clientUrl = $request->input('client_url');
+            $clientName = $request->input('client_name');
 
-            DB::table('clients')->where('id', $id)
+            DB::table('clients')->where('id', $clientId)
                 ->update(array(
-                    'client_url' => $client_url,
-                    'client_name' => $client_name
+                    'client_url' => $clientUrl,
+                    'client_name' => $clientName
                 ));
 
             return view('admin.editclientsuccess');
         } elseif ($request->input('delete')) {
-            DB::table('clients')->where('id', $id)->delete();
+            DB::table('clients')->where('id', $clientId)->delete();
 
             return view('admin.deleteclientsuccess');
         }
@@ -569,9 +567,9 @@ class AdminController extends Controller
      * @param  string  The contact id
      * @return \Illuminate\View\Factory view
      */
-    public function editContact($id)
+    public function editContact($contactId)
     {
-        $contact = Contact::findOrFail($id);
+        $contact = Contact::findOrFail($contactId);
 
         return view('admin.editcontact', array('contact' => $contact));
     }
@@ -581,9 +579,9 @@ class AdminController extends Controller
      *
      * @return \Illuminate\View\Factory view
      */
-    public function deleteContact($id)
+    public function deleteContact($contactId)
     {
-        return view('admin.deletecontact', array('id' => $id));
+        return view('admin.deletecontact', array('id' => $contactId));
     }
 
     /**
@@ -600,9 +598,9 @@ class AdminController extends Controller
         $contact->homepage = $request->input('homepage');
         $contact->twitter = $request->input('twitter');
         $contact->save();
-        $id = $contact->id;
+        $contactId = $contact->id;
 
-        return view('admin.newcontactsuccess', array('id' => $id));
+        return view('admin.newcontactsuccess', array('id' => $contactId));
     }
 
     /**
@@ -614,9 +612,9 @@ class AdminController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\View\Factory view
      */
-    public function postEditContact($id, Request $request)
+    public function postEditContact($contactId, Request $request)
     {
-        $contact = Contact::findOrFail($id);
+        $contact = Contact::findOrFail($contactId);
         $contact->name = $request->input('name');
         $contact->nick = $request->input('nick');
         $contact->homepage = $request->input('homepage');
@@ -627,9 +625,9 @@ class AdminController extends Controller
             if ($request->input('homepage') != '') {
                 $dir = parse_url($request->input('homepage'))['host'];
                 $destination = public_path() . '/assets/profile-images/' . $dir;
-                $fs = new Filesystem();
-                if ($fs->isDirectory($destination) === false) {
-                    $fs->makeDirectory($destination);
+                $filesystem = new Filesystem();
+                if ($filesystem->isDirectory($destination) === false) {
+                    $filesystem->makeDirectory($destination);
                 }
                 $request->file('avatar')->move($destination, 'image');
             }
@@ -644,9 +642,9 @@ class AdminController extends Controller
      * @param  string  The contact id
      * @return \Illuminate\View\Factory view
      */
-    public function postDeleteContact($id)
+    public function postDeleteContact($contactId)
     {
-        $contact = Contact::findOrFail($id);
+        $contact = Contact::findOrFail($contactId);
         $contact->delete();
 
         return view('admin.deletecontactsuccess');
@@ -661,9 +659,9 @@ class AdminController extends Controller
      * @param  string  The contact id
      * @return \Illuminate\View\Factory view
      */
-    public function getAvatar($id)
+    public function getAvatar($contactId)
     {
-        $contact = Contact::findOrFail($id);
+        $contact = Contact::findOrFail($contactId);
         $homepage = $contact->homepage;
         if (($homepage !== null) && ($homepage !== '')) {
             $client = new Client();
@@ -687,11 +685,11 @@ class AdminController extends Controller
                 return "Unable to get $avatarURL";
             }
             $directory = public_path() . '/assets/profile-images/' . parse_url($homepage)['host'];
-            $fs = new Filesystem();
-            if ($fs->isDirectory($directory) === false) {
-                $fs->makeDirectory($directory);
+            $filesystem = new Filesystem();
+            if ($filesystem->isDirectory($directory) === false) {
+                $filesystem->makeDirectory($directory);
             }
-            $fs->put($directory . '/image', $avatar->getBody());
+            $filesystem->put($directory . '/image', $avatar->getBody());
             return view('admin.getavatarsuccess', array('homepage' => parse_url($homepage)['host']));
         }
     }

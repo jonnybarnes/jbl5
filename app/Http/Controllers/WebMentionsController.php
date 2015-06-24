@@ -14,6 +14,7 @@ use Jonnybarnes\Posse\URL;
 use Jonnybarnes\WebmentionsParser\Parser;
 use Jonnybarnes\WebmentionsParser\ParsingException;
 use App\Esceptions\RemoteContentNotFound;
+use Log;
 
 class WebMentionsController extends Controller
 {
@@ -52,7 +53,7 @@ class WebMentionsController extends Controller
                     $parser = new Parser();
                     try {
                         $remoteContent = $this->getRemoteContent($source);
-                        $mf = $this->parseHTML($remoteContent, $baseurl);
+                        $microformats = $this->parseHTML($remoteContent, $baseurl);
                         $count = WebMention::where('source', '=', $source)->count();
                         if ($count > 0) {
                             //we already have a webmention from this source
@@ -64,34 +65,33 @@ class WebMentionsController extends Controller
                                     //we switch for each type of mention (reply/like/repost)
                                     switch ($webmention->type) {
                                         case 'reply':
-                                            if ($parser->checkInReplyTo($mf, $target) == false) {
+                                            if ($parser->checkInReplyTo($microformats, $target) == false) {
                                                 //it doesn't so delete
                                                 $webmention->delete();
                                                 return (new Response('The webmention has been deleted', 202));
-                                            } else {
-                                                //webmenion is still a reply, so update content
-                                                try {
-                                                    $content = $parser->replyContent($mf);
-                                                    $this->saveImage($content);
-                                                    $content['reply'] = $this->filterHTML($content['reply']);
-                                                    $content = serialize($content);
-                                                    $webmention->content = $content;
-                                                    $webmention->save();
-                                                    return (new Response('The webmention has been updated', 202));
-                                                } catch (Exception $e) {
-                                                    return (new Response('There was an error parsing the content from your site', 400));
-                                                }
+                                            }
+                                            //webmenion is still a reply, so update content
+                                            try {
+                                                $content = $parser->replyContent($microformats);
+                                                $this->saveImage($content);
+                                                $content['reply'] = $this->filterHTML($content['reply']);
+                                                $content = serialize($content);
+                                                $webmention->content = $content;
+                                                $webmention->save();
+                                                return (new Response('The webmention has been updated', 202));
+                                            } catch (Exception $e) {
+                                                return (new Response('There was an error parsing the content from your site', 400));
                                             }
                                             break;
                                         case 'like':
-                                            if ($parser->checkLikeOf($mf, $target) == false) {
+                                            if ($parser->checkLikeOf($microformats, $target) == false) {
                                                 //it doesn't so delete
                                                 $webmention->delete();
                                                 return (new Response('The webmention has been deleted', 202));
                                             } //note we don't need to do anything if it still is a like
                                             break;
                                         case 'repost':
-                                            if ($parser->checkRepostOf($mf, $target) == false) {
+                                            if ($parser->checkRepostOf($microformats, $target) == false) {
                                                 //it doesn't so delete
                                                 $webmention->delete();
                                                 return (new Response('The webmention has been deleted', 202));
@@ -104,9 +104,9 @@ class WebMentionsController extends Controller
                             //no wemention in db so create new one
                             $webmention = new WebMention();
                             //check it is in fact a reply
-                            if ($parser->checkInReplyTo($mf, $target)) {
+                            if ($parser->checkInReplyTo($microformats, $target)) {
                                 try {
-                                    $content = $parser->replyContent($mf);
+                                    $content = $parser->replyContent($microformats);
                                     $this->saveImage($content);
                                     $content['reply'] = $this->filterHTML($content['reply']);
                                     $content = serialize($content);
@@ -121,10 +121,10 @@ class WebMentionsController extends Controller
                                 } catch (ParsingException $e) {
                                     return (new Response('There was an error parsing the content from your reply', 400));
                                 }
-                            } elseif ($parser->checkLikeOf($mf, $target)) {
+                            } elseif ($parser->checkLikeOf($microformats, $target)) {
                                 //it is a like
                                 try {
-                                    $content = $parser->likeContent($mf);
+                                    $content = $parser->likeContent($microformats);
                                     $this->saveImage($content);
                                     $content = serialize($content);
                                     $webmention->source = $source;
@@ -138,10 +138,10 @@ class WebMentionsController extends Controller
                                 } catch (ParsingException $e) {
                                     return (new Response('There was an error parsing the content from your like', 400));
                                 }
-                            } elseif ($parser->checkRepostOf($mf, $target)) {
+                            } elseif ($parser->checkRepostOf($microformats, $target)) {
                                 //it is a repost
                                 try {
-                                    $content = $parser->repostContent($mf);
+                                    $content = $parser->repostContent($microformats);
                                     $this->saveImage($content);
                                     $content = serialize($content);
                                     $webmention->source = $source;
@@ -155,9 +155,8 @@ class WebMentionsController extends Controller
                                 } catch (ParsingException $e) {
                                     return (new Response('There was an error parsing the content from your repost', 400));
                                 }
-                            } else {
-                                return (new Response('Your webmention does not actually link to my note', 400));
                             }
+                            return (new Response('Your webmention does not actually link to my note', 400));
                         }
                     } catch (RemoteContentNotFound $e) {
                         return (new Response(
@@ -176,7 +175,7 @@ class WebMentionsController extends Controller
             case 'blog':
                 return (new Response(
                     'I don’t accept webmentions for blog posts yet.',
-                    400
+                    501
                 ));
                 break;
             default:
@@ -248,7 +247,7 @@ class WebMentionsController extends Controller
      * @param  string  The URL
      * @return string  The path name
      */
-    private function URLtoFileName($url)
+    private function createFilenameFromURL($url)
     {
         $url = str_replace(array('https://', 'http://'), array('', ''), $url);
         if (substr($url, -1) == '/') {
@@ -288,9 +287,8 @@ class WebMentionsController extends Controller
                 $this->fileForceContents($path, $image);
             }
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
@@ -302,9 +300,9 @@ class WebMentionsController extends Controller
      */
     private function parseHTML($html, $baseurl)
     {
-        $mf = \Mf2\parse((string) $html, $baseurl);
+        $microformats = \Mf2\parse((string) $html, $baseurl);
 
-        return $mf;
+        return $microformats;
     }
 
     /**
@@ -387,14 +385,12 @@ class WebMentionsController extends Controller
             if ($endpoint) {
                 if (filter_var($endpoint, FILTER_VALIDATE_URL)) {
                     return $endpoint;
-                } else {
-                    //it must be a relative url, so resolve with php-mf2
-                    $resolved = $mf2->resolveUrl($endpoint);
-                    return $resolved;
                 }
-            } else {
-                return false;
+                //it must be a relative url, so resolve with php-mf2
+                $resolved = $mf2->resolveUrl($endpoint);
+                return $resolved;
             }
+            return false;
         } catch (GuzzleHttp\Exception\ClientException $e) {
             return false;
         }
@@ -413,7 +409,7 @@ class WebMentionsController extends Controller
         $client = new Client();
 
         try {
-            $response = $client->post($endpoint, [
+            $client->post($endpoint, [
                 'body' => [
                     'source' => $source,
                     'target' => $target
@@ -424,6 +420,5 @@ class WebMentionsController extends Controller
             Log::warning("Error sending webmention to $target");
             return false;
         }
-
     }
 }

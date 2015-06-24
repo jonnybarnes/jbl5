@@ -24,10 +24,9 @@ class MicropubController extends Controller
         $url = '';
         $syndication = [];
         $syndicationType = null;
+        $errorMessage = false;
         if (Session::has('error-message')) {
             $errorMessage = session('error-message');
-        } else {
-            $errorMessage = false;
         }
         if ($request->cookie('me') && $request->cookie('me') != 'loggedout') {
             $authed = true;
@@ -39,8 +38,6 @@ class MicropubController extends Controller
                 $valid = $this->checkTokenValidity($request->cookie('token'));
                 if ($valid == true) {
                     $cookie->queue('token_last_verified', date('Y-m-d'), 86400);
-                } else {
-                    $error = 'Unable to verify if the current token is still valid';
                 }
             }
             $syndicationTargets = $request->cookie('syndication');
@@ -135,9 +132,8 @@ class MicropubController extends Controller
         if ($response->getStatusCode() == 201) {
             $location = (string)$response->getHeader('Location');
             return redirect($location);
-        } else {
-            return $response;
         }
+        return $response;
     }
 
     /**
@@ -152,15 +148,15 @@ class MicropubController extends Controller
         $authorizationEndpoint = \IndieAuth\Client::discoverAuthorizationEndpoint($me);
         if ($authorizationEndpoint) {
             $code = $request->input('code');
-            $redirect_uri = $request->input('redirect_uri');
-            $client_id = $request->input('client_id');
+            $redirectUri = $request->input('redirect_uri');
+            $clientId = $request->input('client_id');
             $state = $request->input('state');
-            $auth = \IndieAuth\Client::verifyIndieAuthCode($authorizationEndpoint, $code, $me, $redirect_uri, $client_id, $state);
+            $auth = \IndieAuth\Client::verifyIndieAuthCode($authorizationEndpoint, $code, $me, $redirectUri, $clientId, $state);
             if (array_key_exists('me', $auth)) {
                 $scope = array_key_exists('scope', $auth) ? $auth['scope'] : '';
                 $scopes = explode(' ', $scope);
-                $t = new TokensController();
-                $token = $t->saveToken($auth['me'], $client_id, $scopes);
+                $tokensController = new TokensController();
+                $token = $tokensController->saveToken($auth['me'], $clientId, $scopes);
 
                 $content = http_build_query(array(
                     'me' => $me,
@@ -169,14 +165,12 @@ class MicropubController extends Controller
                 ));
                 return (new Response($content, 200))
                                ->header('Content-Type', 'application/x-www-form-urlencoded');
-            } else {
-                $contents = 'There was an error verifying the authorisation code. Sorry.';
-                return (new Response($contents, 400));
             }
-        } else {
-            $contents = 'There was an error discovering the authorisation endpoint.';
+            $contents = 'There was an error verifying the authorisation code. Sorry.';
             return (new Response($contents, 400));
         }
+        $contents = 'There was an error discovering the authorisation endpoint.';
+        return (new Response($contents, 400));
     }
 
     /**
@@ -192,34 +186,31 @@ class MicropubController extends Controller
         if (preg_match('/Bearer (.+)/', $httpAuth, $match)) {
             $token = $match[1];
 
-            $t = new TokensController();
+            $tokensController = new TokensController();
 
-            $scope = 'post';
-            $token_data = $t->tokenValidity($token);
-            if ($token_data === false) {
-                $token_data = array('scopes' => array());
+            //$scope = 'post';
+            $tokenData = $tokensController->tokenValidity($token);
+            if ($tokenData === false) {
+                $tokenData = array('scopes' => array());
             } //this is a quick hack so the next line doesn't error out
 
-            if (in_array('post', $token_data['scopes'])) { //this may need double checking
-                $client_id = $token_data['client_id'];
+            if (in_array('post', $tokenData['scopes'])) { //this may need double checking
+                $clientId = $tokenData['client_id'];
                 $admin = new AdminController();
                 $longurl = $admin->postNewNote($request, true, $client_id);
                 $content = 'Note created at ' . $longurl;
                 return (new Response($content, 201))
                               ->header('Location', $longurl);
-            } else {
-                $content = http_build_query(array(
-                    'error' => 'invalid_token',
-                    'error_description' => 'The token provided is not valid or does not have the necessary scope',
-                ));
-                return $response;
-                return (new Response($content, 400))
-                              ->header('Content-Type', 'application/x-www-form-urlencoded');
             }
-        } else {
-            $content = 'No OAuth token sent with request.';
-            return (new Response($content, 400));
+            $content = http_build_query(array(
+                'error' => 'invalid_token',
+                'error_description' => 'The token provided is not valid or does not have the necessary scope',
+            ));
+            return (new Response($content, 400))
+                          ->header('Content-Type', 'application/x-www-form-urlencoded');
         }
+        $content = 'No OAuth token sent with request.';
+        return (new Response($content, 400));
     }
 
     /**
@@ -238,36 +229,33 @@ class MicropubController extends Controller
         if (preg_match('/Bearer (.+)/', $httpAuth, $match)) {
             $token = $match[1];
 
-            $t = new TokensController();
-            $valid = $t->tokenValidity($token);
+            $tokensController = new TokensController();
+            $valid = $tokensController->tokenValidity($token);
 
             if ($valid === false) {
                 $content = 'Invalid token';
                 return (new Response($content, 400));
-            } else {
-                //we have a valid token, is `syndicate-to` set?
-                if ($request->input('q') === 'syndicate-to') {
-                    $content = http_build_query(array(
-                        'syndicate-to' => 'twitter.com/jonnybarnes',
-                        'mp-syndicate-to' => 'twitter.com/jonnybarnes',
-                    ));
-                    return (new Response($content, 200))
-                                  ->header('Content-Type', 'application/x-www-form-urlencoded');
-                } else {
-                    //nope, just return the token
-                    $content = http_build_query(array(
-                        'me' => $valid['me'],
-                        'scopes' => $valid['scopes'],
-                        'client_id' => $valid['client_id']
-                    ));
-                    return (new Response($content, 200))
-                                  ->header('Content-Type', 'application/x-www-form-urlencoded');
-                }
             }
-        } else {
-            $content = 'No OAuth token sent with request.';
-            return (new Response($content, 400));
+            //we have a valid token, is `syndicate-to` set?
+            if ($request->input('q') === 'syndicate-to') {
+                $content = http_build_query(array(
+                    'syndicate-to' => 'twitter.com/jonnybarnes',
+                    'mp-syndicate-to' => 'twitter.com/jonnybarnes',
+                ));
+                return (new Response($content, 200))
+                              ->header('Content-Type', 'application/x-www-form-urlencoded');
+            }
+            //nope, just return the token
+            $content = http_build_query(array(
+                'me' => $valid['me'],
+                'scopes' => $valid['scopes'],
+                'client_id' => $valid['client_id']
+            ));
+            return (new Response($content, 200))
+                          ->header('Content-Type', 'application/x-www-form-urlencoded');
         }
+        $content = 'No OAuth token sent with request.';
+        return (new Response($content, 400));
     }
 
     /**
@@ -278,13 +266,12 @@ class MicropubController extends Controller
      */
     public function checkTokenValidity($token)
     {
-        $t = new TokensController();
+        $tokensController = new TokensController();
 
-        if ($t->tokenValidity($token) === false) {
+        if ($tokensController->tokenValidity($token) === false) {
             return false;
-        } else {
-            return true; //we don't want to return the token data, just bool
         }
+        return true; //we don't want to return the token data, just bool
     }
 
     /**
@@ -318,7 +305,7 @@ class MicropubController extends Controller
         }
         $body = (string) $response->getBody();
         $syndication = str_replace(['&', '[]'], [';', ''], $body);
-        
+
         $cookie->queue('syndication', $syndication, 44640);
         return redirect('notes/new');
     }

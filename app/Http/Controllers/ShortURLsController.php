@@ -64,7 +64,7 @@ class ShortURLsController extends Controller
      * @param  string  Post ID
      * @return \Illuminate\Routing\Redirector redirect
      */
-    public function expandType($type, $id)
+    public function expandType($type, $postId)
     {
         if ($type == 't') {
             $type = 'notes';
@@ -73,7 +73,7 @@ class ShortURLsController extends Controller
             $type = 'blog/s';
         }
 
-        $redirect = 'https://' . config('url.longurl') . '/' . $type .'/' . $id;
+        $redirect = 'https://' . config('url.longurl') . '/' . $type .'/' . $postId;
 
         return redirect($redirect);
     }
@@ -84,24 +84,24 @@ class ShortURLsController extends Controller
      * @param  string The short URL id
      * @return \Illuminate\Routing\Redirector redirect
      */
-    public function redirect($id)
+    public function redirect($shortURLId)
     {
         $url = new URL();
-        $num = $url->b60tonum($id);
+        $num = $url->b60tonum($shortURLId);
         $shorturl = ShortURL::find($num);
         $redirect = $shorturl->redirect;
 
         return redirect($redirect);
     }
 
-    
+
     /**
      * I had an old redirect systme breifly, but cool URLs should still work.
      *
      * @param  string URL ID
      * @return \Illuminate\Routing\Redirector redirect
      */
-    public function oldRedirect($id)
+    public function oldRedirect($shortURLId)
     {
         $filename = base_path() . '/public/assets/old-shorturls.json';
         $handle = fopen($filename, 'r');
@@ -109,7 +109,7 @@ class ShortURLsController extends Controller
         $object = json_decode($contents);
 
         foreach ($object as $key => $val) {
-            if ($id == $key) {
+            if ($shortURLId == $key) {
                 $url = $val;
                 return redirect($url);
             }
