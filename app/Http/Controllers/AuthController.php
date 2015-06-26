@@ -24,10 +24,9 @@ class AuthController extends Controller
 
         if ($postedName == env('ADMIN_USER') && $postedPass == env('ADMIN_PASS')) {
             session(['loggedin' => true]);
-            return redirect('admin');
-        } else {
-            return redirect()->route('login');
+            return redirect()->intended('admin');
         }
+        return redirect()->route('login');
     }
 
     /**
