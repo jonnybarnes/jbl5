@@ -1,20 +1,22 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Routing\Controller;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\Note;
-use App\Tag;
-use App\Contact;
+namespace App\Http\Controllers;
+
 use DB;
 use Twitter;
+use App\Tag;
+use App\Note;
+use App\Contact;
 use Carbon\Carbon;
-use League\CommonMark\CommonMarkConverter;
-use Jonnybarnes\Posse\NotePrep;
 use Jonnybarnes\Posse\URL;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Jonnybarnes\Posse\NotePrep;
+use App\Http\Cotrollers\Controller;
+use Illuminate\Filesystem\Filesystem;
 use Jonnybarnes\UnicodeTools\UnicodeTools;
+use League\CommonMark\CommonMarkConverter;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 // Need to sort out Twitter and webmentions!
 

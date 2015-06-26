@@ -32,52 +32,49 @@ Route::group(array('domain' => config('url.longurl')), function () {
     Route::group(['middleware' => 'myauth'], function () {
         get('admin', 'AdminController@showWelcome');
 
-        get('admin/blog/new', 'AdminController@newArticle');
-        get('admin/blog/edit', 'AdminController@listArticles');
-        get('admin/blog/edit/{id}', 'AdminController@editArticle');
-        get('admin/blog/delete/{id}', 'AdminController@deleteArticle');
+        //Articles
+        get('admin/blog/new', 'ArticlesAdminController@newArticle');
+        get('admin/blog/edit', 'ArticlesAdminController@listArticles');
+        get('admin/blog/edit/{id}', 'ArticlesAdminController@editArticle');
+        get('admin/blog/delete/{id}', 'ArticlesAdminController@deleteArticle');
+        post('admin/blog/new', 'ArticlesAdminController@postNewArticle');
+        post('admin/blog/edit/{id}', 'ArticlesAdminController@postEditArticle');
+        post('admin/blog/delete/{id}', 'ArticlesAdminController@postDeleteArticle');
 
-        get('admin/note/new', 'AdminController@newNote');
-        get('admin/note/edit', 'AdminController@listNotes');
-        get('admin/note/edit/{id}', 'AdminController@editNote');
-        get('admin/note/delete/{id}', 'AdminController@deleteNote');
+        //Notes
+        get('admin/note/new', 'NotesAdminController@newNote');
+        get('admin/note/edit', 'NotesAdminController@listNotes');
+        get('admin/note/edit/{id}', 'NotesAdminController@editNote');
+        post('admin/note/new', 'NotesAdminController@postNewNote');
+        post('admin/note/edit/{id}', 'NotesAdminController@postEditNote');
 
-        get('admin/tokens', 'AdminController@showTokens');
-        get('admin/tokens/delete/{id}', 'AdminController@deleteToken');
-        post('admin/tokens/delete/{id}', 'AdminController@postDeleteToken');
+        //Tokens
+        get('admin/tokens', 'TokensAdminController@showTokens');
+        get('admin/tokens/delete/{id}', 'TokensAdminController@deleteToken');
+        post('admin/tokens/delete/{id}', 'TokensAdminController@postDeleteToken');
 
-        get('admin/clients', 'AdminController@listClients');
-        get('admin/clients/new', 'AdminController@newClient');
-        post('admin/clients/new', 'AdminController@postNewClient');
-        get('admin/clients/edit/{id}', 'AdminController@editClient');
-        post('admin/clients/edit/{id}', 'AdminController@postEditClient');
+        //Micropub Clients
+        get('admin/clients', 'ClientsAdminController@listClients');
+        get('admin/clients/new', 'ClientsAdminController@newClient');
+        get('admin/clients/edit/{id}', 'ClientsAdminController@editClient');
+        post('admin/clients/new', 'ClientsAdminController@postNewClient');
+        post('admin/clients/edit/{id}', 'ClientsAdminController@postEditClient');
 
-        get('admin/contacts/new', 'AdminController@newContact');
-        get('admin/contacts/edit', 'AdminController@listContacts');
-        get('admin/contacts/edit/{id}', 'AdminController@editContact');
-        get('admin/contacts/edit/{id}/getavatar', 'AdminController@getAvatar');
-        get('admin/contacts/delete/{id}', 'AdminController@deleteContact');
-
-        //POSTs from forms
-        post('admin/blog/new', 'AdminController@postNewArticle');
-        post('admin/blog/edit/{id}', 'AdminController@postEditArticle');
-        post('admin/blog/delete/{id}', 'AdminController@postDeleteArticle');
-
-        post('admin/note/new', 'AdminController@postNewNote');
-        post('admin/note/edit/{id}', 'AdminController@postEditNote');
-        post('admin/note/delete/{id}', 'AdminController@postDeleteNote');
-
-        post('admin/contacts/new', 'AdminController@postNewContact');
-        post('admin/contacts/edit/{id}', 'AdminController@postEditContact');
-        post('admin/contacts/delete/{id}', 'AdminController@postDeleteContact');
+        //Contacts
+        get('admin/contacts/new', 'ContactsAdminController@newContact');
+        get('admin/contacts/edit', 'ContactsAdminController@listContacts');
+        get('admin/contacts/edit/{id}', 'ContactsAdminController@editContact');
+        get('admin/contacts/edit/{id}/getavatar', 'ContactsAdminController@getAvatar');
+        get('admin/contacts/delete/{id}', 'ContactsAdminController@deleteContact');
+        post('admin/contacts/new', 'ContactsAdminController@postNewContact');
+        post('admin/contacts/edit/{id}', 'ContactsAdminController@postEditContact');
+        post('admin/contacts/delete/{id}', 'ContactsAdminController@postDeleteContact');
     });
 
     //Blog pages using ArticlesController
-    get('blog', 'ArticlesController@manyArticles');
-    get('blog/s/{id}', 'ArticlesController@onlyId');
-    get('blog/{year}', 'ArticlesController@manyArticles');
-    get('blog/{year}/{month}', 'ArticlesController@manyArticles');
-    get('blog/{year}/{month}/{post}', 'ArticlesController@singleArticle');
+    get('blog/s/{id}', 'ArticlesController@onlyIdInURL');
+    get('blog/{year?}/{month?}', 'ArticlesController@showAllArticles');
+    get('blog/{year}/{month}/{slug}', 'ArticlesController@singleArticle');
 
     //micropub new notes page
     //this needs to be first so `notes/new` doesn't match `notes/{id}`

@@ -1,11 +1,13 @@
-<?php namespace App\Http\Controllers;
+<?php
 
+namespace App\Http\Controllers;
+
+use Session;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Routing\Controller;
 use Illuminate\Cookie\CookieJar;
-use Carbon\Carbon;
-use Session;
+use App\Http\Controllers\Controller;
 
 //TODO(MAYBE): split this into micropub endpoint and micropub client
 

@@ -1,10 +1,12 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-use Illuminate\Cookie\CookieJar;
-use IndieAuth\Client;
+namespace App\Http\Controllers;
+
 use Session;
+use IndieAuth\Client;
+use Illuminate\Http\Request;
+use Illuminate\Cookie\CookieJar;
+use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {

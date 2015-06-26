@@ -1,6 +1,8 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-use Illuminate\Routing\Controller;
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
 use Illuminate\Filesystem\Filesystem;
 
 class TokensController extends Controller

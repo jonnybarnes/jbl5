@@ -1,20 +1,22 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Routing\Controller;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+namespace App\Http\Controllers;
+
+use Log;
 use App\Note;
+use Mf2\parse;
+use HTMLPurifier;
 use App\WebMention;
 use GuzzleHttp\Client;
-use Mf2\parse;
 use HTMLPurifier_Config;
-use HTMLPurifier;
 use Jonnybarnes\Posse\URL;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
 use Jonnybarnes\WebmentionsParser\Parser;
-use Jonnybarnes\WebmentionsParser\ParsingException;
 use App\Esceptions\RemoteContentNotFound;
-use Log;
+use Jonnybarnes\WebmentionsParser\ParsingException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class WebMentionsController extends Controller
 {

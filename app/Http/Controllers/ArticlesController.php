@@ -1,22 +1,24 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Routing\Controller;
+namespace App\Http\Controllers;
+
 use App\Article;
 use Carbon\Carbon;
-use League\CommonMark\CommonMarkConverter;
-use Jonnybarnes\UnicodeTools\UnicodeTools;
 use Jonnybarnes\Posse\URL;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use App\Http\Controllers\Controller;
+use Jonnybarnes\UnicodeTools\UnicodeTools;
+use League\CommonMark\CommonMarkConverter;
 
 class ArticlesController extends Controller
 {
     /**
      * Show all articles (with pagination)
      *
-     * @return view
+     * @return \Illuminate\View\Factory view
      */
-    public function manyArticles($year = null, $month = null)
+    public function showAllArticles($year = null, $month = null)
     {
         $carbon = new Carbon();
         $start = null;
@@ -44,9 +46,9 @@ class ArticlesController extends Controller
     /**
      * Show a single article
      *
-     * @return view
+     * @return \Illuminate\View\Factory view
      */
-    public function singleArticle($slug)
+    public function singleArticle($month, $year, $slug)
     {
         $carbon = new Carbon();
         $article = Article::where('titleurl', $slug)->get();
@@ -65,7 +67,7 @@ class ArticlesController extends Controller
      *
      * @return \Illuminte\Routing\RedirectResponse redirect
      */
-    public function onlyId($postId)
+    public function onlyIdInUrl($postId)
     {
         $url = new URL();
         $realId = $url->b60tonum($postId);
@@ -119,7 +121,13 @@ class ArticlesController extends Controller
         $transformed = $markdown->convertToHtml($codepoints);
         $codeblocks = $this->codeBlocksLang($transformed);
 
-        return $codeblocks;
+        //change <pre><code>[lang] -> <pre><code data-language="lang">
+        $match = '/<pre><code>\[(.*)\]\n/';
+        $replace = '<pre><code class="language-$1">';
+        $text = preg_replace($match, $replace, $transformed);
+        $default = preg_replace('/<pre><code>/', '<pre><code class="language-markdown">', $text);
+
+        return $default;
     }
 
     /**
@@ -136,23 +144,5 @@ class ArticlesController extends Controller
         $linkmonth = date("m", $datetime);
         $link = '/blog/' . $linkyear . '/' . $linkmonth . '/' . $titleurl;
         return $link;
-    }
-
-    /**
-     * Find a post-Markdown’ed case of <pre><code>[language] and convert
-     * to <pre><code data-language="language">
-     *
-     * @param  string
-     * @return string
-     */
-    public function codeBlocksLang($text)
-    {
-        $match = '/<pre><code>\[(.*)\]\n/';
-        $replace = '<pre><code class="language-$1">';
-
-        $text = preg_replace($match, $replace, $text);
-
-        $default = preg_replace('/<pre><code>/', '<pre><code class="language-markdown">', $text);
-        return $default;
     }
 }

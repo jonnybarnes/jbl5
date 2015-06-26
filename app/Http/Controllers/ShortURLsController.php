@@ -1,9 +1,11 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-use Jonnybanres\Posse\URL;
+namespace App\Http\Controllers;
+
 use App\ShortURL;
+use Jonnybanres\Posse\URL;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ShortURLsController extends Controller
 {

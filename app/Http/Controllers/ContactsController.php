@@ -1,8 +1,10 @@
-<?php namespace App\Http\Controllers;
+<?php
 
-use Illuminate\Routing\Conrtoller;
-use Illuminate\Filesystem\Filesystem;
+namespace App\Http\Controllers;
+
 use App\Contact;
+use App\Http\Controllers\Controller;
+use Illuminate\Filesystem\Filesystem;
 
 class ContactsController extends Controller
 {
