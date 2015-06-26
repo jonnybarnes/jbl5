@@ -1,5 +1,8 @@
-<?php namespace App;
+<?php
 
+namespace App;
+
+use DB;
 use Illuminate\Database\Eloquent\Model;
 use MartinBean\Database\Eloquent\Sluggable;
 
