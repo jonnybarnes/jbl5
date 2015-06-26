@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Session;
 use IndieAuth\Client;
 use Illuminate\Http\Request;
 use Illuminate\Cookie\CookieJar;
@@ -22,7 +21,7 @@ class AuthController extends Controller
         $postedName = $request->input('username');
         $postedPass = $request->input('password');
 
-        if ($postedName == env('ADMIN_USER') && $postedPass == env('ADMIN_PASS')) {
+        if ($request->input('username') === env('ADMIN_USER') && $request->input('password') === env('ADMIN_PASS')) {
             session(['loggedin' => true]);
             return redirect()->intended('admin');
         }
@@ -56,9 +55,8 @@ class AuthController extends Controller
             $authorizationURL = Client::buildAuthorizationURL($authorizationEndpoint, $domain, $redirectURL, $clientId, $state, $scope);
 
             return redirect($authorizationURL);
-        } else {
-            return redirect('notes/new')->with('error', 'Unable to determine authorisation endpoint.');
         }
+        return redirect('notes/new')->with('error', 'Unable to determine authorisation endpoint.');
     }
 
 
@@ -73,21 +71,25 @@ class AuthController extends Controller
      */
     public function indieauth(CookieJar $cookie, Request $request)
     {
-        $me = $request->input('me');
         $code = $request->input('code');
-        $stateInput = $request->input('state');
-        $stateSession = session('state');
-        if ($stateInput != $stateSession) {
+        if (session('state') != $request->input('state')) {
             return redirect('notes/new')->with('error', 'Mismatch of <code>state</code> value from indieauth server.');
         }
 
         $redirectURL = 'https://' . config('url.longurl') . '/auth';
         $clientId = 'https://' . config('url.longurl') . '/notes/new';
 
-        $tokenEndpoint = Client::discoverTokenEndpoint($me);
+        $tokenEndpoint = Client::discoverTokenEndpoint($request->input('me'));
 
         if ($tokenEndpoint) {
-            $token = Client::getAccessToken($tokenEndpoint, $code, $me, $redirectURL, $clientId, $stateInput);
+            $token = Client::getAccessToken(
+                $tokenEndpoint,
+                $request->input('code'),
+                $request->input('me'),
+                $redirectURL,
+                $clientId,
+                $request->input('state')
+            );
 
             if (array_key_exists('access_token', $token)) {
                 $cookie->queue('me', $token['me'], 86400);
@@ -107,9 +109,9 @@ class AuthController extends Controller
      * @param  \Illuminate\Cookie\CookieJar $cookie
      * @return \Illuminate\Routing\RedirectResponse redirect
      */
-    public function indieauthLogout(CookieJar $cookie)
+    public function indieauthLogout(Request $request, CookieJar $cookie)
     {
-        Session::flush();
+        $request->session()->flush();
         $cookie->queue('me', 'loggedout', 5);
 
         return redirect('/notes/new');

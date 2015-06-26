@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Session;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -27,7 +26,7 @@ class MicropubController extends Controller
         $syndication = [];
         $syndicationType = null;
         $errorMessage = false;
-        if (Session::has('error-message')) {
+        if ($request->session()->has('error-message')) {
             $errorMessage = session('error-message');
         }
         if ($request->cookie('me') && $request->cookie('me') != 'loggedout') {
