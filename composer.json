@@ -14,7 +14,7 @@
 		"predis/predis": "~1.0",
 		"filp/whoops": "~1.1",
 		"thujohn/twitter": "~2.0",
-		"mf2/mf2": "0.2.*",
+		"mf2/mf2": "~0.2",
 		"martinbean/laravel-sluggable-trait": "0.2.*",
 		"indieauth/client": "0.1.*",
 		"ezyang/htmlpurifier": "~4.6",
