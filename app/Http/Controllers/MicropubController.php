@@ -258,7 +258,7 @@ class MicropubController extends Controller
 
             if (in_array('post', $tokenData['scopes'])) { //this may need double checking
                 $clientId = $tokenData['client_id'];
-                $admin = new AdminController();
+                $admin = new NotesAdminController();
                 $longurl = $admin->postNewNote($request, true, $clientId);
                 $content = 'Note created at ' . $longurl;
                 return (new Response($content, 201))
