@@ -76,7 +76,7 @@ class ArticlesAdminController extends Controller
         $time = time();
 
         try {
-            $id = Article::insertGetId(
+            $articleId = Article::insertGetId(
                 array(
                     'url' => $url,
                     'title' => $title,
@@ -95,7 +95,7 @@ class ArticlesAdminController extends Controller
             //this isn't the error you're looking for
             throw $e;
         }
-        return view('admin.newarticlesuccess', array('id' => $id, 'title' => $title));
+        return view('admin.newarticlesuccess', array('id' => $articleId, 'title' => $title));
     }
 
     /**

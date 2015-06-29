@@ -48,17 +48,20 @@ class ArticlesController extends Controller
      *
      * @return \Illuminate\View\Factory view
      */
-    public function singleArticle($month, $year, $slug)
+    public function singleArticle($year, $month, $slug)
     {
         $carbon = new Carbon();
-        $article = Article::where('titleurl', $slug)->get();
-        foreach ($article as $row) {
-            $row['main'] = $this->markdown($row['main']);
-            $row['w3c_time'] = $carbon->createFromTimeStamp($row['date_time'])->toW3CString();
-            $row['tooltip_time'] = $carbon->createFromTimeStamp($row['date_time'])->toRFC850String();
-            $row['human_time'] = $carbon->createFromTimeStamp($row['date_time'])->diffForHumans();
+        $article = Article::where('titleurl', $slug)->first();
+        $articleCarbon = $carbon->createFromTimeStamp($article->date_time);
+        if ($articleCarbon->year != $year || $articleCarbon->month != $month) {
+            throw new \Exception;
         }
-        return view('singlepost', array('data' => $article));
+        $article->main = $this->markdown($article->main);
+        $article->w3c_time = $carbon->createFromTimeStamp($article->date_time)->toW3CString();
+        $article->tooltip_time = $carbon->createFromTimeStamp($article->tooltip_time)->toRFC850String();
+        $article->human_time = $carbon->createFromTimeStamp($article->date_time)->diffForHumans();
+
+        return view('singlepost', array('article' => $article));
     }
 
     /**
@@ -119,7 +122,6 @@ class ArticlesController extends Controller
         $codepoints = $unicode->convertUnicodeCodepoints($text);
         $markdown = new CommonMarkConverter();
         $transformed = $markdown->convertToHtml($codepoints);
-        $codeblocks = $this->codeBlocksLang($transformed);
 
         //change <pre><code>[lang] -> <pre><code data-language="lang">
         $match = '/<pre><code>\[(.*)\]\n/';
