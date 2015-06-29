@@ -2,7 +2,7 @@
 <html lang="en-GB">
 <head>
   <meta charset="UTF-8">
-  <title>@yield('title')</title>
+  <title>@if (App::environment() == 'local'){!! "[testing] -"!!}@endif @yield('title')</title>
   <meta name="viewport" content="width=device-width">
   <script type="text/javascript" src="//use.typekit.net/kmb3cdb.js"></script>
   <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
