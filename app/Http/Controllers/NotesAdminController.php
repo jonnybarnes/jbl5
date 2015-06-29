@@ -67,12 +67,12 @@ class NotesAdminController extends Controller
         $noteOrig = $request->input('content');
         $noteNfc = \Patchwork\Utf8::filter($noteOrig);
 
-        $inputReplyTo = $request->input('in-reply-to');
-        if ($inputReplyTo) {
-            if ($inputReplyTo == '') {
+        $inReplyTo = $request->input('in-reply-to');
+        if ($inReplyTo) {
+            if ($inReplyTo == '') {
                 $replyTo = null;
             } else {
-                $replyTo = $inputReplyTo;
+                $replyTo = $inReplyTo;
             }
         } else {
             $replyTo = null;
@@ -162,7 +162,7 @@ class NotesAdminController extends Controller
         $shorturl = 'https://' . $shorturlBase . '/' . $shorturlId;
         $noteNfcSwappedNames = $this->swapNames($noteNfc);
         if (
-            (is_array($request->input('mp-syndicate-to')) && in_array('twitter.com/jonnybarnes', $request->input('mp-syndicate-to')))
+            (is_array($request->input('mp-syndicate-to[]')) && in_array('twitter.com/jonnybarnes', $request->input('mp-syndicate-to[]')))
             ||
             ($request->input('twitter') == true)
         ) {

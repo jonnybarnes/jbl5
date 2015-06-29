@@ -161,13 +161,13 @@ class MicropubController extends Controller
             if ($replyTo != '') {
                 $formParams['in-reply-to'] = $replyTo;
             }
-            if ($request->input('mp-syndicate-to')) {
-                foreach ($request->input('mp-syndicate-to') as $syn) {
-                    $formParams['mp-syndicate-to'] = $syn;
+            if ($request->input('mp-syndicate-to[]')) {
+                foreach ($request->input('mp-syndicate-to[]') as $syn) {
+                    $formParams['mp-syndicate-to[]'] = $syn;
                 }
-            } elseif ($request->input('syndicate-to')) {
-                foreach ($request->input('syndicate-to') as $syn) {
-                    $formParams['syndicate-to'] = $syn;
+            } elseif ($request->input('syndicate-to[]')) {
+                foreach ($request->input('syndicate-to[]') as $syn) {
+                    $formParams['syndicate-to[]'] = $syn;
                 }
             }
             if ($request->input('confirmlocation')) {
