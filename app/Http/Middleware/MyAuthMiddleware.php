@@ -15,7 +15,7 @@ class MyAuthMiddleware {
 		 */
 		public function handle($request, Closure $next)
 		{
-				if($request->session->get('loggedin') !== true) {
+				if($request->session()->has('loggedin') !== true) {
 						//they’re not logged in, so send them to login form
 						return redirect()->route('login');
 				}

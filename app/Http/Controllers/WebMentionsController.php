@@ -233,7 +233,7 @@ class WebMentionsController extends Controller
 
         try {
             $response = $client->get($url);
-            $html = $response->getBody(true);
+            $html = (string) $response->getBody();
             $path = storage_path() . '/HTML/' . $this->URLtoFileName($url);
             $this->fileForceContents($path, $html);
 
@@ -412,7 +412,7 @@ class WebMentionsController extends Controller
 
         try {
             $client->post($endpoint, [
-                'body' => [
+                'form_params' => [
                     'source' => $source,
                     'target' => $target
                 ]

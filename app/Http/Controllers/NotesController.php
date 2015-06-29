@@ -12,7 +12,7 @@ use Jonnybarnes\Posse\URL;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Jonnybarnes\Posse\NotePrep;
-use App\Http\Cotrollers\Controller;
+use App\Http\Controllers\Controller;
 use Illuminate\Filesystem\Filesystem;
 use Jonnybarnes\UnicodeTools\UnicodeTools;
 use League\CommonMark\CommonMarkConverter;

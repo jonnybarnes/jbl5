@@ -32,7 +32,7 @@ class TokensController extends Controller
      * name is what other pople see *as* the token.
      *
      * @param  string  $me A URL of (normally) a personal homepage
-     * @param  string  $client_id  The PAI client that requested the token
+     * @param  string  $client_id  The API client that requested the token
      * @param  array   £scopes The reuested scopes for the token
      * @return string  The name of the token
      */

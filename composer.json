@@ -10,7 +10,7 @@
 		"jonnybarnes/unicode-tools": "dev-master",
 		"jonnybarnes/posse": "dev-master",
 		"jonnybarnes/webmentions-parser": "dev-master",
-		"guzzlehttp/guzzle": "~5.2",
+		"guzzlehttp/guzzle": "~6.0",
 		"predis/predis": "~1.0",
 		"filp/whoops": "~1.1",
 		"thujohn/twitter": "~2.0",
