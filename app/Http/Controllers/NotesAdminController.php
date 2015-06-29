@@ -8,6 +8,7 @@ use App\Note;
 use Imagine\Image\Box;
 use Imagine\Gd\Imagine;
 use Jonnybarnes\Posse\URL;
+use Illuminate\Http\Request;
 use Jonnybarnes\Posse\NotePrep;
 use Imagine\Image\ImageInterface;
 use App\Http\Controllers\Controller;
@@ -55,6 +56,9 @@ class NotesAdminController extends Controller
     /**
      * Process a request to make a new note
      *
+     * @param Illuminate\Http\Request $request
+     * @param string Set by an micropub API call
+     * @param string The client id that made the API call
      * @todo  Sort this mess out
      */
     public function postNewNote(Request $request, $api = false, $client_id = null)
@@ -157,7 +161,11 @@ class NotesAdminController extends Controller
         $shorturlBase = config('url.shorturl');
         $shorturl = 'https://' . $shorturlBase . '/' . $shorturlId;
         $noteNfcSwappedNames = $this->swapNames($noteNfc);
-        if (is_array($request->input('mp-syndicate-to')) && in_array('twitter.com/jonnybarnes', $request->input('mp-syndicate-to'))) {
+        if (
+            (is_array($request->input('mp-syndicate-to')) && in_array('twitter.com/jonnybarnes', $request->input('mp-syndicate-to')))
+            ||
+            ($request->input('twitter') == true)
+        ) {
             $tweet = $noteprep->createNote($noteNfcSwappedNames, $shorturlBase, $shorturlId, 140, true, true);
             $tweet_opts = array('status' => $tweet, 'format' => 'json');
             if ($replyTo) {
