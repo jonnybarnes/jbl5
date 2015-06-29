@@ -88,9 +88,9 @@ Route::group(array('domain' => config('url.longurl')), function () {
     get('notes/tagged/{tag}', 'NotesController@taggedNotes');
 
     //indieauth
-    Route::any('beginauth', 'AuthController@beginauth');
-    get('auth', 'AuthController@indieauth');
-    get('logout', 'AuthController@indieauthLogout');
+    Route::any('beginauth', 'IndieAuthController@beginauth');
+    get('auth', 'IndieAuthController@indieauth');
+    get('logout', 'IndieAuthController@indieauthLogout');
 
     //micropub endoints
     post('api/token', 'MicropubController@tokenEndpoint');
