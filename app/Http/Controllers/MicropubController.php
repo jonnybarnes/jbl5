@@ -26,8 +26,8 @@ class MicropubController extends Controller
         $syndication = [];
         $syndicationType = null;
         $errorMessage = false;
-        if ($request->session()->has('error-message')) {
-            $errorMessage = session('error-message');
+        if ($request->session()->has('error')) {
+            $errorMessage = session('error');
         }
         if ($request->cookie('me') && $request->cookie('me') != 'loggedout') {
             $authed = true;
