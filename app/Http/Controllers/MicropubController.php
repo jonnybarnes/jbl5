@@ -193,6 +193,9 @@ class MicropubController extends Controller
 
         if ($response->getStatusCode() == 201) {
             $location = $response->getHeader('Location');
+            if (is_array($location)) {
+                return redirect($location[0]);
+            }
             return redirect($location);
         }
         return $response;
