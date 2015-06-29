@@ -164,7 +164,7 @@ class MicropubController extends Controller
             if ($request->input('mp-syndicate-to')) {
                 $mpSyndicateTo = [];
                 foreach ($request->input('mp-syndicate-to') as $syn) {
-                    $mpSyndicateTo[] = $syn
+                    $mpSyndicateTo[] = $syn;
                 }
                 $formParams['mp-syndicate-to'] = $mpSyndicateTo;
             } elseif ($request->input('syndicate-to')) {
