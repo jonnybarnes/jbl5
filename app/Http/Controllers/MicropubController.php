@@ -161,14 +161,18 @@ class MicropubController extends Controller
             if ($replyTo != '') {
                 $formParams['in-reply-to'] = $replyTo;
             }
-            if ($request->input('mp-syndicate-to[]')) {
-                foreach ($request->input('mp-syndicate-to[]') as $syn) {
-                    $formParams['mp-syndicate-to[]'] = $syn;
+            if ($request->input('mp-syndicate-to')) {
+                $mpSyndicateTo = [];
+                foreach ($request->input('mp-syndicate-to') as $syn) {
+                    $mpSyndicateTo[] = $syn
                 }
-            } elseif ($request->input('syndicate-to[]')) {
-                foreach ($request->input('syndicate-to[]') as $syn) {
-                    $formParams['syndicate-to[]'] = $syn;
+                $formParams['mp-syndicate-to'] = $mpSyndicateTo;
+            } elseif ($request->input('syndicate-to')) {
+                $syndicateTo = [];
+                foreach ($request->input('syndicate-to') as $syn) {
+                    $syndicateTo[] = $syn;
                 }
+                $formParams['syndicate-to'] = $syndicateTo;
             }
             if ($request->input('confirmlocation')) {
                 $latLng = $request->input('location');

@@ -162,7 +162,7 @@ class NotesAdminController extends Controller
         $shorturl = 'https://' . $shorturlBase . '/' . $shorturlId;
         $noteNfcSwappedNames = $this->swapNames($noteNfc);
         if (
-            (is_array($request->input('mp-syndicate-to[]')) && in_array('twitter.com/jonnybarnes', $request->input('mp-syndicate-to[]')))
+            (is_array($request->input('mp-syndicate-to')) && in_array('twitter.com/jonnybarnes', $request->input('mp-syndicate-to')))
             ||
             ($request->input('twitter') == true)
         ) {
