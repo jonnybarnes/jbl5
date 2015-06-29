@@ -246,22 +246,18 @@ class NotesAdminController extends Controller
      */
     public function postEditNote($noteId, Request $request)
     {
-        $replyTo = $request->input('reply-to');
-        $noteText = $request->input('note');
-        $webmentions = $request->input('webmentions');
-
         //update note data
         $note = Note::find($noteId);
-        $note->note = $noteText;
-        $note->reply_to = $replyTo;
+        $note->note = $request->input('note');
+        $note->reply_to = $request->input('reply-to');
         $note->save();
 
         //send webmentions
         $webmentionsSent = null;
-        if (($webmentions == true)  && ($replyTo != '')) {
+        if (($request->input('webmentions') == true)  && ($request->input('reply-to') != '')) {
             $longurl = 'https://' . config('url.longurl') . '/note/' . $noteId;
             $wmc = new WebMentionsController();
-            $webmentionsSent = $wmc->send($replyTo, $longurl);
+            $webmentionsSent = $wmc->send($request->input('reply-to'), $longurl);
         }
 
         return view('admin.editnotesuccess', array('id' => $noteId, 'webmentions' => $webmentionsSent));

@@ -36,7 +36,7 @@ class TokensController extends Controller
      * @param  array   £scopes The reuested scopes for the token
      * @return string  The name of the token
      */
-    public function saveToken($me, $clientId, array $scopes)
+    public function saveToken($domain, $clientId, array $scopes)
     {
         $filesystem = new Filesystem();
 
@@ -47,7 +47,7 @@ class TokensController extends Controller
         $dateIssued = date('Y-m-d H:i:s');
 
         $content = array(
-            'me' => $me,
+            'me' => $domain,
             'client_id' => $clientId,
             'scopes' => $scopes,
             'date_issued' => $dateIssued,
