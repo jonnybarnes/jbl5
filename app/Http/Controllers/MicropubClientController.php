@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Cookie\CookieJar;
 use App\Http\Controllers\Controller;
 use IndieAuth\Client as IndieClient;
+use GuzzleHttp\Client as GuzzleClient;
 
 class MicropubClientController extends Controller
 {
