@@ -63,7 +63,7 @@ class MicropubClientController extends Controller
      * @param  \IndieAuth\Client $client
      * @return mixed
      */
-    public function post(Request $request, IndieClient $incdieClient, GuzzleClient $guzzleClient)
+    public function post(Request $request, IndieClient $indieClient, GuzzleClient $guzzleClient)
     {
         $domain = $request->cookie('me');
         $token = $request->cookie('token');
