@@ -78,8 +78,8 @@ Route::group(array('domain' => config('url.longurl')), function () {
 
     //micropub new notes page
     //this needs to be first so `notes/new` doesn't match `notes/{id}`
-    get('notes/new', 'MicropubController@micropubNewNotePage');
-    post('notes/new', 'MicropubController@post');
+    get('notes/new', 'MicropubClientController@micropubNewNotePage');
+    post('notes/new', 'MicropubClientController@post');
 
     //Notes pages using NotesController
     get('notes', 'NotesController@showNotes');
@@ -98,7 +98,7 @@ Route::group(array('domain' => config('url.longurl')), function () {
     get('api/post', 'MicropubController@getEndpoint');
 
     //micropub refresh syndication targets
-    get('refresh-syndication-targets', 'MicropubController@refreshSyndicationTargets');
+    get('refresh-syndication-targets', 'MicropubClientController@refreshSyndicationTargets');
 
     //webmention
     get('webmention', function () {
