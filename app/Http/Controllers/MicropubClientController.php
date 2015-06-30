@@ -63,17 +63,17 @@ class MicropubClientController extends Controller
      * @param  \IndieAuth\Client $client
      * @return mixed
      */
-    public function post(Request $request, IndieClient $client)
+    public function post(Request $request, IndieClient $incdieClient, GuzzleClient $guzzleClient)
     {
         $domain = $request->cookie('me');
         $token = $request->cookie('token');
 
-        $micropubEndpoint = $client->discoverMicropubEndpoint($domain);
+        $micropubEndpoint = $indieClient->discoverMicropubEndpoint($domain);
         if (!$micropubEndpoint) {
             return redirect('notes/new')->with('error', 'Unable to determine micropub API endpoint');
         }
 
-        $response = $this->postRequest($request, $micropubEndpoint, $token);
+        $response = $this->postRequest($request, $micropubEndpoint, $token, $guzzleClient);
 
         if ($response->getStatusCode() == 201) {
             $location = $response->getHeader('Location');
