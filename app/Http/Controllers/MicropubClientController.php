@@ -89,6 +89,9 @@ class MicropubClientController extends Controller
      * We make a request to the micropub endpoint requesting syndication targets
      * and store these in a cookie.
      *
+     * @todo better handling of response regarding mp-syndicate-to
+     *       and syndicate-to
+     *
      * @param  \Illuminate\Cookie\CookieJar $cookie
      * @param  \Illuminate\Http\Request $request
      * @param  \IndieAuth\Client $indieClient
