@@ -164,7 +164,7 @@ class MicropubClientController extends Controller
             ],
             [
                 'name' => 'content',
-                'contents' => $request->input('note')
+                'contents' => $request->input('content')
             ]
         ];
         if ($request->hasFile('photo')) {
