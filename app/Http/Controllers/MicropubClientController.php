@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Cookie\CookieJar;
 use App\Http\Controllers\Controller;
+use IndieAuth\Client as IndieClient;
 
 class MicropubClientController extends Controller
 {
@@ -22,10 +23,7 @@ class MicropubClientController extends Controller
         $url = '';
         $syndication = [];
         $syndicationType = null;
-        $errorMessage = false;
-        if ($request->session()->has('error')) {
-            $errorMessage = session('error');
-        }
+        $errorMessage = session('error');
         if ($request->cookie('me') && $request->cookie('me') != 'loggedout') {
             $authed = true;
             $url = $request->cookie('me');
@@ -38,24 +36,17 @@ class MicropubClientController extends Controller
                     $cookie->queue('token_last_verified', date('Y-m-d'), 86400);
                 }
             }
+            $syndication = false;
             $syndicationTargets = $request->cookie('syndication');
             if ($syndicationTargets) {
-                $syndicateTo = [];
                 $mpSyndicateTo = [];
                 $parts = explode(';', $syndicationTargets);
                 foreach ($parts as $part) {
                     $target = explode('=', $part);
-                    if ($target[0] == 'syndicate-to') {
-                        $syndicateTo[] = urldecode($target[1]);
-                    } elseif ($target[0] == 'mp-syndicate-to') {
-                        $mpSyndicateTo[] = urldecode($target[1]);
-                    }
+                    $mpSyndicateTo[] = urldecode($target[1]);
                 }
                 if (count($mpSyndicateTo) != 0) {
                     $syndication = $mpSyndicateTo;
-                    $syndicationType = 'mp';
-                } elseif (count($syndicateTo) != 0) {
-                    $syndication = $syndicateTo;
                 }
             }
         }
@@ -68,130 +59,20 @@ class MicropubClientController extends Controller
      * @todo   make sure this works with multiple syndication targets
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \IndieAuth\Client $indieClient
-     * @param  \GuzzleHttp\Client $guzzleClient
+     * @param  \IndieAuth\Client $client
      * @return mixed
      */
-    public function post(Request $request, IndieClient $indieClient, GuzzleClient $guzzleClient)
+    public function post(Request $request, IndieClient $client)
     {
-        $replyTo = $request->input('in-reply-to');
-        $note = $request->input('content');
-
         $domain = $request->cookie('me');
         $token = $request->cookie('token');
 
-        $micropubEndpoint = $indieClient->discoverMicropubEndpoint($domain);
+        $micropubEndpoint = $client->discoverMicropubEndpoint($domain);
         if (!$micropubEndpoint) {
             return redirect('notes/new')->with('error', 'Unable to determine micropub API endpoint');
         }
 
-        if ($request->hasFile('photo')) {
-            $photo = $request->file('photo');
-            $filename = $photo->getClientOriginalName();
-            $photo->move(storage_path(), $filename);
-            $multipart = [
-                [
-                    'name' => 'photo',
-                    'contents' => fopen(storage_path() . '/' . $filename, 'r')
-                ],
-                [
-                    'name' => 'h',
-                    'contents' => 'entry'
-                ],
-                [
-                    'name' => 'content',
-                    'contents' => $note
-                ]
-            ];
-            if ($replyTo != '') {
-                $multipart[] = [
-                    'name' => 'in-reply-to',
-                    'contents' => $replyTo
-                ];
-            }
-            if ($request->input('mp-syndicate-to')) {
-                foreach ($request->input('mp-syndicate-to') as $syn) {
-                    $multipart[] = [
-                        'name' => 'mp-syndicate-to',
-                        'contents' => $syn
-                    ];
-                }
-            } elseif ($request->input('syndicate-to')) {
-                foreach ($request->input('syndicate-to') as $syn) {
-                    $multipart[] = [
-                        'name' => 'syndicate-to',
-                        'contents' => $syn
-                    ];
-                }
-            }
-            if ($request->input('confirmlocation')) {
-                $latLng = $request->input('location');
-                $geoURL = 'geo:' . str_replace(' ', '', $latLng);
-                $multipart[] = [
-                    'name' => 'location',
-                    'contents' => $geoURL
-                ];
-                if ($request->input('address') != '') {
-                    //$postBody->setField('place_name', $request->input('address'));
-                    $multipart[] = [
-                        'name' => 'place_name',
-                        'contents' => $request->input('address')
-                    ];
-                }
-            }
-            $headers = [
-                'Authorization' => 'Bearer ' . $token
-            ];
-            try {
-                $response = $guzzleClient->post($micropubEndpoint, [
-                    'multipart' => $multipart,
-                    'headers' => $headers
-                ]);
-            } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-                unlink(storage_path() . '/' . $filename);
-                return redirect('notes/new')->with('error', 'There was a bad response from the micropub endpoint.');
-            }
-        } else {
-            $formParams = [
-                'h' => 'entry',
-                'content' => $note
-            ];
-            if ($replyTo != '') {
-                $formParams['in-reply-to'] = $replyTo;
-            }
-            if ($request->input('mp-syndicate-to')) {
-                $mpSyndicateTo = [];
-                foreach ($request->input('mp-syndicate-to') as $syn) {
-                    $mpSyndicateTo[] = $syn;
-                }
-                $formParams['mp-syndicate-to'] = $mpSyndicateTo;
-            } elseif ($request->input('syndicate-to')) {
-                $syndicateTo = [];
-                foreach ($request->input('syndicate-to') as $syn) {
-                    $syndicateTo[] = $syn;
-                }
-                $formParams['syndicate-to'] = $syndicateTo;
-            }
-            if ($request->input('confirmlocation')) {
-                $latLng = $request->input('location');
-                $geoURL = 'geo:' . str_replace(' ', '', $latLng);
-                $formParams['location'] = $geoURL;
-                if ($request->input('address') != '') {
-                    $formParams['place_name'] = $request->input('address');
-                }
-            }
-            $headers = [
-                'Authorization' => 'Bearer ' . $token
-            ];
-            try {
-                $response = $guzzleClient->post($micropubEndpoint, [
-                    'form_params' => $formParams,
-                    'headers' => $headers
-                ]);
-            } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-                return redirect('notes/new')->with('error', 'There was a bad response from the micropub endpoint.');
-            }
-        }
+        $response = $this->postRequest($request, $micropubEndpoint, $token);
 
         if ($response->getStatusCode() == 201) {
             $location = $response->getHeader('Location');
@@ -256,5 +137,84 @@ class MicropubClientController extends Controller
             return false;
         }
         return true; //we don't want to return the token data, just bool
+    }
+
+    /**
+     * This method performs the actual POST request
+     * @param  \Illuminate\Http\Request $request
+     * @param  string The Micropub endpoint to post to
+     * @param  string The token to authenticate the request with
+     * @param  \GuzzleHttp\Client $client
+     * @return \GuzzleHttp\Response $response | \Illuminate\RedirectFactory redirect
+     */
+    private function postRequest(
+        Request $request,
+        $micropubEndpoint,
+        $token,
+        GuzzleClient $client
+    ) {
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $filename = $photo->getClientOriginalName();
+            $photo->move(storage_path(), $filename);
+        }
+        $multipart = [
+            [
+                'name' => 'photo',
+                'contents' => fopen(storage_path() . '/' . $filename, 'r')
+            ],
+            [
+                'name' => 'h',
+                'contents' => 'entry'
+            ],
+            [
+                'name' => 'content',
+                'contents' => $request->input('note')
+            ]
+        ];
+        if ($request->input('reply-to') != '') {
+            $multipart[] = [
+                'name' => 'in-reply-to',
+                'contents' => $request->input('reply-to')
+            ];
+        }
+        if ($request->input('mp-syndicate-to')) {
+            foreach ($request->input('mp-syndicate-to') as $syn) {
+                $multipart[] = [
+                    'name' => 'mp-syndicate-to',
+                    'contents' => $syn
+                ];
+            }
+        }
+        if ($request->input('confirmlocation')) {
+            $latLng = $request->input('location');
+            $geoURL = 'geo:' . str_replace(' ', '', $latLng);
+            $multipart[] = [
+                'name' => 'location',
+                'contents' => $geoURL
+            ];
+            if ($request->input('address') != '') {
+                $multipart[] = [
+                    'name' => 'place_name',
+                    'contents' => $request->input('address')
+                ];
+            }
+        }
+        $headers = [
+            'Authorization' => 'Bearer ' . $token
+        ];
+        try {
+            $response = $client->post($micropubEndpoint, [
+                'multipart' => $multipart,
+                'headers' => $headers
+            ]);
+        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+            if (file_exists(storage_path() . '/' . $filename)) {
+                unlink(storage_path() . '/' . $filename);
+            }
+            return redirect('notes/new')->with('error', 'There was a bad response from the micropub endpoint.');
+        }
+
+        return $response;
     }
 }
