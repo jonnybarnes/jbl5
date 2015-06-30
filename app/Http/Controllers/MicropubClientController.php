@@ -157,16 +157,7 @@ class MicropubClientController extends Controller
         $token,
         GuzzleClient $client
     ) {
-        if ($request->hasFile('photo')) {
-            $photo = $request->file('photo');
-            $filename = $photo->getClientOriginalName();
-            $photo->move(storage_path(), $filename);
-        }
         $multipart = [
-            [
-                'name' => 'photo',
-                'contents' => fopen(storage_path() . '/' . $filename, 'r')
-            ],
             [
                 'name' => 'h',
                 'contents' => 'entry'
@@ -176,6 +167,15 @@ class MicropubClientController extends Controller
                 'contents' => $request->input('note')
             ]
         ];
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $filename = $photo->getClientOriginalName();
+            $photo->move(storage_path(), $filename);
+            $multipart[] = [
+                'name' => 'photo',
+                'contents' => fopen(storage_path() . '/' . $filename, 'r')
+            ];
+        }
         if ($request->input('reply-to') != '') {
             $multipart[] = [
                 'name' => 'in-reply-to',
