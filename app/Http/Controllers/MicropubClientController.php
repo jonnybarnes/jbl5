@@ -74,8 +74,6 @@ class MicropubClientController extends Controller
             return redirect('notes/new')->with('error', 'Unable to determine micropub API endpoint');
         }
 
-        dd($guzzleClient);
-
         $response = $this->postRequest($request, $micropubEndpoint, $token, $guzzleClient);
 
         if ($response->getStatusCode() == 201) {
@@ -179,7 +177,7 @@ class MicropubClientController extends Controller
                 'contents' => fopen(storage_path() . '/' . $filename, 'r')
             ];
         }
-        if ($request->input('reply-to') != '') {
+        if ($request->input('in-reply-to') != '') {
             $multipart[] = [
                 'name' => 'in-reply-to',
                 'contents' => $request->input('reply-to')

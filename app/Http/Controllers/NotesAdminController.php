@@ -164,6 +164,8 @@ class NotesAdminController extends Controller
         if (
             (is_array($request->input('mp-syndicate-to')) && in_array('twitter.com/jonnybarnes', $request->input('mp-syndicate-to')))
             ||
+            ($request->input('mp-syndicate-to') == 'twitter.com/jonnybarnes')
+            ||
             ($request->input('twitter') == true)
         ) {
             $tweet = $noteprep->createNote($noteNfcSwappedNames, $shorturlBase, $shorturlId, 140, true, true);
