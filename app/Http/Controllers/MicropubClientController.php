@@ -60,7 +60,8 @@ class MicropubClientController extends Controller
      * @todo   make sure this works with multiple syndication targets
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \IndieAuth\Client $client
+     * @param  \IndieAuth\Client $indieClient
+     * @param  \GuzzleHttp\Client $guzzleClient
      * @return mixed
      */
     public function post(Request $request, IndieClient $indieClient, GuzzleClient $guzzleClient)
@@ -72,6 +73,8 @@ class MicropubClientController extends Controller
         if (!$micropubEndpoint) {
             return redirect('notes/new')->with('error', 'Unable to determine micropub API endpoint');
         }
+
+        dd($guzzleClient);
 
         $response = $this->postRequest($request, $micropubEndpoint, $token, $guzzleClient);
 
