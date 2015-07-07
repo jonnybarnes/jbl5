@@ -59,18 +59,12 @@ class ArticlesController extends Controller
      *
      * @return \Illuminte\Routing\RedirectResponse redirect
      */
-    public function onlyIdInUrl($postId)
+    public function onlyIdInUrl($inURLId)
     {
         $url = new URL();
-        $realId = $url->b60tonum($postId);
-        $article = Article::find($realId);
-        $slug = $article['titleurl'];
-        $published = $article['date_time'];
-        $carbon = new Carbon();
-        $datetime = $carbon->createFromTimeStamp($published);
-        $year = $datetime->year;
-        $month = $datetime->month;
-        $redirect = '/blog/' . $year . '/' . $month . '/' . $slug;
+        $realId = $url->b60tonum($inURLId);
+        $article = Article::findOrFail($realId);
+        $redirect = '/blog/' . $article->updated_at->year . '/' . $article->updated_at->format('m') . '/' . $article->titleurl;
 
         return redirect($redirect);
     }
