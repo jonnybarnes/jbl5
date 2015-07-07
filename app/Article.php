@@ -5,15 +5,25 @@ namespace App;
 use DB;
 use Illuminate\Database\Eloquent\Model;
 use MartinBean\Database\Eloquent\Sluggable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Article extends Model
 {
+    use SoftDeletes;
+
     /**
      * We want to turn the titles into slugs
      */
     use Sluggable;
     const DISPLAY_NAME = 'title';
     const SLUG = 'titleurl';
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
     /**
      * The database table used by the model.
@@ -33,13 +43,6 @@ class Article extends Model
     }
 
     /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    protected $hidden = array('deleted');
-
-    /**
      * We aren't using Eloquent timestamps
      *
      * @var string
@@ -54,17 +57,20 @@ class Article extends Model
     protected $guarded = array('id');
 
     /**
-     * Find an article by its slug
+     * Scope a query to only include articles from a particular year/month.
      *
-     * @param  string
-     * @return \App\Article $article
+     * @return \Illuminate\Database\Eloquent\Builder
      */
-    public static function findBySlug($slug)
+    public function scopeDate($query, $year = null, $month = null)
     {
-        $article = DB::select("select * from $this->table where titleurl = ?", array($slug));
-        if (count($article == 0)) {
-            return null;
+        if ($year == null) {
+            return $query;
         }
-        return $article;
+        $time = $year;
+        if ($month !== null) {
+            $time .= '-' . $month;
+        }
+        $time .= '%';
+        return $query->where('updated_at', 'like', $time);
     }
 }

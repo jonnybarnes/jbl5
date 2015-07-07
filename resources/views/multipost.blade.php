@@ -5,8 +5,11 @@ Articles « Jonny Barnes
 @stop
 
 @section('content')
+@if (count($data) == 0)
+<p>No articles exist for this time.</p>
+@endif
 @foreach ($data as $article)
-@if($article['url'] != '')<article class="link h-entry">@else<article class="h-entry">@endif
+@if ($article['url'] != '')<article class="link h-entry">@else<article class="h-entry">@endif
 <header>
 <h1 class="p-name">
 <a href="@if($article['url'] == ''){{ App\Http\Controllers\ArticlesController::createLink($article['date_time'], $article['titleurl']) }}@else{{ $article['url'] }}@endif">{{ $article['title'] }}</a>

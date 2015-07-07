@@ -21,17 +21,8 @@ class ArticlesController extends Controller
     public function showAllArticles($year = null, $month = null)
     {
         $carbon = new Carbon();
-        $start = null;
-        if (isset($year)) {
-            $start = mktime(0, 0, 0, 1, 1, $year);
-            $end= mktime(23, 59, 59, 12, 31, $year);
-            if (isset($month)) {
-                $start = mktime(0, 0, 0, $month, 1, $year);
-                $end = mktime(23, 59, 59, $month+1, 0, $year);
-            }
-        }
 
-        $articles = ($start ? Article::where('deleted', '0')->where('published', '1')->orderBy('date_time', 'desc')->whereBetween('date_time', array($start, $end))->simplePaginate(5) : Article::where('deleted', '0')->where('published', '1')->orderBy('date_time', 'desc')->simplePaginate(5));
+        $articles = Article::where('published', '1')->date($year, $month)->orderBy('updated_at', 'desc')->simplePaginate(5);
 
         foreach ($articles as $article) {
             $article['main'] = $this->markdown($article['main']);

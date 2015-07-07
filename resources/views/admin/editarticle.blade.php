@@ -17,8 +17,6 @@ Edit Article « Admin CP
 <br>
 <textarea name="main" id="main">{{ $post['0']['main'] }}</textarea>
 <br>
-<label for"time">Time: </label><input type="text" name="time" id="time" value="{{ date("F j Y H:i:s", $post['0']['date_time']) }}"><button type="button" onClick="upTime();">Update to now</button>
-<br>
 <label for="published">Published:</label><input type="checkbox" name="published" value="1"@if($post['0']['published'] == '1') checked="checked"@endif>
 <br>
 <input type="submit" name="save" value="Save">
@@ -56,15 +54,5 @@ Edit Article « Admin CP
   	console.log('no textarea found');
   }
 }())
-</script>
-<script>
-function upTime() {
-if(!document.getElementById) return;
-var input = document.getElementById('time');
-var newtime = new Date();
-if(input) {
-input.value = newtime;
-}
-}
 </script>
 @stop

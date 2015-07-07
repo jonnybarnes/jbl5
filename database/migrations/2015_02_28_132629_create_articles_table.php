@@ -23,8 +23,8 @@ class CreateArticlesTable extends Migration {
 				$table->longText('main');
 				$table->text('tags');
 				$table->integer('date_time');
-				$table->tinyInt('deleted')->default(0);
 				$table->tinyInt('published')->default(0);
+				$table->softDeletes();
 			});
 		}
 	}

@@ -25,7 +25,7 @@ class ArticlesAdminController extends Controller
      */
     public function listArticles()
     {
-        $posts = Article::select('id', 'title', 'published')->where('deleted', '0')->orderBy('id', 'desc')->get();
+        $posts = Article::select('id', 'title', 'published')->orderBy('id', 'desc')->get();
         return view('admin.listarticles', array('posts' => $posts));
     }
 
@@ -41,7 +41,6 @@ class ArticlesAdminController extends Controller
             'title',
             'main',
             'url',
-            'date_time',
             'published'
         )->where('id', $articleId)->get();
         return view('admin.editarticle', array('id' => $articleId, 'post' => $post));
@@ -73,7 +72,6 @@ class ArticlesAdminController extends Controller
         if ($published == null) {
             $published = '0';
         }
-        $time = time();
 
         try {
             $articleId = Article::insertGetId(
@@ -81,7 +79,6 @@ class ArticlesAdminController extends Controller
                     'url' => $url,
                     'title' => $title,
                     'main' => $main,
-                    'date_time' => $time,
                     'published' => $published
                 )
             );
@@ -111,7 +108,6 @@ class ArticlesAdminController extends Controller
         $article->title = $request->input('title');
         $article->url = $request->input('url');
         $article->main = $request->input('main');
-        $article->date_time = strtotime($request->input('time'));
         $article->published = $request->input('published');
         $article->save();
 
@@ -126,7 +122,7 @@ class ArticlesAdminController extends Controller
      */
     public function postDeleteArticle($articleId)
     {
-        Article::where('id', $articleId)->update(array('deleted' => '1'));
+        Article::where('id', $articleId)->delete();
 
         return view('admin.deletearticlesuccess', array('id' => $articleId));
     }
