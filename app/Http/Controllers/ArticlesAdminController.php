@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Article;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class ArticlesAdminController extends Controller
@@ -65,20 +66,16 @@ class ArticlesAdminController extends Controller
      */
     public function postNewArticle(Request $request)
     {
-        $title = $request->input('title');
-        $url = $request->input('url');
-        $main = $request->input('main');
         $published = $request->input('published');
         if ($published == null) {
             $published = '0';
         }
-
         try {
-            $articleId = Article::insertGetId(
+            $article = Article::create(
                 array(
-                    'url' => $url,
-                    'title' => $title,
-                    'main' => $main,
+                    'url' => $request->input('url'),
+                    'title' => $request->input('title'),
+                    'main' => $request->input('main'),
                     'published' => $published
                 )
             );
@@ -92,7 +89,7 @@ class ArticlesAdminController extends Controller
             //this isn't the error you're looking for
             throw $e;
         }
-        return view('admin.newarticlesuccess', array('id' => $articleId, 'title' => $title));
+        return view('admin.newarticlesuccess', array('id' => $article->id, 'title' => $article->title));
     }
 
     /**
@@ -104,11 +101,15 @@ class ArticlesAdminController extends Controller
      */
     public function postEditArticle($articleId, Request $request)
     {
+        $published = $request->input('published');
+        if ($published == null) {
+            $published = '0';
+        }
         $article = Article::find($articleId);
         $article->title = $request->input('title');
         $article->url = $request->input('url');
         $article->main = $request->input('main');
-        $article->published = $request->input('published');
+        $article->published = $published;
         $article->save();
 
         return view('admin.editarticlesuccess', array('id' => $articleId));

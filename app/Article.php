@@ -23,7 +23,7 @@ class Article extends Model
      *
      * @var array
      */
-    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
+    protected $dates = ['deleted_at'];
 
     /**
      * The database table used by the model.
@@ -41,13 +41,6 @@ class Article extends Model
     {
         return $this->morphMany('App\WebMention', 'commentable');
     }
-
-    /**
-     * We aren't using Eloquent timestamps
-     *
-     * @var string
-     */
-    public $timestamps = false;
 
     /**
      * We shall set a blacklist of non-modifiable model attributes

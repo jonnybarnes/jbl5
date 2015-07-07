@@ -20,15 +20,14 @@ class ArticlesController extends Controller
      */
     public function showAllArticles($year = null, $month = null)
     {
-        $carbon = new Carbon();
-
         $articles = Article::where('published', '1')->date($year, $month)->orderBy('updated_at', 'desc')->simplePaginate(5);
 
         foreach ($articles as $article) {
             $article['main'] = $this->markdown($article['main']);
-            $article['w3c_time'] = $carbon->createFromTimeStamp($article['date_time'])->toW3CString();
-            $article['tooltip_time'] = $carbon->createFromTimeStamp($article['date_time'])->toRFC850String();
-            $article['human_time'] = $carbon->createFromTimeStamp($article['date_time'])->diffForHumans();
+            $article['w3c_time'] = $article['updated_at']->toW3CString();
+            $article['tooltip_time'] = $article['updated_at']->toRFC850String();
+            $article['human_time'] = $article['updated_at']->diffForHumans();
+            $article['link'] = $this->createLink($article['updated_at'], $article['titleurl']);
         }
 
         return view('multipost', array('data' => $articles));
@@ -41,16 +40,15 @@ class ArticlesController extends Controller
      */
     public function singleArticle($year, $month, $slug)
     {
-        $carbon = new Carbon();
         $article = Article::where('titleurl', $slug)->first();
-        $articleCarbon = $carbon->createFromTimeStamp($article->date_time);
-        if ($articleCarbon->year != $year || $articleCarbon->month != $month) {
+        if ($article->updated_at->year != $year || $article->updated_at->month != $month) {
             throw new \Exception;
         }
         $article->main = $this->markdown($article->main);
-        $article->w3c_time = $carbon->createFromTimeStamp($article->date_time)->toW3CString();
-        $article->tooltip_time = $carbon->createFromTimeStamp($article->tooltip_time)->toRFC850String();
-        $article->human_time = $carbon->createFromTimeStamp($article->date_time)->diffForHumans();
+        $article->w3c_time = $article->updated_at->toW3CString();
+        $article->tooltip_time = $article->updated_at->toRFC850String();
+        $article->human_time = $article->updated_at->diffForHumans();
+        $article->link = $this->createLink($article->updated_at, $article->titleurl);
 
         return view('singlepost', array('article' => $article));
     }
@@ -127,15 +125,13 @@ class ArticlesController extends Controller
      * Creates a dynamic link to the article.
      * That is a link of the form /blog/1999/11/i-am-a-slug
      *
-     * @param  string  An UNIX epoch timestamp
+     * @param  \Carbon\Carbon  the upated time of the model
      * @param  string  A slug of blog post
      * @return string
      */
-    public static function createLink($datetime, $titleurl)
+    private function createLink($updatedAt, $titleurl)
     {
-        $linkyear = date("Y", $datetime);
-        $linkmonth = date("m", $datetime);
-        $link = '/blog/' . $linkyear . '/' . $linkmonth . '/' . $titleurl;
+        $link = '/blog/' . $updatedAt->year . '/' . $updatedAt->format('m') . '/' . $titleurl;
         return $link;
     }
 }
