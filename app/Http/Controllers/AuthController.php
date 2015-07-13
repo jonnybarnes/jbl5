@@ -16,7 +16,10 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        if ($request->input('username') === env('ADMIN_USER') && $request->input('password') === env('ADMIN_PASS')) {
+        if ($request->input('username') === env('ADMIN_USER')
+            &&
+            $request->input('password') === env('ADMIN_PASS')
+        ) {
             session(['loggedin' => true]);
             return redirect()->intended('admin');
         }
