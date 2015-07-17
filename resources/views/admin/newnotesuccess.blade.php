@@ -25,8 +25,4 @@ New Note Success « Admin CP
 </ul>
 @endif
 @endif
-@if($tweet != '')
-<h2>Tweet sent</h2>
-<p style="white-space: pre-wrap;">{{ $tweet }}</p>
-@endif
 @stop
