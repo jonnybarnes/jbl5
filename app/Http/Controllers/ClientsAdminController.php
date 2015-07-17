@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Client;
 use App\Http\Controllers\Controller;
 
 class ClientsAdminController extends Controller
@@ -13,7 +14,7 @@ class ClientsAdminController extends Controller
      */
     public function listClients()
     {
-        $clients = DB::table('clients')->get();
+        $clients = Client::all();
 
         return view('admin.listclients', array('clients' => $clients));
     }
@@ -36,14 +37,10 @@ class ClientsAdminController extends Controller
      */
     public function postNewClient(Request $request)
     {
-        $clientUrl = $request->input('client_url');
-        $clientName = $request->input('client_name');
-        DB::table('clients')->insert(
-            array(
-                'client_url' => $clientUrl,
-                'client_name' => $clientName
-            )
-        );
+        Client::create([
+            'client_url' => $request->input('client_url'),
+            'client_name' => $request->input('client_name')
+        ]);
 
         return view('admin.newclientsuccess');
     }
@@ -56,9 +53,9 @@ class ClientsAdminController extends Controller
      */
     public function editClient($clientId)
     {
-        $client = DB::table('clients')->where('id', $clientId)->first();
+        $client = Client::findOrFail($clientId);
 
-        return view('admin.editclient', array('id' => $clientId, 'client_url' => $client['client_url'], 'client_name' => $client['client_name']));
+        return view('admin.editclient', array('id' => $clientId, 'client_url' => $client->client_url, 'client_name' => $client->client_name));
     }
 
     /**
@@ -70,19 +67,16 @@ class ClientsAdminController extends Controller
      */
     public function postEditClient($clientId, Request $request)
     {
+        $client = Client::findOrFail($clientId);
         if ($request->input('edit')) {
-            $clientUrl = $request->input('client_url');
-            $clientName = $request->input('client_name');
-
-            DB::table('clients')->where('id', $clientId)
-                ->update(array(
-                    'client_url' => $clientUrl,
-                    'client_name' => $clientName
-                ));
+            $client->client_url = $request->input('client_url');
+            $client->client_name = $request->input('client_name');
+            $client->save();
 
             return view('admin.editclientsuccess');
-        } elseif ($request->input('delete')) {
-            DB::table('clients')->where('id', $clientId)->delete();
+        }
+        if ($request->input('delete')) {
+            $client->delete();
 
             return view('admin.deleteclientsuccess');
         }
