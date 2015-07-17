@@ -29,7 +29,10 @@ class NotesAdminController extends Controller
      */
     public function listNotes()
     {
-        $notes = Note::select('id', 'note')->where('deleted', '0')->orderBy('id', 'desc')->get();
+        $notes = Note::select('id', 'note')->orderBy('id', 'desc')->get();
+        foreach ($notes as $note) {
+            $note->originalNote = $note->getOriginal('note');
+        }
         return view('admin.listnotes', array('notes' => $notes));
     }
 
@@ -42,6 +45,7 @@ class NotesAdminController extends Controller
     public function editNote($noteId)
     {
         $note = Note::find($noteId);
+        $note->originalNote = $note->getOriginal('note');
         return view('admin.editnote', array('id' => $noteId, 'note' => $note));
     }
 
@@ -122,16 +126,16 @@ class NotesAdminController extends Controller
     {
         //update note data
         $note = Note::find($noteId);
-        $note->note = $request->input('note');
-        $note->reply_to = $request->input('reply-to');
+        $note->note = normalizer_normalize($request->input('content'), Normalizer::FORM_C);
+        $note->in_reply_to = $request->input('in-reply-to');
         $note->save();
 
         //send webmentions
         $webmentionsSent = null;
-        if (($request->input('webmentions') == true)  && ($request->input('reply-to') != '')) {
+        if (($request->input('webmentions') == true)  && ($request->input('in-reply-to') != '')) {
             $longurl = 'https://' . config('url.longurl') . '/note/' . $noteId;
             $wmc = new WebMentionsController();
-            $webmentionsSent = $wmc->send($request->input('reply-to'), $longurl);
+            $webmentionsSent = $wmc->send($request->input('in-reply-to'), $longurl);
         }
 
         return view('admin.editnotesuccess', array('id' => $noteId, 'webmentions' => $webmentionsSent));

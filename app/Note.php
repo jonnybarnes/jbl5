@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Jonnybarnes\UnicodeTools\UnicodeTools;
+use League\CommonMark\CommonMarkConverter;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Note extends Model {
@@ -58,4 +60,20 @@ class Note extends Model {
 		{
 				$this->in_reply_to = empty($value) ? null : $value;
 		}
+
+		/**
+     * Pre-process notes for web-view
+     *
+     * @param  string
+     * @return string
+     */
+    public function getNoteAttribute($value)
+    {
+        $unicode = new UnicodeTools();
+        $codepoints = $unicode->convertUnicodeCodepoints($value);
+        $markdown = new CommonMarkConverter();
+        $transformed = $markdown->convertToHtml($codepoints);
+
+        return $transformed;
+    }
 }

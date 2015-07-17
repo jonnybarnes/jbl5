@@ -14,8 +14,6 @@ use Illuminate\Http\Response;
 use Jonnybarnes\Posse\NotePrep;
 use App\Http\Controllers\Controller;
 use Illuminate\Filesystem\Filesystem;
-use Jonnybarnes\UnicodeTools\UnicodeTools;
-use League\CommonMark\CommonMarkConverter;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 // Need to sort out Twitter and webmentions!
@@ -40,7 +38,7 @@ class NotesController extends Controller
                 }
             }
             $note->replies = $replies;
-            $note->note = $this->transformNote($note->note);
+            $note->note = $this->autoLinkHashtag($this->makeHCards($note->note));
             $note->iso8601_time = $note->updated_at->toISO8601String();
             $note->human_time = $note->updated_at->diffForHumans();
             if ($note->location) {
@@ -104,7 +102,7 @@ class NotesController extends Controller
                     break;
             }
         }
-        $note->note = $this->transformNote($note->note);
+        $note->note = $this->autoLinkHashtag($this->makeHCards($note->note));
         $note->iso8601_time = $note->updated_at->toISO8601String();
         $note->human_time = $note->updated_at->diffForHumans();
         if ($note->location) {
@@ -160,24 +158,6 @@ class NotesController extends Controller
     }
 
     /**
-     * Pre-process notes for web-view
-     *
-     * @param  string
-     * @return string
-     */
-    public function transformNote($text)
-    {
-        $unicode = new UnicodeTools();
-        $codepoints = $unicode->convertUnicodeCodepoints($text);
-        $markdown = new CommonMarkConverter();
-        $transformed = $markdown->convertToHtml($codepoints);
-        $hashtags = $this->autoLinkHashtag($transformed, 'notes');
-        $names = $this->makeHCards($hashtags);
-
-        return $names;
-    }
-
-    /**
      * Note that this method does two things, given @username (NOT [@username](URL)!)
      * we try to create a fancy hcard from our contact info. If this is not possible
      * due to lack of contact info, we assume @username is a twitter handle and link it
@@ -219,7 +199,7 @@ class NotesController extends Controller
      * @param  string  The section (such as blog)
      * @return string
      */
-    public function autoLinkHashtag($text, $section)
+    public function autoLinkHashtag($text, $section = 'notes')
     {
         // $replacements = ["#tag" => "<a rel="tag" href="/tags/tag">#tag</a>]
         $replacements = [];
