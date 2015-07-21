@@ -7,9 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Controllers\Controller;
 
-
-//TODO(MAYBE): split this into micropub endpoint and micropub client
-
 class MicropubController extends Controller
 {
     /**
@@ -80,7 +77,7 @@ class MicropubController extends Controller
             if (in_array('post', $tokenData['scopes'])) { //this may need double checking
                 $clientId = $tokenData['client_id'];
                 $admin = new NotesAdminController();
-                $longurl = $admin->postNewNote($request, true, $clientId);
+                $longurl = $admin->postNewNote($request, $clientId);
                 $content = 'Note created at ' . $longurl;
                 return (new Response($content, 201))
                               ->header('Location', $longurl);

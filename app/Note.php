@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Normalizer;
 use Illuminate\Database\Eloquent\Model;
 use Jonnybarnes\UnicodeTools\UnicodeTools;
 use League\CommonMark\CommonMarkConverter;
@@ -59,6 +60,17 @@ class Note extends Model {
 		public function setInReplyToAttribute($value)
 		{
 				$this->in_reply_to = empty($value) ? null : $value;
+		}
+
+		/**
+		 * Normalize the note to Unicode FORM C
+		 *
+		 * @param  string  $value
+		 * @return string
+		 */
+		public function setNoteAttribute($value)
+		{
+				$this->note = normalizer_normalize($value, Normalizer::FORM_C);
 		}
 
 		/**

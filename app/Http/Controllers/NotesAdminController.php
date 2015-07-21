@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Tag;
 use App\Note;
-use Normalizer;
 use Jonnybarnes\Posse\URL;
 use Illuminate\Http\Request;
 use Jonnybarnes\Posse\NotePrep;
@@ -61,13 +60,12 @@ class NotesAdminController extends Controller
         $url = new URL();
         $noteprep = new NotePrep();
 
-        $noteNfc = normalizer_normalize($request->input('content'), Normalizer::FORM_C);
         $location = $this->getLocation($request);
 
         try {
             $note = Note::create(
                 array(
-                    'note' => $noteNfc,
+                    'note' => $request->input('content'),
                     'in_reply_to' => $request->input('in-reply-to'),
                     'location' => $location,
                     'client_id' => $clientId,
@@ -84,7 +82,7 @@ class NotesAdminController extends Controller
         $photosController = new PhotosController();
         $photosController->saveImage($request, $realId);
 
-        $tags = $noteprep->getTags($noteNfc);
+        $tags = $noteprep->getTags($request->input('content'));
         $tagsToSave = [];
         foreach ($tags as $text) {
             $tag = Tag::firstOrCreate(['tag', $text]);
@@ -94,8 +92,10 @@ class NotesAdminController extends Controller
 
         $longurl = 'https://' . config('url.longurl') . '/notes/' . $realId;
 
-        $wmc = new WebMentionsController();
-        $webmentions = $wmc->send($request, $longurl);
+        if ($request->input('webmention')) {
+            $wmc = new WebMentionsController();
+            $wmc->send($note, $longurl);
+        }
 
         $shorturl = 'https://' . config('url.shorturl') . '/t/' . $url->numto60($note->id);
 
@@ -112,7 +112,7 @@ class NotesAdminController extends Controller
         if ($clientId) {
             return $longurl;
         }
-        return view('admin.newnotesuccess', array('id' => $note->id, 'shorturl' => $shorturl, 'webmentions' => $webmentions));
+        return view('admin.newnotesuccess', array('id' => $note->id, 'shorturl' => $shorturl));
     }
 
     /**
@@ -126,7 +126,7 @@ class NotesAdminController extends Controller
     {
         //update note data
         $note = Note::find($noteId);
-        $note->note = normalizer_normalize($request->input('content'), Normalizer::FORM_C);
+        $note->note = $request->input('content');
         $note->in_reply_to = $request->input('in-reply-to');
         $note->save();
 
