@@ -70,7 +70,7 @@ class Note extends Model {
 		 */
 		public function setNoteAttribute($value)
 		{
-				$this->note = normalizer_normalize($value, Normalizer::FORM_C);
+				$this->attributes['note'] = normalizer_normalize($value, Normalizer::FORM_C);
 		}
 
 		/**
