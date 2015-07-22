@@ -59,7 +59,7 @@ class Note extends Model {
 		 */
 		public function setInReplyToAttribute($value)
 		{
-				$this->in_reply_to = empty($value) ? null : $value;
+				$this->attributes['in_reply_to'] = empty($value) ? null : $value;
 		}
 
 		/**
