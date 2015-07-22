@@ -7,6 +7,7 @@ use GuzzleHttp\Client;
 use Jonnybarnes\Posse\URL;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Jobs\SendWebMentions;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 

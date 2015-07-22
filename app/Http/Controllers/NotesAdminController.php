@@ -92,7 +92,7 @@ class NotesAdminController extends Controller
 
         $longurl = 'https://' . config('url.longurl') . '/notes/' . $realId;
 
-        if ($request->input('webmention')) {
+        if ($request->input('webmentions')) {
             $wmc = new WebMentionsController();
             $wmc->send($note, $longurl);
         }
@@ -130,15 +130,13 @@ class NotesAdminController extends Controller
         $note->in_reply_to = $request->input('in-reply-to');
         $note->save();
 
-        //send webmentions
-        $webmentionsSent = null;
-        if (($request->input('webmentions') == true)  && ($request->input('in-reply-to') != '')) {
+        if ($request->input('webmentions')) {
             $longurl = 'https://' . config('url.longurl') . '/note/' . $noteId;
             $wmc = new WebMentionsController();
-            $webmentionsSent = $wmc->send($request->input('in-reply-to'), $longurl);
+            $wmc->send($note, $longurl);
         }
 
-        return view('admin.editnotesuccess', array('id' => $noteId, 'webmentions' => $webmentionsSent));
+        return view('admin.editnotesuccess', array('id' => $noteId));
     }
 
     /**

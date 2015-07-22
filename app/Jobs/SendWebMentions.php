@@ -15,7 +15,6 @@ class SendWebMentions extends Job implements SelfHandling, ShouldQueue
 
     protected $url;
     protected $source;
-    protected $client;
 
     /**
      * Create a new job instance.
@@ -26,7 +25,6 @@ class SendWebMentions extends Job implements SelfHandling, ShouldQueue
     {
         $this->url = $url;
         $this->source = $source;
-        $this->client = new Client();
     }
 
     /**
@@ -34,11 +32,11 @@ class SendWebMentions extends Job implements SelfHandling, ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(Client $client)
     {
-        $endpoint = $this->discoverWebmentionEndpoint($this->url);
+        $endpoint = $this->discoverWebmentionEndpoint($this->url, $client);
         if ($endpoint) {
-            $this->client->post($endpoint, [
+            $client->post($endpoint, [
                 'form_params' => [
                     'source' => $this->source,
                     'target' => $this->url,
@@ -51,13 +49,14 @@ class SendWebMentions extends Job implements SelfHandling, ShouldQueue
      * Discover if a URL has a webmention endpoint
      *
      * @param  string  The URL
+     * @param  \GuzzleHttp\Client $client
      * @return string  The webmention endpoint URL
      */
-    private function discoverWebmentionEndpoint($url)
+    private function discoverWebmentionEndpoint($url, $client)
     {
         $endpoint = null;
 
-        $response = $this->client->get($url);
+        $response = $client->get($url);
         //check HTTP Headers for webmention endpoint
         $links = \GuzzleHttp\Psr7\parse_header($response->getHeader('Link'));
         foreach ($links as $link) {
