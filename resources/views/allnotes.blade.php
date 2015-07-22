@@ -11,21 +11,11 @@ a name property for the h-feed -->
 <span class="p-name"></span>
   @foreach ($notes as $note)
   <div class="h-entry">
-  @if ($note->reply_to)
-  @if(mb_substr($note->reply_to, 0, 19, "UTF-8") == 'https://twitter.com')
+  @if ($note->in_reply_to)
     <div class="p-in-reply-to h-cite reply-to">
-      <span class="reply-arrow">↪</span>
-      <a class="h-card vcard mini-h-card p-author" href="{{ $note->reply_to_url }}">
-        <img src="{{ $note->reply_to_profile_photo }}" alt="" class="photo u-photo logo"> {{ $note->reply_to_author_name }}
-      </a>
-      <div class="e-content p-name">{!! $note->reply_to_text !!}</div>
+      In reply to <a href="{{ $note->reply_to }}" class="u-url">{{ $note->in_reply_to }}</a>
     </div>
-@else
-    <div class="p-in-reply-to h-cite reply-to">
-      In reply to <a href="{{ $note->reply_to }}" class="u-url">{{ $note->reply_to }}</a>
-    </div>
-@endif
-@endif
+  @endif
     <div class="note">
       <div class="e-content p-name">{!! $note->note !!}@if($note->photopath)<img src="{{ $note->photopath }}" alt="" class="note-photo">@endif</div>
       <div class="note-metadata">

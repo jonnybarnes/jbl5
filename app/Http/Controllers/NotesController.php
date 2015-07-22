@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-use Twitter;
+
 use App\Tag;
 use App\Note;
+use App\Client;
 use App\Contact;
 use Carbon\Carbon;
 use Jonnybarnes\Posse\URL;
@@ -14,8 +14,6 @@ use Illuminate\Http\Response;
 use Jonnybarnes\Posse\NotePrep;
 use App\Http\Controllers\Controller;
 use Illuminate\Filesystem\Filesystem;
-use Jonnybarnes\UnicodeTools\UnicodeTools;
-use League\CommonMark\CommonMarkConverter;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 // Need to sort out Twitter and webmentions!
@@ -25,63 +23,36 @@ class NotesController extends Controller
     /**
      * Show all the notes
      *
-     * @return \Illuminte\View\Factry view
+     * @return \Illuminte\View\Factory view
      */
     public function showNotes()
     {
-        $carbon = new Carbon();
-        $noteprep = new NotePrep();
-        $notes = Note::where('deleted', '0')->orderBy('timestamp', 'desc')->simplePaginate(10);
+        $url = new URL();
+        $notes = Note::orderBy('updated_at', 'desc')->with('webmentions')->simplePaginate(10);
         foreach ($notes as $note) {
-            $url = new URL();
-            $note['nb60id'] = $url->numto60($note['id']);
+            $note->nb60id = $url->numto60($note->id);
             $replies = 0;
             foreach ($note->webmentions as $webmention) {
                 if ($webmention->type == 'reply') {
                     $replies = $replies + 1;
                 }
             }
-            $note['replies'] = $replies;
-            $note['note'] = $this->transformNote($note['note']);
-            $note['iso8601_time'] = $carbon->createFromTimeStamp($note['timestamp'])->toISO8601String();
-            $note['human_time'] = $carbon->createFromTimeStamp($note['timestamp'])->diffForHumans();
-            if ($note['reply_to']) {
-                if (mb_substr($note['reply_to'], 0, 19, "UTF-8") == 'https://twitter.com') {
-                    $id = $noteprep->replyTweetId($note['reply_to']);
-                    $tweet = Twitter::getTweet($id);
-                    $note['reply_to_url'] = $note['reply_to'];
-                    $note['reply_to_text'] = Twitter::linkify($tweet->text);
-                    $note['reply_to_author_name'] = $tweet->user->name;
-                    $note['reply_to_screen_name'] = $tweet->user->screen_name;
-                    $note['reply_to_profile_photo'] = $this->secureTwimgLink($tweet->user->profile_image_url);
-                }
-            }
-            if ($note['location']) {
-                $pieces = explode(':', $note['location']);
+            $note->replies = $replies;
+            $note->note = $this->autoLinkHashtag($this->makeHCards($note->note));
+            $note->iso8601_time = $note->updated_at->toISO8601String();
+            $note->human_time = $note->updated_at->diffForHumans();
+            if ($note->location) {
+                $pieces = explode(':', $note->location);
                 $latlng = explode(',', $pieces[0]);
-                $note['latitude'] = trim($latlng[0]);
-                $note['longitude'] = trim($latlng[1]);
+                $note->latitude = trim($latlng[0]);
+                $note->longitude = trim($latlng[1]);
                 if (count($pieces) == 2) {
-                    $note['address'] = $pieces[1];
+                    $note->address = $pieces[1];
                 }
             }
-            if ($note['photo'] == true) {
-                $filesystem = new Filesystem();
-                $photoDir = public_path() . '/assets/img/notes';
-                $idname = 'note-' . $note['nb60id'];
-                $files = $filesystem->files($photoDir);
-                foreach ($files as $file) {
-                    $parts = explode('.', $file);
-                    $name = $parts[0];
-                    $dirs = explode('/', $name);
-                    $actualname = last($dirs);
-                    if ($actualname == $idname) {
-                        $ext = $parts[1];
-                    }
-                }
-                if (isset($ext)) {
-                    $note['photopath'] = '/assets/img/notes/' . $idname . '.' . $ext;
-                }
+            if ($note->photo == true) {
+                $photosController = new PhotosController();
+                $note->photopath = $photosController->getPhotoPath($note->nb60id);
             }
         }
         return view('allnotes', array('notes' => $notes));
@@ -91,80 +62,49 @@ class NotesController extends Controller
      * Show a single note
      *
      * @param  string The id of the note
+     * @param  \App\Client $client
      * @return \Illuminate\View\Factory view
      */
-    public function singleNote($noteId)
+    public function singleNote($urlId, Client $client)
     {
         $url = new URL();
-        $realId = $url->b60tonum($noteId);
+        $realId = $url->b60tonum($urlId);
         $carbon = new Carbon();
-        $noteprep = new NotePrep();
         $note = Note::find($realId);
-        $note->nb60id = $noteId;
+        $note->nb60id = $urlId;
         if ($note->client_id) {
-            $clientName = DB::table('clients')->where('client_url', $note->client_id)->pluck('client_name');
-            if ($clientName) {
-                $note->client_name = $clientName;
-            } else {
-                $url = parse_url($note->client_id);
-                $note->client_name = $url['host'];
-                if (isset($url['path'])) {
-                    $note->client_name .= $url['path'];
-                }
-            }
+            $note->client_name = $client->getClientName($note->client_id);
         }
         $replies = array();
         $reposts = array();
         $likes = array();
         foreach ($note->webmentions as $webmention) {
-            if ($webmention->type == 'reply') {
-                $content = unserialize($webmention->content);
-                $content['source'] = $this->bridgyReply($webmention->source);
-                $url = parse_url($content['photo'])['host'];
-                if ($url != 'pbs.twimg.com' && $url != 'twitter.com') {
-                    $content['photo'] = '/assets/profile-images/' . $url . '/image';
-                }
-                $content['photo'] = $this->secureTwimgLink($content['photo']);
-                $content['date'] = $carbon->parse($content['date'])->toDayDateTimeString();
-                $replies[] = $content;
-            }
-            if ($webmention->type == 'repost') {
-                $content = unserialize($webmention->content);
-                $url = parse_url($content['photo'])['host'];
-                if ($url != 'twitter.com' && $url != 'pbs.twimg.com') {
-                    $content['photo'] = '/assets/profile-images/' . $url . '/image';
-                } else {
-                    $content['photo'] = $this->secureTwimgLink($content['photo']);
-                }
-                $content['date'] = $carbon->parse($content['date'])->toDayDateTimeString();
-                $reposts[] = $content;
-            }
-            if ($webmention->type == 'like') {
-                $content = unserialize($webmention->content);
-                $url = parse_url($content['photo'])['host'];
-                if ($url != 'twitter.com' && $url != 'pbs.twimg.com') {
-                    $content['photo'] = '/assets/profile-images/' . $url . '/image';
-                } else {
-                    $content['photo'] = $this->secureTwimgLink($content['photo']);
-                }
-                $likes[] = $content;
-            }
-        }
-        $note->note = $this->transformNote($note->note);
-        $note->iso8601_time = $carbon->createFromTimeStamp($note->timestamp)->toISO8601String();
-        $note->human_time = $carbon->createFromTimeStamp($note->timestamp)->diffForHumans();
-        if ($note->reply_to) {
-            if (mb_substr($note->reply_to, 0, 19, "UTF-8") == 'https://twitter.com') {
-                $id = $noteprep->replyTweetId($note->reply_to);
-                $tweet = Twitter::getTweet($id);
-                $note->reply_to_url = $note->reply_to;
-                $note->reply_to_text = Twitter::linkify($tweet->text);
-                $note->reply_to_author_name = $tweet->user->name;
-                $note->reply_to_screen_name = $tweet->user->screen_name;
-                $note->reply_to_profile_photo = $this->secureTwimgLink($tweet->user->profile_image_url);
+            switch ($webmention->type) {
+                case 'reply':
+                    $content = unserialize($webmention->content);
+                    $content['source'] = $this->bridgyReply($webmention->source);
+                    $content['photo'] = $this->createPhotoLink($content['photo']);
+                    $content['date'] = $carbon->parse($content['date'])->toDayDateTimeString();
+                    $replies[] = $content;
+                    break;
 
+                case 'repost':
+                    $content = unserialize($webmention->content);
+                    $content['photo'] = $this->createPhotoLink($content['photo']);
+                    $content['date'] = $carbon->parse($content['date'])->toDayDateTimeString();
+                    $reposts[] = $content;
+                    break;
+
+                case 'like':
+                    $content = unserialize($webmention->content);
+                    $content['photo'] = $this->createPhotoLink($content['photo']);
+                    $likes[] = $content;
+                    break;
             }
         }
+        $note->note = $this->autoLinkHashtag($this->makeHCards($note->note));
+        $note->iso8601_time = $note->updated_at->toISO8601String();
+        $note->human_time = $note->updated_at->diffForHumans();
         if ($note->location) {
             $pieces = explode(':', $note->location);
             $latlng = explode(',', $pieces[0]);
@@ -175,22 +115,8 @@ class NotesController extends Controller
             }
         }
         if ($note->photo == true) {
-            $filesystem = new Filesystem();
-            $photoDir = public_path() . '/assets/img/notes';
-            $idname = 'note-' . $id;
-            $files = $filesystem->files($photoDir);
-            foreach ($files as $file) {
-                $parts = explode('.', $file);
-                $name = $parts[0];
-                $dirs = explode('/', $name);
-                $actualname = last($dirs);
-                if ($actualname == $idname) {
-                    $ext = $parts[1];
-                }
-            }
-            if (isset($ext)) {
-                $note->photopath = '/assets/img/notes/' . $idname . '.' . $ext;
-            }
+            $photosController = new PhotosController();
+            $note->photopath = $photosController->getPhotoPath($note->nb60id);
         }
 
         return view('singlenote', array('note' => $note, 'replies' => $replies, 'reposts' => $reposts, 'likes' => $likes));
@@ -202,12 +128,12 @@ class NotesController extends Controller
      * @param  string The decimal id of he note
      * @return \Illuminate\Routing\RedirectResponse redirect
      */
-    public function singleNoteRedirect($id)
+    public function singleNoteRedirect($decId)
     {
         $url = new URL();
-        $realid = $url->numto60($id);
+        $realId = $url->numto60($decId);
 
-        $url = 'https://' . config('url.longurl') . '/notes/' . $realid;
+        $url = 'https://' . config('url.longurl') . '/notes/' . $realId;
 
         return redirect($url);
     }
@@ -220,35 +146,15 @@ class NotesController extends Controller
      */
     public function taggedNotes($tag)
     {
-        $carbon = new Carbon();
         $tagId = Tag::where('tag', $tag)->pluck('id');
-        $notes = Tag::find($tagId)->notes()->orderBy('timestamp', 'desc')->get();
+        $notes = Tag::find($tagId)->notes()->orderBy('updated_at', 'desc')->get();
         foreach ($notes as $note) {
-            $note['note'] = $this->TransformNote($note['note']);
-            $note['iso8601_time'] = $carbon->createFromTimeStamp($note['timestamp'])->toISO8601String();
-            $note['human_time'] = $carbon->createFromTimeStamp($note['timestamp'])->diffForHumans();
+            $note->note = $this->TransformNote($note->note);
+            $note->iso8601_time = $note->updated_at->toISO8601String();
+            $note->human_time = $note->updated_at->diffForHumans();
         }
 
         return view('taggednotes', array('notes' => $notes, 'tag' => $tag));
-    }
-
-    /**
-     * Pre-process notes for web-view
-     *
-     * @param  string
-     * @return string
-     */
-    public function transformNote($text)
-    {
-        $unicode = new UnicodeTools();
-        $codepoints = $unicode->convertUnicodeCodepoints($text);
-        $markdown = new CommonMarkConverter();
-        $transformed = $markdown->convertToHtml($codepoints);
-        $hashtags = $this->autoLinkHashtag($transformed, 'notes');
-        $names = $this->makeHCards($hashtags);
-        $abbr = $this->addAbbrTag($names);
-
-        return $abbr;
     }
 
     /**
@@ -272,11 +178,10 @@ class NotesController extends Controller
                     return '<a href="https://twitter.com/' . $matches[1] . '">' . $matches[0] . '</a>';
                 }
                 $path = parse_url($contact->homepage)['host'];
-                if (file_exists(public_path() . '/assets/profile-images/' . $path . '/image')) {
-                    $contact->photo = '/assets/profile-images/' . $path . '/image';
-                } else {
-                    $contact->photo = $contact->photo = '/assets/profile-images/default-image';
-                }
+                $contact->photo = (file_exists(public_path() . '/assets/profile-images/' . $path . '/image')) ?
+                    '/assets/profile-images/' . $path . '/image'
+                :
+                    '/assets/profile-images/default-image';
                 return view('mini-hcard-template', array('contact' => $contact))->render();
             },
             $text
@@ -294,7 +199,7 @@ class NotesController extends Controller
      * @param  string  The section (such as blog)
      * @return string
      */
-    public function autoLinkHashtag($text, $section)
+    public function autoLinkHashtag($text, $section = 'notes')
     {
         // $replacements = ["#tag" => "<a rel="tag" href="/tags/tag">#tag</a>]
         $replacements = [];
@@ -317,46 +222,6 @@ class NotesController extends Controller
     }
 
     /**
-     * Add the <abbr> element to known abbr
-     *
-     * @param  string
-     * @return string
-     */
-    public function addAbbrTag($text)
-    {
-        $abbreviations = [
-            'HTML' => 'HyperText Markup Language',
-            'XML' => 'eXtensible Markup Language',
-            'TIL' => 'Today I Learned',
-            'ICYMI' => 'In Case You Missed It',
-            'FWIW' => 'For What It’s Worth'
-        ];
-        $regex = '/(?<!\#)\b(';
-        $i = 0;
-        $len = count($abbreviations);
-        foreach ($abbreviations as $key => $value) {
-            $regex .= $key;
-            if ($i < ($len - 1)) {
-                $regex .= '|';
-            }
-            $i++;
-        }
-        $regex .= ')\b/';
-        $text = preg_replace_callback(
-            $regex,
-            function ($matches) use ($abbreviations) {
-                if (array_key_exists($matches[0], $abbreviations)) {
-                    return '<abbr title="' . $abbreviations[$matches[0]] . '">' . $matches[0] . '</abbr>';
-                } else {
-                    return $matches[0];
-                }
-            },
-            $text
-        );
-        return $text;
-    }
-
-    /**
      * Swap a brid.gy URL shim-ing a twitter reply to a real twitter link.
      *
      * @param  string
@@ -367,9 +232,9 @@ class NotesController extends Controller
         $url = $source;
         if (mb_substr($source, 0, 28, "UTF-8") == 'https://brid-gy.appspot.com/') {
             $parts = explode('/', $source);
-            $tweet_id = array_pop($parts);
-            if ($tweet_id) {
-                $url = 'https://twitter.com/_/status/' . $tweet_id;
+            $tweetId = array_pop($parts);
+            if ($tweetId) {
+                $url = 'https://twitter.com/_/status/' . $tweetId;
             }
         }
 
@@ -377,17 +242,21 @@ class NotesController extends Controller
     }
 
     /**
-     * Make any pbs.twimg.com links secure
+     * Create the photo link
      *
      * @param  string
      * @return string
      */
-    public function secureTwimgLink($url)
+    public function createPhotoLink($url)
     {
+        $host = parse_url($url)['host'];
+        if ($host != 'twitter.com' && $host != 'pbs.twimg.com') {
+            return '/assets/profile-images/' . $host . '/image';
+        }
         if (mb_substr($url, 0, 20) == 'http://pbs.twimg.com') {
-            $url = str_replace('http://', 'https://', $url);
+            return str_replace('http://', 'https://', $url);
         }
 
-        return $url;
+        return null;
     }
 }
