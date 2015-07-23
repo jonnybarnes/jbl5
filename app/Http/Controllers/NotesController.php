@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
-
+use Cache;
+use Twitter;
 use App\Tag;
 use App\Note;
 use App\Client;
 use App\Contact;
 use Carbon\Carbon;
 use Jonnybarnes\Posse\URL;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Jonnybarnes\Posse\NotePrep;
 use App\Http\Controllers\Controller;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 // Need to sort out Twitter and webmentions!
@@ -38,6 +36,7 @@ class NotesController extends Controller
                 }
             }
             $note->replies = $replies;
+            $note->twitter = $this->checkTwitterReply($note->in_reply_to);
             $note->note = $this->autoLinkHashtag($this->makeHCards($note->note));
             $note->iso8601_time = $note->updated_at->toISO8601String();
             $note->human_time = $note->updated_at->diffForHumans();
@@ -102,6 +101,7 @@ class NotesController extends Controller
                     break;
             }
         }
+        $note->twitter = $this->checkTwitterReply($note->in_reply_to);
         $note->note = $this->autoLinkHashtag($this->makeHCards($note->note));
         $note->iso8601_time = $note->updated_at->toISO8601String();
         $note->human_time = $note->updated_at->diffForHumans();
@@ -258,5 +258,40 @@ class NotesController extends Controller
         }
 
         return null;
+    }
+
+    /**
+     * Twitter!!!
+     *
+     * @param  string  The reply to URL
+     * @return string | null
+     */
+    private function checkTwitterReply($url)
+    {
+        if ($url == null) {
+            return null;
+        }
+
+        if (mb_substr($url, 0, 20, 'UTF-8') !== 'https://twitter.com/') {
+            return null;
+        }
+
+        $arr = explode('/', $url);
+        $tweetId = end($arr);
+        if (Cache::has($tweetId)) {
+            return Cache::get($tweetId);
+        }
+        try {
+            $oEmbed = Twitter::getOembed([
+                'id' => $tweetId,
+                'align' => 'center',
+                'omit_script' => true,
+                'maxwidth' => 550,
+            ]);
+        } catch (\Exception $e) {
+            return null;
+        }
+        Cache::put($tweetId, $oEmbed, ($oEmbed->cache_age / 60));
+        return $oEmbed;
     }
 }

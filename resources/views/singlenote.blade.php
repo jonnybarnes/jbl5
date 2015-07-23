@@ -6,7 +6,9 @@ Notes « Jonny Barnes
 
 @section('content')
 <div class="h-entry">
-@if ($note->in_reply_to)
+@if ($note->twitter)
+  {!! $note->twitter->html !!}
+@elseif ($note->in_reply_to)
   <div class="p-in-reply-to h-cite reply-to">
     In reply to <a href="{{ $note->in_reply_to }}" class="u-url">{{ $note->in_reply_to }}</a>
   </div>
