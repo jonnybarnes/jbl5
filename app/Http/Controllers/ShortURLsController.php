@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\ShortURL;
-use Jonnybanres\Posse\URL;
 use Illuminate\Http\Request;
+use Jonnybanres\IndieWeb\Numbers;
 use App\Http\Controllers\Controller;
 
 class ShortURLsController extends Controller
@@ -88,8 +88,8 @@ class ShortURLsController extends Controller
      */
     public function redirect($shortURLId)
     {
-        $url = new URL();
-        $num = $url->b60tonum($shortURLId);
+        $numbers = new Numbers();
+        $num = $numbers->b60tonum($shortURLId);
         $shorturl = ShortURL::find($num);
         $redirect = $shorturl->redirect;
 

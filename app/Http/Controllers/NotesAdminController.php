@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Tag;
 use App\Note;
-use Jonnybarnes\Posse\URL;
 use Illuminate\Http\Request;
-use Jonnybarnes\Posse\NotePrep;
+use Jonnybarnes\IndieWeb\Numbers;
+use Jonnybarnes\IndieWeb\NotePrep;
 use App\Http\Controllers\Controller;
 
 class NotesAdminController extends Controller
@@ -57,7 +57,7 @@ class NotesAdminController extends Controller
      */
     public function postNewNote(Request $request, $clientId = null)
     {
-        $url = new URL();
+        $numbers = new Numbers();
         $noteprep = new NotePrep();
 
         $location = $this->getLocation($request);
@@ -77,7 +77,7 @@ class NotesAdminController extends Controller
             return 'Error saving note' . $msg;
         }
 
-        $realId = $url->numto60($note->id);
+        $realId = $numbers->numto60($note->id);
 
         $photosController = new PhotosController();
         $photosController->saveImage($request, $realId);
@@ -97,10 +97,11 @@ class NotesAdminController extends Controller
             $wmc->send($note, $longurl);
         }
 
-        $shorturl = 'https://' . config('url.shorturl') . '/t/' . $url->numto60($note->id);
+        $shorturl = 'https://' . config('url.shorturl') . '/t/' . $numbers->numto60($note->id);
 
-        if (
-            (is_array($request->input('mp-syndicate-to')) && in_array('twitter.com/jonnybarnes', $request->input('mp-syndicate-to')))
+        if ((is_array($request->input('mp-syndicate-to'))
+                &&
+            in_array('twitter.com/jonnybarnes', $request->input('mp-syndicate-to')))
             ||
             ($request->input('mp-syndicate-to') == 'twitter.com/jonnybarnes')
             ||

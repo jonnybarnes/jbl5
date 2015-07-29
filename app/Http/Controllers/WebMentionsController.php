@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Note;
 use GuzzleHttp\Client;
-use Jonnybarnes\Posse\URL;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Jobs\SendWebMentions;
+use Jonnybarnes\IndieWeb\Numbers;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -36,8 +36,8 @@ class WebMentionsController extends Controller
             case 'notes':
                 //we have a note
                 $noteId = $pathParts[2];
-                $url = new URL();
-                $realId = $url->b60tonum($noteId);
+                $numbers = new Numbers();
+                $realId = $numbers->b60tonum($noteId);
                 try {
                     $note = Note::findOrFail($realId);
                     $this->dispatch(new ProcessWebMention($note, $request->input('source')));

@@ -6,8 +6,8 @@ use Twitter;
 use App\Note;
 use App\Contact;
 use App\Jobs\Job;
-use Jonnybarnes\Posse\URL;
-use Jonnybarnes\Posse\NotePrep;
+use Jonnybarnes\IndieWeb\Numbers;
+use Jonnybarnes\IndieWeb\NotePrep;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Bus\SelfHandling;
@@ -33,16 +33,15 @@ class SyndicateToTwitter extends Job implements SelfHandling, ShouldQueue
     /**
      * Execute the job.
      *
-     * @param  \Jonnybarnes\Posse\URL $url
-     * @param  \Jonnybarnes\Posse\NotePrep $noteprep
+     * @param  \Jonnybarnes\IndieWeb\Numbers $numbers
+     * @param  \Jonnybarnes\IndieWeb\NotePrep $noteprep
      * @return void
      */
-    public function handle(URL $url, NotePrep $noteprep)
+    public function handle(Numbers $numbers, NotePrep $noteprep)
     {
         $noteSwappedNames = $this->swapNames($this->note->note);
-        $shorturlBase = config('url.shorturl');
-        $shorturlPath = 't/' . $url->numto60($this->note->id);
-        $tweet = $noteprep->createNote($noteSwappedNames, $shorturlBase, $shorturlPath, 140, true, true);
+        $shorturl = 'https://' . config('url.shorturl') . '/t/' . $numbers->numto60($this->note->id);
+        $tweet = $noteprep->createNote($noteSwappedNames, $shorturl, 140, true);
         $tweetOpts = array('status' => $tweet, 'format' => 'json');
         if ($this->note->in_reply_to) {
             $tweetOpts['in_reply_to_status_id'] = $noteprep->replyTweetId($this->note->in_reply_to);
@@ -62,7 +61,7 @@ class SyndicateToTwitter extends Job implements SelfHandling, ShouldQueue
             }
         }*/
         if ($this->note->photo) {
-            $photoFilename = 'note-' . $url->numto60($this->note->id);
+            $photoFilename = 'note-' . $numbers->numto60($this->note->id);
             $photosController = new PhotosController();
             $photoFilenameSmall = $photosController->makeSmallPhotoForTwitter($photoFilename);
             $file = ($photoFilenameSmall !== null) ?

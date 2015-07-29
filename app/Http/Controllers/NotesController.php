@@ -9,8 +9,7 @@ use App\Note;
 use App\Client;
 use App\Contact;
 use Carbon\Carbon;
-use Jonnybarnes\Posse\URL;
-use Jonnybarnes\Posse\NotePrep;
+use Jonnybarnes\IndieWeb\Numbers;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -25,10 +24,10 @@ class NotesController extends Controller
      */
     public function showNotes()
     {
-        $url = new URL();
+        $numbers = new Numbers();
         $notes = Note::orderBy('updated_at', 'desc')->with('webmentions')->simplePaginate(10);
         foreach ($notes as $note) {
-            $note->nb60id = $url->numto60($note->id);
+            $note->nb60id = $numbers->numto60($note->id);
             $replies = 0;
             foreach ($note->webmentions as $webmention) {
                 if ($webmention->type == 'reply') {
@@ -66,8 +65,8 @@ class NotesController extends Controller
      */
     public function singleNote($urlId, Client $client)
     {
-        $url = new URL();
-        $realId = $url->b60tonum($urlId);
+        $numbers = new Numbers();
+        $realId = $numbers->b60tonum($urlId);
         $carbon = new Carbon();
         $note = Note::find($realId);
         $note->nb60id = $urlId;
@@ -119,7 +118,12 @@ class NotesController extends Controller
             $note->photopath = $photosController->getPhotoPath($note->nb60id);
         }
 
-        return view('singlenote', array('note' => $note, 'replies' => $replies, 'reposts' => $reposts, 'likes' => $likes));
+        return view('singlenote', array(
+            'note' => $note,
+            'replies' => $replies,
+            'reposts' => $reposts,
+            'likes' => $likes
+        ));
     }
 
     /**
@@ -130,8 +134,8 @@ class NotesController extends Controller
      */
     public function singleNoteRedirect($decId)
     {
-        $url = new URL();
-        $realId = $url->numto60($decId);
+        $numbers = new Numbers();
+        $realId = $numbers->numto60($decId);
 
         $url = 'https://' . config('url.longurl') . '/notes/' . $realId;
 
@@ -209,7 +213,8 @@ class NotesController extends Controller
             // Look up #tags, get Full name and URL
             foreach ($matches[0] as $name) {
                 $name = str_replace('#', '', $name);
-                $replacements[$name] = '<a rel="tag" class="p-category" href="/' . $section . '/tagged/' . $name . '">#' . $name . '</a>';
+                $replacements[$name] =
+                  '<a rel="tag" class="p-category" href="/' . $section . '/tagged/' . $name . '">#' . $name . '</a>';
             }
 
             // Replace #tags with valid microformat-enabled link

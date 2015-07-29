@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use Carbon\Carbon;
-use Jonnybarnes\Posse\URL;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Jonnybarnes\IndieWeb\Numbers;
 use App\Http\Controllers\Controller;
 use Jonnybarnes\UnicodeTools\UnicodeTools;
 use League\CommonMark\CommonMarkConverter;
@@ -20,7 +20,10 @@ class ArticlesController extends Controller
      */
     public function showAllArticles($year = null, $month = null)
     {
-        $articles = Article::where('published', '1')->date($year, $month)->orderBy('updated_at', 'desc')->simplePaginate(5);
+        $articles = Article::where('published', '1')
+                    ->date($year, $month)
+                    ->orderBy('updated_at', 'desc')
+                    ->simplePaginate(5);
 
         foreach ($articles as $article) {
             $article['main'] = $this->markdown($article['main']);
@@ -61,10 +64,15 @@ class ArticlesController extends Controller
      */
     public function onlyIdInUrl($inURLId)
     {
-        $url = new URL();
-        $realId = $url->b60tonum($inURLId);
+        $numbers = new Numbers();
+        $realId = $numbers->b60tonum($inURLId);
         $article = Article::findOrFail($realId);
-        $redirect = '/blog/' . $article->updated_at->year . '/' . $article->updated_at->format('m') . '/' . $article->titleurl;
+        $redirect = '/blog/'
+                    . $article->updated_at->year
+                    . '/'
+                    . $article->updated_at->format('m')
+                    . '/'
+                    . $article->titleurl;
 
         return redirect($redirect);
     }
