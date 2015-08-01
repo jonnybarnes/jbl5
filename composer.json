@@ -59,18 +59,6 @@
 					"php artisan key:generate"
 			]
 	},
-	"repositories": [
-		{
-			"name": "jonnybarnes/posse",
-			"type": "git",
-			"url": "https://github.com/jonnybarnes/posse.git"
-		},
-		{
-			"name": "jonnybarnes/webmentions-parser",
-			"type": "git",
-			"url": "https://github.com/jonnybarnes/webmentions-parser"
-		}
-	],
 	"config": {
 		"preferred-install": "dist"
 	}
