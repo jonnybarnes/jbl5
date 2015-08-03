@@ -2,9 +2,10 @@
 	"name": "jonnybarnes/jbl5",
 	"description": "The code for jonnybanres.uk, based on Laravel 5.1",
 	"keywords": ["framework", "laravel", "indieweb"],
-	"license": "CC0",
+	"license": "CC0-1.0",
 	"type": "project",
 	"require": {
+		"ext-intl": "*",
 		"php": ">=5.5.9",
 		"laravel/framework": "5.1.*",
 		"jonnybarnes/unicode-tools": "dev-master",

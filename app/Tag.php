@@ -4,37 +4,36 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Tag extends Model {
+class Tag extends Model
+{
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'tags';
 
-	/**
-	 * The database table used by the model.
-	 *
-	 * @var string
-	 */
-	protected $table = 'tags';
+    /**
+     * Define the relationship with tags
+     *
+     * @var array
+     */
+    public function notes()
+    {
+        return $this->belongsToMany('App\Note');
+    }
 
-	/**
-	 * Define the relationship with tags
-	 *
-	 * @var array
-	 */
-	public function notes()
-	{
-		return $this->belongsToMany('App\Note');
-	}
+    /**
+     * The attributes excluded from the model's JSON form.
+     *
+     * @var array
+     */
+    protected $hidden = array('deleted');
 
-	/**
-	 * The attributes excluded from the model's JSON form.
-	 *
-	 * @var array
-	 */
-	protected $hidden = array('deleted');
-
-	/**
-	 * We shall set a blacklist of non-modifiable model attributes
-	 *
-	 * @var array
-	 */
-	protected $guarded = array('id');
-
+    /**
+     * We shall set a blacklist of non-modifiable model attributes
+     *
+     * @var array
+     */
+    protected $guarded = array('id');
 }
