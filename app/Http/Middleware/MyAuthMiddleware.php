@@ -7,7 +7,7 @@ use Closure;
 class MyAuthMiddleware
 {
     /**
-     * Check the user is logged in
+     * Check the user is logged in.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \Closure  $next

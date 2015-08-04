@@ -76,6 +76,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
                             if ($parser->checkLikeOf($microformats, $target) == false) {
                                 //it doesn't so delete
                                 $webmention->delete();
+
                                 return true;
                             } //note we don't need to do anything if it still is a like
                             break;

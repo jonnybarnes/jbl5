@@ -63,6 +63,7 @@ class Article extends Model
             $time .= '-' . $month;
         }
         $time .= '%';
+
         return $query->where('updated_at', 'like', $time);
     }
 }

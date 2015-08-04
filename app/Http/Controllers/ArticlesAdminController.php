@@ -15,6 +15,7 @@ class ArticlesAdminController extends Controller
     public function newArticle()
     {
         $message = session('message');
+
         return view('admin.newarticle', ['message' => $message]);
     }
 
@@ -26,6 +27,7 @@ class ArticlesAdminController extends Controller
     public function listArticles()
     {
         $posts = Article::select('id', 'title', 'published')->orderBy('id', 'desc')->get();
+
         return view('admin.listarticles', ['posts' => $posts]);
     }
 
@@ -43,6 +45,7 @@ class ArticlesAdminController extends Controller
             'url',
             'published'
         )->where('id', $articleId)->get();
+
         return view('admin.editarticle', ['id' => $articleId, 'post' => $post]);
     }
 
@@ -88,6 +91,7 @@ class ArticlesAdminController extends Controller
             //this isn't the error you're looking for
             throw $e;
         }
+
         return view('admin.newarticlesuccess', ['id' => $article->id, 'title' => $article->title]);
     }
 

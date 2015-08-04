@@ -44,13 +44,13 @@ class ContactsAdminController extends Controller
     }
 
     /**
-     * Show the fomr to confirm deleting a contact
+     * Show the form to confirm deleting a contact.
      *
      * @return \Illuminate\View\Factory view
      */
     public function deleteContact($contactId)
     {
-        return view('admin.deletecontact', array('id' => $contactId));
+        return view('admin.deletecontact', ['id' => $contactId]);
     }
 
     /**

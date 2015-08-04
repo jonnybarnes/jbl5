@@ -38,7 +38,7 @@ class ClientsAdminController extends Controller
     {
         Client::create([
             'client_url' => $request->input('client_url'),
-            'client_name' => $request->input('client_name')
+            'client_name' => $request->input('client_name'),
         ]);
 
         return view('admin.newclientsuccess');
