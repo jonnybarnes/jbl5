@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use IndieAuth\Client;
 use Illuminate\Http\Request;
 use Illuminate\Cookie\CookieJar;
-use App\Http\Controllers\Controller;
 
 class IndieAuthController extends Controller
 {
@@ -34,13 +33,20 @@ class IndieAuthController extends Controller
             $clientId = 'https://' . config('url.longurl') . '/notes/new';
             $state = $hex;
             $scope = 'post';
-            $authorizationURL = $client->buildAuthorizationURL($authEndpoint, $domain, $redirectURL, $clientId, $state, $scope);
+            $authorizationURL = $client->buildAuthorizationURL(
+                $authEndpoint,
+                $domain,
+                $redirectURL,
+                $clientId,
+                $state,
+                $scope
+            );
 
             return redirect($authorizationURL);
         }
+
         return redirect('notes/new')->with('error', 'Unable to determine authorisation endpoint.');
     }
-
 
     /**
      * Once they have verified themselves through the authorisation endpint
@@ -80,13 +86,15 @@ class IndieAuthController extends Controller
 
                 return redirect('/notes/new');
             }
+
             return redirect('notes/new')->with('error', 'Error getting token from the token endpoint');
         }
+
         return redirect('notes/new')->with('error', 'Unable to discover your token endpoint');
     }
 
     /**
-     * Log out the user, flush an session data, and overwrite any cookie data
+     * Log out the user, flush an session data, and overwrite any cookie data.
      *
      * @param  \Illuminate\Cookie\CookieJar $cookie
      * @return \Illuminate\Routing\RedirectResponse redirect

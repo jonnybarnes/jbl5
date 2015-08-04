@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ShortURL;
-use Illuminate\Http\Request;
 use Jonnybanres\IndieWeb\Numbers;
-use App\Http\Controllers\Controller;
 
 class ShortURLsController extends Controller
 {
@@ -96,7 +94,6 @@ class ShortURLsController extends Controller
         return redirect($redirect);
     }
 
-
     /**
      * I had an old redirect systme breifly, but cool URLs should still work.
      *
@@ -112,8 +109,7 @@ class ShortURLsController extends Controller
 
         foreach ($object as $key => $val) {
             if ($shortURLId == $key) {
-                $url = $val;
-                return redirect($url);
+                return redirect($val);
             }
         }
 

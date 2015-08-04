@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Note extends Model
 {
     use SoftDeletes;
+
     /**
      * The database table used by the model.
      *
@@ -19,7 +20,7 @@ class Note extends Model
     protected $table = 'notes';
 
     /**
-     * Define the relationship with tags
+     * Define the relationship with tags.
      *
      * @var array
      */
@@ -29,7 +30,7 @@ class Note extends Model
     }
 
     /**
-     * Define the relationship with webmentions
+     * Define the relationship with webmentions.
      *
      * @var array
      */
@@ -39,11 +40,11 @@ class Note extends Model
     }
 
     /**
-     * We shall set a blacklist of non-modifiable model attributes
+     * We shall set a blacklist of non-modifiable model attributes.
      *
      * @var array
      */
-    protected $guarded = array('id');
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be mutated to dates.
@@ -53,7 +54,7 @@ class Note extends Model
     protected $dates = ['deleted_at'];
 
     /**
-     * A mutator to ensure that in-reply-to is always non-empty or null
+     * A mutator to ensure that in-reply-to is always non-empty or null.
      *
      * @param  string  value
      * @return string
@@ -64,7 +65,7 @@ class Note extends Model
     }
 
     /**
-     * Normalize the note to Unicode FORM C
+     * Normalize the note to Unicode FORM C.
      *
      * @param  string  $value
      * @return string
@@ -75,7 +76,7 @@ class Note extends Model
     }
 
     /**
-     * Pre-process notes for web-view
+     * Pre-process notes for web-view.
      *
      * @param  string
      * @return string

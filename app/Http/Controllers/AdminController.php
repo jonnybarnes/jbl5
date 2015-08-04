@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-
 class AdminController extends Controller
 {
     /*
@@ -16,7 +14,7 @@ class AdminController extends Controller
      */
 
     /**
-     * Set variables
+     * Set variables.
      *
      * @var string
      */
@@ -26,12 +24,12 @@ class AdminController extends Controller
     }
 
     /**
-     * Show the main admin CP page
+     * Show the main admin CP page.
      *
      * @return \Illuminate\View\Factory view
      */
     public function showWelcome()
     {
-        return view('admin.welcome', array('name' => $this->username));
+        return view('admin.welcome', ['name' => $this->username]);
     }
 }

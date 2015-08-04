@@ -3,18 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Note;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Jobs\SendWebMentions;
 use Jonnybarnes\IndieWeb\Numbers;
-use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class WebMentionsController extends Controller
 {
     /**
-     * Receive and process a webmention
+     * Receive and process a webmention.
+     *
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Respone
      */
@@ -44,6 +43,7 @@ class WebMentionsController extends Controller
                 } catch (ModelNotFoundException $e) {
                     return (new Response('This note doesn’t exist.', 400));
                 }
+
                 return (new Response(
                     'Webmention received, it will be processed shortly',
                     202
@@ -83,17 +83,18 @@ class WebMentionsController extends Controller
     }
 
     /**
-     * Get the URLs from a note
+     * Get the URLs from a note.
      */
     private function getLinks($html)
     {
-        $urls = array();
+        $urls = [];
         $dom = new \DOMDocument();
         $dom->loadHTML($html);
         $anchors = $dom->getElementsByTagName('a');
         foreach ($anchors as $anchor) {
             $urls[] = ($anchor->hasAttribute('href')) ? $anchor->getAttribute('href') : false;
         }
+
         return $urls;
     }
 }

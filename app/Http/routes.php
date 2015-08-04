@@ -11,7 +11,7 @@
 |
 */
 
-Route::group(array('domain' => config('url.longurl')), function () {
+Route::group(['domain' => config('url.longurl')], function () {
     //Static homepage
     get('/', function () {
         return view('homepage');
@@ -114,23 +114,23 @@ Route::group(array('domain' => config('url.longurl')), function () {
 });
 
 //Short URL
-Route::group(array('domain' => config('url.shorturl')), function () {
+Route::group(['domain' => config('url.shorturl')], function () {
     get('/', 'ShortURLsController@baseURL');
     get('@', 'ShortURLsController@twitter');
     get('+', 'ShortURLsController@googlePlus');
     get('α', 'ShortURLsController@appNet');
 
     get('{type}/{id}', 'ShortURLsController@expandType')->where(
-        array(
+        [
             'type' => '[bt]',
-            'id' => '[0-9A-HJ-NP-Z_a-km-z]+'
-        )
+            'id' => '[0-9A-HJ-NP-Z_a-km-z]+',
+        ]
     );
 
     get('h/{id}', 'ShortURLsController@redirect');
     get('{id}', 'ShortURLsController@oldRedirect')->where(
-        array(
-            'id' => '[0-9A-HJ-NP-Z_a-km-z]{4}'
-        )
+        [
+            'id' => '[0-9A-HJ-NP-Z_a-km-z]{4}',
+        ]
     );
 });

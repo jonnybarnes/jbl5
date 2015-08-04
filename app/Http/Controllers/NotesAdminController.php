@@ -7,12 +7,11 @@ use App\Note;
 use Illuminate\Http\Request;
 use Jonnybarnes\IndieWeb\Numbers;
 use Jonnybarnes\IndieWeb\NotePrep;
-use App\Http\Controllers\Controller;
 
 class NotesAdminController extends Controller
 {
     /**
-     * Show the form to make a new note
+     * Show the form to make a new note.
      *
      * @return \Illuminate\View\Factory view
      */
@@ -22,7 +21,7 @@ class NotesAdminController extends Controller
     }
 
     /**
-     * List the notes that can be edited
+     * List the notes that can be edited.
      *
      * @return \Illuminate\View\Factory view
      */
@@ -32,11 +31,12 @@ class NotesAdminController extends Controller
         foreach ($notes as $note) {
             $note->originalNote = $note->getOriginal('note');
         }
-        return view('admin.listnotes', array('notes' => $notes));
+
+        return view('admin.listnotes', ['notes' => $notes]);
     }
 
     /**
-     * Display the form to edit a specific note
+     * Display the form to edit a specific note.
      *
      * @param  string The note id
      * @return \Illuminate\View\Factory view
@@ -45,11 +45,12 @@ class NotesAdminController extends Controller
     {
         $note = Note::find($noteId);
         $note->originalNote = $note->getOriginal('note');
-        return view('admin.editnote', array('id' => $noteId, 'note' => $note));
+
+        return view('admin.editnote', ['id' => $noteId, 'note' => $note]);
     }
 
     /**
-     * Process a request to make a new note
+     * Process a request to make a new note.
      *
      * @param Illuminate\Http\Request $request
      * @param string The client id that made the API call
@@ -64,16 +65,17 @@ class NotesAdminController extends Controller
 
         try {
             $note = Note::create(
-                array(
+                [
                     'note' => $request->input('content'),
                     'in_reply_to' => $request->input('in-reply-to'),
                     'location' => $location,
                     'client_id' => $clientId,
-                    'photo' => $request->hasFile('photo')
-                )
+                    'photo' => $request->hasFile('photo'),
+                ]
             );
         } catch (\Exception $e) {
             $msg = $e->getMessage(); //do something
+
             return 'Error saving note' . $msg;
         }
 
@@ -113,7 +115,8 @@ class NotesAdminController extends Controller
         if ($clientId) {
             return $longurl;
         }
-        return view('admin.newnotesuccess', array('id' => $note->id, 'shorturl' => $shorturl));
+
+        return view('admin.newnotesuccess', ['id' => $note->id, 'shorturl' => $shorturl]);
     }
 
     /**
@@ -137,11 +140,11 @@ class NotesAdminController extends Controller
             $wmc->send($note, $longurl);
         }
 
-        return view('admin.editnotesuccess', array('id' => $noteId));
+        return view('admin.editnotesuccess', ['id' => $noteId]);
     }
 
     /**
-     * Get the relavent location information from the input
+     * Get the relavent location information from the input.
      *
      * @param  \Illuminate\Http\Request $request
      * @return string | null
@@ -154,10 +157,13 @@ class NotesAdminController extends Controller
                 if ($request->input('address')) {
                     $location .= ':' . $request->input('address');
                 }
+
                 return $location;
             }
-            return null;
+
+            return;
         }
-        return null;
+
+        return;
     }
 }

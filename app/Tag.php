@@ -14,7 +14,7 @@ class Tag extends Model
     protected $table = 'tags';
 
     /**
-     * Define the relationship with tags
+     * Define the relationship with tags.
      *
      * @var array
      */
@@ -28,12 +28,12 @@ class Tag extends Model
      *
      * @var array
      */
-    protected $hidden = array('deleted');
+    protected $hidden = ['deleted'];
 
     /**
-     * We shall set a blacklist of non-modifiable model attributes
+     * We shall set a blacklist of non-modifiable model attributes.
      *
      * @var array
      */
-    protected $guarded = array('id');
+    protected $guarded = ['id'];
 }

@@ -4,13 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Contact;
 use GuzzleHttp\Client;
-use App\Http\Controllers\Controller;
 use Illuminate\Filesystem\Filesystem;
 
 class ContactsAdminController extends Controller
 {
     /**
-     * Display the form to add a new contact
+     * Display the form to add a new contact.
      *
      * @return \Illuminate\View\Factory view
      */
@@ -20,7 +19,7 @@ class ContactsAdminController extends Controller
     }
 
     /**
-     * List the currect contacts that can be edited
+     * List the currect contacts that can be edited.
      *
      * @return \Illuminate\View\Factory view
      */
@@ -28,11 +27,11 @@ class ContactsAdminController extends Controller
     {
         $contacts = Contact::all();
 
-        return view('admin.listcontacts', array('contacts' => $contacts));
+        return view('admin.listcontacts', ['contacts' => $contacts]);
     }
 
     /**
-     * Show the form to edit an existing contact
+     * Show the form to edit an existing contact.
      *
      * @param  string  The contact id
      * @return \Illuminate\View\Factory view
@@ -41,7 +40,7 @@ class ContactsAdminController extends Controller
     {
         $contact = Contact::findOrFail($contactId);
 
-        return view('admin.editcontact', array('contact' => $contact));
+        return view('admin.editcontact', ['contact' => $contact]);
     }
 
     /**
@@ -55,7 +54,7 @@ class ContactsAdminController extends Controller
     }
 
     /**
-     * Process the request to add a new contact
+     * Process the request to add a new contact.
      *
      * @param  \Illuminate\Http|request $request
      * @return \Illuminate\View\Factory view
@@ -70,11 +69,11 @@ class ContactsAdminController extends Controller
         $contact->save();
         $contactId = $contact->id;
 
-        return view('admin.newcontactsuccess', array('id' => $contactId));
+        return view('admin.newcontactsuccess', ['id' => $contactId]);
     }
 
     /**
-     * Process the request to edit a contact
+     * Process the request to edit a contact.
      *
      * @todo   Allow saving profile pictures for people without homepages
      *
@@ -107,7 +106,7 @@ class ContactsAdminController extends Controller
     }
 
     /**
-     * Process the request to delete a contact
+     * Process the request to delete a contact.
      *
      * @param  string  The contact id
      * @return \Illuminate\View\Factory view
@@ -121,7 +120,7 @@ class ContactsAdminController extends Controller
     }
 
     /**
-     * Download the avatar for a contact
+     * Download the avatar for a contact.
      *
      * This method attempts to find the microformat marked-up profile image
      * from a given homepage and save it accordingly
@@ -137,7 +136,7 @@ class ContactsAdminController extends Controller
             $client = new Client();
             try {
                 $response = $client->get($homepage);
-                $html = (string)$response->getBody();
+                $html = (string) $response->getBody();
                 $mf2 = \Mf2\parse($html, $homepage);
             } catch (\GuzzleHttp\Exception\BadResponseException $e) {
                 return "Bad Response from $homepage";
@@ -160,7 +159,8 @@ class ContactsAdminController extends Controller
                 $filesystem->makeDirectory($directory);
             }
             $filesystem->put($directory . '/image', $avatar->getBody());
-            return view('admin.getavatarsuccess', array('homepage' => parse_url($homepage)['host']));
+
+            return view('admin.getavatarsuccess', ['homepage' => parse_url($homepage)['host']]);
         }
     }
 }

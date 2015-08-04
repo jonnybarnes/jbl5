@@ -5,14 +5,13 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Cookie\CookieJar;
-use App\Http\Controllers\Controller;
 use IndieAuth\Client as IndieClient;
 use GuzzleHttp\Client as GuzzleClient;
 
 class MicropubClientController extends Controller
 {
     /**
-     * Display the new notes form
+     * Display the new notes form.
      *
      * @param  \Illuminate\Cookie\CookieJar $cookie
      * @param  \Illuminate\Http\Request $request
@@ -51,11 +50,18 @@ class MicropubClientController extends Controller
                 }
             }
         }
-        return view('micropubnewnotepage', array('authed' => $authed, 'url' => $url, 'errorMessage' => $errorMessage, 'syndication' => $syndication, 'syndicationType' => $syndicationType));
+
+        return view('micropubnewnotepage', [
+            'authed' => $authed,
+            'url' => $url,
+            'errorMessage' => $errorMessage,
+            'syndication' => $syndication,
+            'syndicationType' => $syndicationType,
+        ]);
     }
 
     /**
-     * Post the notes content to the relavent micropub API endpoint
+     * Post the notes content to the relavent micropub API endpoint.
      *
      * @todo   make sure this works with multiple syndication targets
      *
@@ -70,7 +76,7 @@ class MicropubClientController extends Controller
         $token = $request->cookie('token');
 
         $micropubEndpoint = $indieClient->discoverMicropubEndpoint($domain);
-        if (!$micropubEndpoint) {
+        if (! $micropubEndpoint) {
             return redirect('notes/new')->with('error', 'Unable to determine micropub API endpoint');
         }
 
@@ -81,8 +87,10 @@ class MicropubClientController extends Controller
             if (is_array($location)) {
                 return redirect($location[0]);
             }
+
             return redirect($location);
         }
+
         return $response;
     }
 
@@ -116,7 +124,7 @@ class MicropubClientController extends Controller
         try {
             $response = $guzzleClient->get($micropubEndpoint, [
                 'headers' => ['Authorization' => 'Bearer ' . $token],
-                'query' => ['q' => 'syndicate-to']
+                'query' => ['q' => 'syndicate-to'],
             ]);
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
             return redirect('notes/new')->with('error-message', 'Bad response when refreshing syndication targets');
@@ -125,11 +133,12 @@ class MicropubClientController extends Controller
         $syndication = str_replace(['&', '[]'], [';', ''], $body);
 
         $cookie->queue('syndication', $syndication, 44640);
+
         return redirect('notes/new');
     }
 
     /**
-     * Check the token is still a valid token
+     * Check the token is still a valid token.
      *
      * @param  string The token
      * @return bool
@@ -141,11 +150,13 @@ class MicropubClientController extends Controller
         if ($tokensController->tokenValidity($token) === false) {
             return false;
         }
+
         return true; //we don't want to return the token data, just bool
     }
 
     /**
-     * This method performs the actual POST request
+     * This method performs the actual POST request.
+     *
      * @param  \Illuminate\Http\Request $request
      * @param  string The Micropub endpoint to post to
      * @param  string The token to authenticate the request with
@@ -161,12 +172,12 @@ class MicropubClientController extends Controller
         $multipart = [
             [
                 'name' => 'h',
-                'contents' => 'entry'
+                'contents' => 'entry',
             ],
             [
                 'name' => 'content',
-                'contents' => $request->input('content')
-            ]
+                'contents' => $request->input('content'),
+            ],
         ];
         if ($request->hasFile('photo')) {
             $photo = $request->file('photo');
@@ -174,20 +185,20 @@ class MicropubClientController extends Controller
             $photo->move(storage_path(), $filename);
             $multipart[] = [
                 'name' => 'photo',
-                'contents' => fopen(storage_path() . '/' . $filename, 'r')
+                'contents' => fopen(storage_path() . '/' . $filename, 'r'),
             ];
         }
         if ($request->input('in-reply-to') != '') {
             $multipart[] = [
                 'name' => 'in-reply-to',
-                'contents' => $request->input('reply-to')
+                'contents' => $request->input('reply-to'),
             ];
         }
         if ($request->input('mp-syndicate-to')) {
             foreach ($request->input('mp-syndicate-to') as $syn) {
                 $multipart[] = [
                     'name' => 'mp-syndicate-to',
-                    'contents' => $syn
+                    'contents' => $syn,
                 ];
             }
         }
@@ -196,27 +207,28 @@ class MicropubClientController extends Controller
             $geoURL = 'geo:' . str_replace(' ', '', $latLng);
             $multipart[] = [
                 'name' => 'location',
-                'contents' => $geoURL
+                'contents' => $geoURL,
             ];
             if ($request->input('address') != '') {
                 $multipart[] = [
                     'name' => 'place_name',
-                    'contents' => $request->input('address')
+                    'contents' => $request->input('address'),
                 ];
             }
         }
         $headers = [
-            'Authorization' => 'Bearer ' . $token
+            'Authorization' => 'Bearer ' . $token,
         ];
         try {
             $response = $client->post($micropubEndpoint, [
                 'multipart' => $multipart,
-                'headers' => $headers
+                'headers' => $headers,
             ]);
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
             if (file_exists(storage_path() . '/' . $filename)) {
                 unlink(storage_path() . '/' . $filename);
             }
+
             return redirect('notes/new')->with('error', 'There was a bad response from the micropub endpoint.');
         }
 

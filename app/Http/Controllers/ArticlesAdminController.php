@@ -4,34 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class ArticlesAdminController extends Controller
 {
     /**
-     * Show the new article form
+     * Show the new article form.
      *
      * @return \Illuminate\View\Factory view
      */
     public function newArticle()
     {
         $message = session('message');
-        return view('admin.newarticle', array('message' => $message));
+        return view('admin.newarticle', ['message' => $message]);
     }
 
     /**
-     * List the articles that can be edited
+     * List the articles that can be edited.
      *
      * @return \Illuminate\View\Factory view
      */
     public function listArticles()
     {
         $posts = Article::select('id', 'title', 'published')->orderBy('id', 'desc')->get();
-        return view('admin.listarticles', array('posts' => $posts));
+        return view('admin.listarticles', ['posts' => $posts]);
     }
 
     /**
-     * Show the edit form for an existing article
+     * Show the edit form for an existing article.
      *
      * @param  string  The article id
      * @return \Illuminate\View\Factory view
@@ -44,18 +43,18 @@ class ArticlesAdminController extends Controller
             'url',
             'published'
         )->where('id', $articleId)->get();
-        return view('admin.editarticle', array('id' => $articleId, 'post' => $post));
+        return view('admin.editarticle', ['id' => $articleId, 'post' => $post]);
     }
 
     /**
-     * Show the delete confirmation form for an article
+     * Show the delete confirmation form for an article.
      *
      * @param  string  The article id
      * @return \Illuminate\View\Factory view
      */
     public function deleteArticle($articleId)
     {
-        return view('admin.deletearticle', array('id' => $articleId));
+        return view('admin.deletearticle', ['id' => $articleId]);
     }
 
     /**
@@ -72,12 +71,12 @@ class ArticlesAdminController extends Controller
         }
         try {
             $article = Article::create(
-                array(
+                [
                     'url' => $request->input('url'),
                     'title' => $request->input('title'),
                     'main' => $request->input('main'),
-                    'published' => $published
-                )
+                    'published' => $published,
+                ]
             );
         } catch (Exception $e) {
             $msg = $e->getMessage();
@@ -89,11 +88,11 @@ class ArticlesAdminController extends Controller
             //this isn't the error you're looking for
             throw $e;
         }
-        return view('admin.newarticlesuccess', array('id' => $article->id, 'title' => $article->title));
+        return view('admin.newarticlesuccess', ['id' => $article->id, 'title' => $article->title]);
     }
 
     /**
-     * Process an incoming request to edit an article
+     * Process an incoming request to edit an article.
      *
      * @param  string
      * @param  \Illuminate\Http\Request $request
@@ -112,11 +111,11 @@ class ArticlesAdminController extends Controller
         $article->published = $published;
         $article->save();
 
-        return view('admin.editarticlesuccess', array('id' => $articleId));
+        return view('admin.editarticlesuccess', ['id' => $articleId]);
     }
 
     /**
-     * Process a request to delete an aricle
+     * Process a request to delete an aricle.
      *
      * @param  string The article id
      * @return \Illuminate\View\Factory view
@@ -125,6 +124,6 @@ class ArticlesAdminController extends Controller
     {
         Article::where('id', $articleId)->delete();
 
-        return view('admin.deletearticlesuccess', array('id' => $articleId));
+        return view('admin.deletearticlesuccess', ['id' => $articleId]);
     }
 }

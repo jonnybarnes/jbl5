@@ -5,7 +5,6 @@ namespace App\Jobs;
 use Twitter;
 use App\Note;
 use App\Contact;
-use App\Jobs\Job;
 use Jonnybarnes\IndieWeb\Numbers;
 use Jonnybarnes\IndieWeb\NotePrep;
 use Illuminate\Queue\SerializesModels;
@@ -42,7 +41,7 @@ class SyndicateToTwitter extends Job implements SelfHandling, ShouldQueue
         $noteSwappedNames = $this->swapNames($this->note->note);
         $shorturl = 'https://' . config('url.shorturl') . '/t/' . $numbers->numto60($this->note->id);
         $tweet = $noteprep->createNote($noteSwappedNames, $shorturl, 140, true);
-        $tweetOpts = array('status' => $tweet, 'format' => 'json');
+        $tweetOpts = ['status' => $tweet, 'format' => 'json'];
         if ($this->note->in_reply_to) {
             $tweetOpts['in_reply_to_status_id'] = $noteprep->replyTweetId($this->note->in_reply_to);
         }
@@ -80,7 +79,7 @@ class SyndicateToTwitter extends Job implements SelfHandling, ShouldQueue
     }
 
     /**
-     * Swap @names in a note
+     * Swap @names in a note.
      *
      * When a note is being saved and we are posting it to twitter, we want
      * to swap our @local_name to Twitter’s @twitter_name so the user get’s
@@ -101,10 +100,12 @@ class SyndicateToTwitter extends Job implements SelfHandling, ShouldQueue
                     return '@' . $matches[1];
                 }
                 $twitterHandle = $contact->twitter;
+
                 return '@' . $twitterHandle;
             },
             $note
         );
+
         return $noteSwappedNames;
     }
 }

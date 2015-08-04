@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Note;
 use Mf2\parse;
-use App\Jobs\Job;
 use HTMLPurifier;
 use App\WebMention;
 use GuzzleHttp\Client;
@@ -60,6 +59,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
                             if ($parser->checkInReplyTo($microformats, $target) == false) {
                                 //it doesn't so delete
                                 $webmention->delete();
+
                                 return true;
                             }
                             //webmenion is still a reply, so update content
@@ -69,6 +69,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
                             $content = serialize($content);
                             $webmention->content = $content;
                             $webmention->save();
+
                             return true;
                             break;
                         case 'like':
@@ -82,6 +83,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
                             if ($parser->checkRepostOf($microformats, $target) == false) {
                                 //it doesn't so delete
                                 $webmention->delete();
+
                                 return true;
                             } //again, we don't need to do anything if it still is a repost
                             break;
@@ -104,6 +106,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
             $webmention->type = 'reply';
             $webmention->content = $content;
             $webmention->save();
+
             return true;
         } elseif ($parser->checkLikeOf($microformats, $target)) {
             //it is a like
@@ -117,6 +120,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
             $webmention->type = 'like';
             $webmention->content = $content;
             $webmention->save();
+
             return true;
         } elseif ($parser->checkRepostOf($microformats, $target)) {
             //it is a repost
@@ -130,12 +134,13 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
             $webmention->type = 'repost';
             $webmention->content = $content;
             $webmention->save();
+
             return true;
         }
     }
 
     /**
-     * Retreive the remote content from a URL, and caches the result
+     * Retreive the remote content from a URL, and caches the result.
      *
      * @param  string  The URL to retreive content from
      * @return string  The HTML from the URL
@@ -161,7 +166,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
      */
     private function createFilenameFromURL($url)
     {
-        $url = str_replace(array('https://', 'http://'), array('', ''), $url);
+        $url = str_replace(['https://', 'http://'], ['', ''], $url);
         if (substr($url, -1) == '/') {
             $url = $url . 'index.html';
         }
@@ -170,7 +175,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
     }
 
     /**
-     * Save a file, and create any necessary folders
+     * Save a file, and create any necessary folders.
      *
      * @param string  The directory to save to
      * @param binary  The file to save
@@ -181,7 +186,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
         $file = array_pop($parts);
         $dir = '';
         foreach ($parts as $part) {
-            if (!is_dir($dir .= "/$part")) {
+            if (! is_dir($dir .= "/$part")) {
                 mkdir($dir);
             }
         }
@@ -189,7 +194,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
     }
 
     /**
-     * A wrapper function for php-mf2’s parse method
+     * A wrapper function for php-mf2’s parse method.
      *
      * @param  string  The HTML to parse
      * @param  string  The base URL to resolve relative URLs in the HTML against
@@ -203,7 +208,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
     }
 
     /**
-     * Save a profile image to the local cache
+     * Save a profile image to the local cache.
      *
      * @param  array  source content
      * @return bool   wether image was saved or not (we don’t save twitter profiles)
@@ -225,19 +230,21 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
                 // we are openning and reading the default image so that
                 // fileForceContent work
                 $default = public_path() . '/assets/profile-images/default-image';
-                $handle = fopen($default, "rb");
+                $handle = fopen($default, 'rb');
                 $image = fread($handle, filesize($default));
                 fclose($handle);
                 $path = public_path() . '/assets/profile-images/' . parse_url($home)['host'] . '/image';
                 $this->fileForceContents($path, $image);
             }
+
             return true;
         }
+
         return false;
     }
 
     /**
-     * Purify HTML received from a webmention
+     * Purify HTML received from a webmention.
      *
      * @param  string  The HTML to be processed
      * @return string  The processed HTML
@@ -247,7 +254,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
         $config = HTMLPurifier_Config::createDefault();
         $config->set('Cache.SerializerPath', storage_path() . '/HTMLPurifier');
         $purifier = new HTMLPurifier($config);
+
         return $purifier->purify($html);
     }
-
 }

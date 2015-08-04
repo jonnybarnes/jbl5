@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Contact;
-use App\Http\Controllers\Controller;
 use Illuminate\Filesystem\Filesystem;
 
 class ContactsController extends Controller
 {
     /**
-     * Show all the contatcs
+     * Show all the contacts.
      *
      * @return \Illuminate\View\Factory view
      */
@@ -20,18 +19,17 @@ class ContactsController extends Controller
         foreach ($contacts as $contact) {
             $contact->homepagePretty = parse_url($contact->homepage)['host'];
             $file = public_path() . '/assets/profile-images/' . $contact->homepagePretty . '/image';
-            if ($filesystem->exists($file) ?
-                $contact->image = '/assets/profile-images/' . $contact->homepagePretty . '/image'
+            $contact->image = ($filesystem->exists($file)) ?
+                '/assets/profile-images/' . $contact->homepagePretty . '/image'
             :
-                $contact->image = '/assets/profile-images/default-image'
-            );
+                '/assets/profile-images/default-image';
         }
 
-        return view('contacts', array('contacts' => $contacts));
+        return view('contacts', ['contacts' => $contacts]);
     }
 
     /**
-     * Show a single contact
+     * Show a single contact.
      *
      * @return \Illuminate\View\Factory view
      */
@@ -41,12 +39,11 @@ class ContactsController extends Controller
         $contact = Contact::where('nick', '=', $nick)->firstOrFail();
         $contact->homepagePretty = parse_url($contact->homepage)['host'];
         $file = public_path() . '/assets/profile-images/' . $contact->homepagePretty . '/image';
-        if ($filesystem->exists($file) ?
-            $contact->image = '/assets/profile-images/' . $contact->homepagePretty . '/image'
+        $contact->image = ($filesystem->exists($file)) ?
+            '/assets/profile-images/' . $contact->homepagePretty . '/image'
         :
-            $contact->image = '/assets/profile-images/default-image'
-        );
+            '/assets/profile-images/default-image';
 
-        return view('contact', array('contact' => $contact));
+        return view('contact', ['contact' => $contact]);
     }
 }

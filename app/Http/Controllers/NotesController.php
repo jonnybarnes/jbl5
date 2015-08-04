@@ -10,7 +10,6 @@ use App\Client;
 use App\Contact;
 use Carbon\Carbon;
 use Jonnybarnes\IndieWeb\Numbers;
-use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 // Need to sort out Twitter and webmentions!
@@ -18,7 +17,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class NotesController extends Controller
 {
     /**
-     * Show all the notes
+     * Show all the notes.
      *
      * @return \Illuminte\View\Factory view
      */
@@ -53,11 +52,12 @@ class NotesController extends Controller
                 $note->photopath = $photosController->getPhotoPath($note->nb60id);
             }
         }
-        return view('allnotes', array('notes' => $notes));
+
+        return view('allnotes', ['notes' => $notes]);
     }
 
     /**
-     * Show a single note
+     * Show a single note.
      *
      * @param  string The id of the note
      * @param  \App\Client $client
@@ -73,9 +73,9 @@ class NotesController extends Controller
         if ($note->client_id) {
             $note->client_name = $client->getClientName($note->client_id);
         }
-        $replies = array();
-        $reposts = array();
-        $likes = array();
+        $replies = [];
+        $reposts = [];
+        $likes = [];
         foreach ($note->webmentions as $webmention) {
             switch ($webmention->type) {
                 case 'reply':
@@ -118,16 +118,16 @@ class NotesController extends Controller
             $note->photopath = $photosController->getPhotoPath($note->nb60id);
         }
 
-        return view('singlenote', array(
+        return view('singlenote', [
             'note' => $note,
             'replies' => $replies,
             'reposts' => $reposts,
-            'likes' => $likes
-        ));
+            'likes' => $likes,
+        ]);
     }
 
     /**
-     * Redirect /note/{decID} to /notes/{nb60id}
+     * Redirect /note/{decID} to /notes/{nb60id}.
      *
      * @param  string The decimal id of he note
      * @return \Illuminate\Routing\RedirectResponse redirect
@@ -143,7 +143,7 @@ class NotesController extends Controller
     }
 
     /**
-     * Show all notes tagged with {tag}
+     * Show all notes tagged with {tag}.
      *
      * @param  string The tag
      * @return \Illuminate\View\Factory view
@@ -158,7 +158,7 @@ class NotesController extends Controller
             $note->human_time = $note->updated_at->diffForHumans();
         }
 
-        return view('taggednotes', array('notes' => $notes, 'tag' => $tag));
+        return view('taggednotes', ['notes' => $notes, 'tag' => $tag]);
     }
 
     /**
@@ -186,7 +186,8 @@ class NotesController extends Controller
                     '/assets/profile-images/' . $path . '/image'
                 :
                     '/assets/profile-images/default-image';
-                return view('mini-hcard-template', array('contact' => $contact))->render();
+
+                return view('mini-hcard-template', ['contact' => $contact])->render();
             },
             $text
         );
@@ -235,7 +236,7 @@ class NotesController extends Controller
     public function bridgyReply($source)
     {
         $url = $source;
-        if (mb_substr($source, 0, 28, "UTF-8") == 'https://brid-gy.appspot.com/') {
+        if (mb_substr($source, 0, 28, 'UTF-8') == 'https://brid-gy.appspot.com/') {
             $parts = explode('/', $source);
             $tweetId = array_pop($parts);
             if ($tweetId) {
@@ -247,7 +248,7 @@ class NotesController extends Controller
     }
 
     /**
-     * Create the photo link
+     * Create the photo link.
      *
      * @param  string
      * @return string
@@ -262,7 +263,7 @@ class NotesController extends Controller
             return str_replace('http://', 'https://', $url);
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -274,11 +275,11 @@ class NotesController extends Controller
     private function checkTwitterReply($url)
     {
         if ($url == null) {
-            return null;
+            return;
         }
 
         if (mb_substr($url, 0, 20, 'UTF-8') !== 'https://twitter.com/') {
-            return null;
+            return;
         }
 
         $arr = explode('/', $url);
@@ -294,9 +295,10 @@ class NotesController extends Controller
                 'maxwidth' => 550,
             ]);
         } catch (\Exception $e) {
-            return null;
+            return;
         }
         Cache::put($tweetId, $oEmbed, ($oEmbed->cache_age / 60));
+
         return $oEmbed;
     }
 }

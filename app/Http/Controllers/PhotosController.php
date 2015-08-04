@@ -6,21 +6,20 @@ use App\Note;
 use Imagine\Image\Box;
 use Imagine\Gd\Imagine;
 use Illuminate\Http\Request;
-use Imagine\Image\ImageInterface;
-use App\Http\Controllers\Controller;
 use Illuminate\Filesystem\Filesystem;
 
 class PhotosController extends Controller
 {
     /**
-     *
+     * Image box size limit for resizing photos.
      */
     public function __construct()
     {
         $this->imageResizeLimit = 800;
     }
+
     /**
-     * Save an uploaded photo to the image folder
+     * Save an uploaded photo to the image folder.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string  The associated note’s nb60 ID
@@ -36,11 +35,12 @@ class PhotosController extends Controller
         $ext = $request->file('photo')->getClientOriginalExtension();
         $photoFilename .= '.' . $ext;
         $request->file('photo')->move($path, $photoFilename);
+
         return true;
     }
 
     /**
-     * Prepare a photo for posting to twitter
+     * Prepare a photo for posting to twitter.
      *
      * @param  string  photo fileanme
      * @return string  small photo filename, or null
@@ -49,26 +49,28 @@ class PhotosController extends Controller
     {
         $imagine = new Imagine();
         $orig = $imagine->open(public_path() . '/assets/img/notes/' . $photoFilename);
-        $size = array($orig->getSize()->getWidth(), $orig->getSize()->getHeight());
+        $size = [$orig->getSize()->getWidth(), $orig->getSize()->getHeight()];
         if ($size[0] > $this->imageResizeLimit || $size[1] > $this->imageResizeLimit) {
             $filenameParts = explode('.', $photoFilename);
             $preExt = count($filenameParts) - 2;
             $filenameParts[$preExt] .= '-small';
             $photoFilenameSmall = implode('.', $filenameParts);
-            $aspectRatio = $size[0]/$size[1];
+            $aspectRatio = $size[0] / $size[1];
             $box = ($aspectRatio >= 1) ?
-                array($this->imageResizeLimit, (int) round($this->imageResizeLimit/$aspectRatio))
+                [$this->imageResizeLimit, (int) round($this->imageResizeLimit / $aspectRatio)]
                 :
-                array((int) round($this->imageResizeLimit * $aspectRatio), $this->imageResizeLimit);
+                [(int) round($this->imageResizeLimit * $aspectRatio), $this->imageResizeLimit];
             $orig->resize(new Box($box[0], $box[1]))
                  ->save(public_path() . '/assets/img/notes/' . $photoFilenameSmall);
+
             return $photoFilenameSmall;
         }
-        return null;
+
+        return;
     }
 
     /**
-     * Get the image path for a note
+     * Get the image path for a note.
      *
      * @param  string $nb60id
      * @return string | null
@@ -90,6 +92,7 @@ class PhotosController extends Controller
         if (isset($ext)) {
             return '/assets/img/notes/note-' . $nb60id . '.' . $ext;
         }
-        return null;
+
+        return;
     }
 }

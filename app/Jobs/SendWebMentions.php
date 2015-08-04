@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-use App\Jobs\Job;
 use GuzzleHttp\Client;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -40,13 +39,13 @@ class SendWebMentions extends Job implements SelfHandling, ShouldQueue
                 'form_params' => [
                     'source' => $this->source,
                     'target' => $this->url,
-                ]
+                ],
             ]);
         }
     }
 
     /**
-     * Discover if a URL has a webmention endpoint
+     * Discover if a URL has a webmention endpoint.
      *
      * @param  string  The URL
      * @param  \GuzzleHttp\Client $client
@@ -82,6 +81,7 @@ class SendWebMentions extends Job implements SelfHandling, ShouldQueue
             //it must be a relative url, so resolve with php-mf2
             return $mf2->resolveUrl($endpoint);
         }
+
         return false;
     }
 }

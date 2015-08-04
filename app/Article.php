@@ -2,7 +2,6 @@
 
 namespace App;
 
-use DB;
 use Illuminate\Database\Eloquent\Model;
 use MartinBean\Database\Eloquent\Sluggable;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +10,7 @@ class Article extends Model
 {
     use SoftDeletes;
 
-    /**
+    /*
      * We want to turn the titles into slugs
      */
     use Sluggable;
@@ -33,7 +32,7 @@ class Article extends Model
     protected $table = 'articles';
 
     /**
-     * Define the relationship with webmentions
+     * Define the relationship with webmentions.
      *
      * @var array
      */
@@ -43,11 +42,11 @@ class Article extends Model
     }
 
     /**
-     * We shall set a blacklist of non-modifiable model attributes
+     * We shall set a blacklist of non-modifiable model attributes.
      *
      * @var array
      */
-    protected $guarded = array('id');
+    protected $guarded = ['id'];
 
     /**
      * Scope a query to only include articles from a particular year/month.

@@ -2,19 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Filesystem\Filesystem;
 
 class TokensController extends Controller
 {
     /**
-     * Return all the tokens
+     * Return all the tokens.
      *
      * @return array
      */
     public function getAll()
     {
-        $return = array();
+        $return = [];
         $filesystem = new Filesystem();
         $tokens = $filesystem->files(storage_path() . '/tokens/');
         foreach ($tokens as $token) {
@@ -46,13 +45,13 @@ class TokensController extends Controller
 
         $dateIssued = date('Y-m-d H:i:s');
 
-        $content = array(
+        $content = [
             'me' => $domain,
             'client_id' => $clientId,
             'scopes' => $scopes,
             'date_issued' => $dateIssued,
-            'valid' => 1
-        );
+            'valid' => 1,
+        ];
         $json = json_encode($content);
 
         $filesystem->put($path, $json);
@@ -73,6 +72,7 @@ class TokensController extends Controller
         if ($tokenData && $tokenData['valid'] == 1) {
             return $tokenData;
         }
+
         return false;
     }
 
@@ -89,13 +89,15 @@ class TokensController extends Controller
         //check token extists
         if ($filesystem->exists($file)) {
             $json = $filesystem->get($file);
+
             return json_decode($json, true);
         }
+
         return false;
     }
 
     /**
-     * Delete a token from file
+     * Delete a token from file.
      *
      * @param  string The token name
      * @return bool

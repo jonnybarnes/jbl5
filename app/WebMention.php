@@ -14,7 +14,7 @@ class WebMention extends Model
     protected $table = 'webmentions';
 
     /**
-     * Define the relationship
+     * Define the relationship.
      *
      * @var array
      */
@@ -24,9 +24,9 @@ class WebMention extends Model
     }
 
     /**
-     * We shall set a blacklist of non-modifiable model attributes
+     * We shall set a blacklist of non-modifiable model attributes.
      *
      * @var array
      */
-    protected $guarded = array('id');
+    protected $guarded = ['id'];
 }

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
 {
@@ -21,8 +20,10 @@ class AuthController extends Controller
             $request->input('password') === env('ADMIN_PASS')
         ) {
             session(['loggedin' => true]);
+
             return redirect()->intended('admin');
         }
+
         return redirect()->route('login');
     }
 }

@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Client;
-use App\Http\Controllers\Controller;
 
 class ClientsAdminController extends Controller
 {
     /**
-     * Show a list of known clients
+     * Show a list of known clients.
      *
      * @return \Illuminate\View\Factory view
      */
@@ -16,11 +15,11 @@ class ClientsAdminController extends Controller
     {
         $clients = Client::all();
 
-        return view('admin.listclients', array('clients' => $clients));
+        return view('admin.listclients', ['clients' => $clients]);
     }
 
     /**
-     * Form to add a client name
+     * Show form to add a client name.
      *
      * @return \Illuminate\View\Factory view
      */
@@ -30,7 +29,7 @@ class ClientsAdminController extends Controller
     }
 
     /**
-     * Process the request to adda new client name
+     * Process the request to adda new client name.
      *
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\View\Factory view
@@ -46,7 +45,7 @@ class ClientsAdminController extends Controller
     }
 
     /**
-     * Show a form to edit a client name
+     * Show a form to edit a client name.
      *
      * @param  string The client id
      * @return \Illuminate\View\Factory view
@@ -55,11 +54,15 @@ class ClientsAdminController extends Controller
     {
         $client = Client::findOrFail($clientId);
 
-        return view('admin.editclient', array('id' => $clientId, 'client_url' => $client->client_url, 'client_name' => $client->client_name));
+        return view('admin.editclient', [
+            'id' => $clientId,
+            'client_url' => $client->client_url,
+            'client_name' => $client->client_name,
+        ]);
     }
 
     /**
-     * Process the request to edit a client name
+     * Process the request to edit a client name.
      *
      * @param  string  The client id
      * @param  \Illuminate\Http\Request $request

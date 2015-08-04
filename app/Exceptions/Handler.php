@@ -22,44 +22,45 @@ class Handler extends ExceptionHandler
      *
      * This is a great spot to send exceptions to Sentry, Bugsnag, etc.
      *
-     * @param  \Exception  $e
+     * @param  \Exception  $exc
      * @return void
      */
-    public function report(Exception $e)
+    public function report(Exception $exc)
     {
-        return parent::report($e);
+        return parent::report($exc);
     }
 
     /**
      * Render an exception into an HTTP response.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Exception  $e
+     * @param  \Exception  $exc
      * @return \Illuminate\Http\Response
      */
-    public function render($request, Exception $e)
+    public function render($request, Exception $exc)
     {
-        if(config('app.debug')) {
-            return $this->renderExceptionWithWhoops($e);
+        if (config('app.debug')) {
+            return $this->renderExceptionWithWhoops($exc);
         }
-        return parent::render($request, $e);
+
+        return parent::render($request, $exc);
     }
 
     /**
      * Render an exception using Whoops.
      *
-     * @param  \Exception $e
+     * @param  \Exception $exc
      * @return \Illuminate\Http\Response
      */
-    protected function renderExceptionWithWhoops(Exception $e)
+    protected function renderExceptionWithWhoops(Exception $exc)
     {
         $whoops = new \Whoops\Run;
         $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
 
         return new \Illuminate\Http\Response(
-              $whoops->handleException($e),
-              $e->getStatusCode(),
-              $e->getHeaders()
+            $whoops->handleException($exc),
+            $exc->getStatusCode(),
+            $exc->getHeaders()
         );
     }
 }

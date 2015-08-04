@@ -38,6 +38,7 @@ class Client extends Model
         if (isset($url['path'])) {
             return $url['host'] . $url['path'];
         }
+
         return $url['host'];
     }
 }

@@ -4,17 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Jonnybarnes\IndieWeb\Numbers;
-use App\Http\Controllers\Controller;
 use Jonnybarnes\UnicodeTools\UnicodeTools;
 use League\CommonMark\CommonMarkConverter;
 
 class ArticlesController extends Controller
 {
     /**
-     * Show all articles (with pagination)
+     * Show all articles (with pagination).
      *
      * @return \Illuminate\View\Factory view
      */
@@ -33,11 +31,11 @@ class ArticlesController extends Controller
             $article['link'] = $this->createLink($article['updated_at'], $article['titleurl']);
         }
 
-        return view('multipost', array('data' => $articles));
+        return view('multipost', ['data' => $articles]);
     }
 
     /**
-     * Show a single article
+     * Show a single article.
      *
      * @return \Illuminate\View\Factory view
      */
@@ -53,7 +51,7 @@ class ArticlesController extends Controller
         $article->human_time = $article->updated_at->diffForHumans();
         $article->link = $this->createLink($article->updated_at, $article->titleurl);
 
-        return view('singlepost', array('article' => $article));
+        return view('singlepost', ['article' => $article]);
     }
 
     /**
@@ -78,14 +76,14 @@ class ArticlesController extends Controller
     }
 
     /**
-     * Returns the RSS feed
+     * Returns the RSS feed.
      *
      * @return \Illuminate\Http\Response
      */
     public function makeRSS()
     {
         $carbon = new Carbon();
-        $pubdates = array();
+        $pubdates = [];
         $articles = Article::where('published', '1')->where('deleted', '0')->orderBy('date_time', 'desc')->get();
         foreach ($articles as $article) {
             $article['main'] = $this->markdown($article['main']);
@@ -95,14 +93,14 @@ class ArticlesController extends Controller
 
         $last = array_pop($pubdates);
 
-        $contents = (string) view('rss', array('data' => $articles, 'pubdate' => $last));
+        $contents = (string) view('rss', ['data' => $articles, 'pubdate' => $last]);
 
         return (new Response($contents, '200'))->header('Content-Type', 'application/rss+xml');
     }
 
     /**
      * This applies the Commonmark Markdown transform, before though
-     * it applies my \uXXXXX\ to chr transform
+     * it applies my \uXXXXX\ to chr transform.
      *
      * @param  string
      * @return string
@@ -125,7 +123,7 @@ class ArticlesController extends Controller
 
     /**
      * Creates a dynamic link to the article.
-     * That is a link of the form /blog/1999/11/i-am-a-slug
+     * That is a link of the form /blog/1999/11/i-am-a-slug.
      *
      * @param  \Carbon\Carbon  the upated time of the model
      * @param  string  A slug of blog post
@@ -133,7 +131,6 @@ class ArticlesController extends Controller
      */
     private function createLink($updatedAt, $titleurl)
     {
-        $link = '/blog/' . $updatedAt->year . '/' . $updatedAt->format('m') . '/' . $titleurl;
-        return $link;
+        return '/blog/' . $updatedAt->year . '/' . $updatedAt->format('m') . '/' . $titleurl;
     }
 }
