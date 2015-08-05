@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Tag;
 use App\Note;
 use Illuminate\Http\Request;
+use App\Jobs\SyndicateToTwitter;
 use Jonnybarnes\IndieWeb\Numbers;
 use Jonnybarnes\IndieWeb\NotePrep;
 

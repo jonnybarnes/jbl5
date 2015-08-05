@@ -38,7 +38,7 @@ class SyndicateToTwitter extends Job implements SelfHandling, ShouldQueue
      */
     public function handle(Numbers $numbers, NotePrep $noteprep)
     {
-        $noteSwappedNames = $this->swapNames($this->note->note);
+        $noteSwappedNames = $this->swapNames($this->note->getOriginal('note'));
         $shorturl = 'https://' . config('url.shorturl') . '/t/' . $numbers->numto60($this->note->id);
         $tweet = $noteprep->createNote($noteSwappedNames, $shorturl, 140, true);
         $tweetOpts = ['status' => $tweet, 'format' => 'json'];
