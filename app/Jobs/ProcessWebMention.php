@@ -8,6 +8,7 @@ use HTMLPurifier;
 use App\WebMention;
 use GuzzleHttp\Client;
 use HTMLPurifier_Config;
+use Jonnybarnes\IndieWeb\Numbers;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Jonnybarnes\WebmentionsParser\Parser;
@@ -37,59 +38,59 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
     /**
      * Execute the job.
      *
+     * @param  \Jonnybarnes\WebmentionsParser\Parser $parser
+     * @param  \Jonnybarnes\IndieWeb\Numbers $numbers
      * @return void
      */
-    public function handle(Parser $parser)
+    public function handle(Parser $parser, Numbers $numbers)
     {
-        $sourceURL = parse_url($source);
+        $target = 'https://' . config('url.longurl') . '/notes/' . $numbers->numto60($this->note->id);
+        $sourceURL = parse_url($this->source);
         $baseURL = $sourceURL['scheme'] . '://' . $sourceURL['host'];
         $remoteContent = $this->getRemoteContent($this->source);
         $microformats = $this->parseHTML($remoteContent, $baseURL);
-        $count = WebMention::where('source', '=', $source)->count();
+        $count = WebMention::where('source', '=', $this->source)->count();
         if ($count > 0) {
             //we already have a webmention from this source
-            $webmentions = WebMention::where('source', '=', $source)->get();
+            $webmentions = WebMention::where('source', '=', $this->source)->get();
             foreach ($webmentions as $webmention) {
-                //for each one, check its a webmention for this particular target
-                if ($webmention->target == $target) {
-                    //now check it still 'mentions' this target
-                    //we switch for each type of mention (reply/like/repost)
-                    switch ($webmention->type) {
-                        case 'reply':
-                            if ($parser->checkInReplyTo($microformats, $target) == false) {
-                                //it doesn't so delete
-                                $webmention->delete();
-
-                                return true;
-                            }
-                            //webmenion is still a reply, so update content
-                            $content = $parser->replyContent($microformats);
-                            $this->saveImage($content);
-                            $content['reply'] = $this->filterHTML($content['reply']);
-                            $content = serialize($content);
-                            $webmention->content = $content;
-                            $webmention->save();
+                //now check it still 'mentions' this target
+                //we switch for each type of mention (reply/like/repost)
+                switch ($webmention->type) {
+                    case 'reply':
+                        if ($parser->checkInReplyTo($microformats, $target) == false) {
+                            //it doesn't so delete
+                            $webmention->delete();
 
                             return true;
-                            break;
-                        case 'like':
-                            if ($parser->checkLikeOf($microformats, $target) == false) {
-                                //it doesn't so delete
-                                $webmention->delete();
+                        }
+                        //webmenion is still a reply, so update content
+                        $content = $parser->replyContent($microformats);
+                        $this->saveImage($content);
+                        $content['reply'] = $this->filterHTML($content['reply']);
+                        $content = serialize($content);
+                        $webmention->content = $content;
+                        $webmention->save();
 
-                                return true;
-                            } //note we don't need to do anything if it still is a like
-                            break;
-                        case 'repost':
-                            if ($parser->checkRepostOf($microformats, $target) == false) {
-                                //it doesn't so delete
-                                $webmention->delete();
+                        return true;
+                        break;
+                    case 'like':
+                        if ($parser->checkLikeOf($microformats, $target) == false) {
+                            //it doesn't so delete
+                            $webmention->delete();
 
-                                return true;
-                            } //again, we don't need to do anything if it still is a repost
-                            break;
-                    }//switch
-                }//if
+                            return true;
+                        } //note we don't need to do anything if it still is a like
+                        break;
+                    case 'repost':
+                        if ($parser->checkRepostOf($microformats, $target) == false) {
+                            //it doesn't so delete
+                            $webmention->delete();
+
+                            return true;
+                        } //again, we don't need to do anything if it still is a repost
+                        break;
+                }//switch
             }//foreach
         }//if
         //no wemention in db so create new one
@@ -100,7 +101,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
             $this->saveImage($content);
             $content['reply'] = $this->filterHTML($content['reply']);
             $content = serialize($content);
-            $webmention->source = $source;
+            $webmention->source = $this->source;
             $webmention->target = $target;
             $webmention->commentable_id = $this->note->id;
             $webmention->commentable_type = 'App\Note';
@@ -114,7 +115,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
             $content = $parser->likeContent($microformats);
             $this->saveImage($content);
             $content = serialize($content);
-            $webmention->source = $source;
+            $webmention->source = $this->source;
             $webmention->target = $target;
             $webmention->commentable_id = $this->note->id;
             $webmention->commentable_type = 'App\Note';
@@ -128,7 +129,7 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
             $content = $parser->repostContent($microformats);
             $this->saveImage($content);
             $content = serialize($content);
-            $webmention->source = $source;
+            $webmention->source = $this->source;
             $webmention->target = $target;
             $webmention->commentable_id = $this->note->id;
             $webmention->commentable_type = 'App\Note';
@@ -184,14 +185,12 @@ class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
     private function fileForceContents($dir, $contents)
     {
         $parts = explode('/', $dir);
-        $file = array_pop($parts);
-        $dir = '';
-        foreach ($parts as $part) {
-            if (! is_dir($dir .= "/$part")) {
-                mkdir($dir);
-            }
+        $name = array_pop($parts);
+        $dir = implode('/', $parts);
+        if (! is_dir($dir)) {
+            mkdir($dir, 0755, true);
         }
-        file_put_contents("$dir/$file", $contents);
+        file_put_contents("$dir/$name", $contents);
     }
 
     /**

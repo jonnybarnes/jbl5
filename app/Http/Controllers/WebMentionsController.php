@@ -6,6 +6,7 @@ use App\Note;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Jobs\SendWebMentions;
+use App\Jobs\ProcessWebMention;
 use Jonnybarnes\IndieWeb\Numbers;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
