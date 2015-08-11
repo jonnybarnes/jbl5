@@ -1,4 +1,4 @@
-/* http://prismjs.com/download.html?themes=prism-dark&languages=markup+css+css-extras+clike+javascript+php+php-extras+scss+bash+c+cpp+python+sql+http+swift+latex+git+markdown&plugins=line-numbers */
+/* http://prismjs.com/download.html?themes=prism-dark&languages=markup+css+clike+javascript+bash+c+cpp+css-extras+git+http+latex+markdown+php+php-extras+python+scss+sql+swift&plugins=line-numbers+show-invisibles */
 /**
  * prism.js Dark theme for JavaScript, CSS and HTML
  * Based on the slides of the talk “/Reg(exp){2}lained/”
@@ -9,7 +9,7 @@ code[class*="language-"],
 pre[class*="language-"] {
 	color: white;
 	text-shadow: 0 -.1em .2em black;
-	font-family: Consolas, Monaco, 'Andale Mono', monospace;
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
 	direction: ltr;
 	text-align: left;
 	white-space: pre;
@@ -166,3 +166,23 @@ pre.line-numbers > code {
 			padding-right: 0.8em;
 			text-align: right;
 		}
+.token.tab:not(:empty):before,
+.token.cr:before,
+.token.lf:before {
+	color: hsl(24, 20%, 85%);
+}
+
+.token.tab:not(:empty):before {
+    content: '\21E5';
+}
+
+.token.cr:before {
+    content: '\240D';
+}
+
+.token.crlf:before {
+    content: '\240D\240A';
+}
+.token.lf:before {
+    content: '\240A';
+}
