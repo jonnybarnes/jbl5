@@ -19,7 +19,7 @@ class CreateArticlesTable extends Migration
                 $table->string('url', 120)->nullable();
                 $table->string('title');
                 $table->longText('main');
-                $table->tinyInt('published')->default(0);
+                $table->tinyInteger('published')->default(0);
                 $table->timestamps();
                 $table->softDeletes();
             });

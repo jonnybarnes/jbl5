@@ -21,7 +21,7 @@ class CreateWebMentionsTable extends Migration
             $table->string('commentable_type')->nullable();
             $table->string('type')->nullable();
             $table->text('content');
-            $table->tinyInt('verified')->default(1);
+            $table->tinyInteger('verified')->default(1);
             $table->timestamps();
             $table->softDeletes();
         });

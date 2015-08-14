@@ -19,7 +19,7 @@ class CreateNotesTable extends Migration
                 $table->string('in_reply_to')->nullable();
                 $table->string('shorturl', 20)->nullable();
                 $table->string('location')->nullable();
-                $table->tinyInt('photo')->nullable();
+                $table->tinyInteger('photo')->nullable();
                 $table->string('tweet_id')->nullable();
                 $table->string('client_id')->nullable();
                 $table->timestamps();
