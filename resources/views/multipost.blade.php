@@ -24,7 +24,7 @@ Articles « Jonny Barnes
 {!! $data->render() !!}
 @stop
 
-@section('script')
+@section('scripts')
 <script src="//twemoji.maxcdn.com/twemoji.min.js"></script>
 <script>
   twemoji.parse(document.body);
