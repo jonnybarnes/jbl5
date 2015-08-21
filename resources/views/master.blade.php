@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width">
   <script type="text/javascript" src="//use.typekit.net/kmb3cdb.js"></script>
   <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-  <script type="text/javascript" src="/assets/js/mapbox.js"></script>
+  <link rel="stylesheet" href="/assets/css/normalize.css">
   <link rel="stylesheet" href="/assets/css/<?php if (App::environment('local')) { echo 'global'; } else { echo 'style'; }?>.css">
   <link rel="stylesheet" href="/assets/css/mapbox.css">
   <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css">
@@ -39,26 +39,28 @@
 @section('scripts')
 <!--scripts go here when needed-->
 @show
-<script src="//twemoji.maxcdn.com/twemoji.min.js"></script>
-<script>
-  twemoji.parse(document.body);
-</script>
-<script src="/assets/js/prism.js"></script>
-<script>window.twttr = (function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0],
-    t = window.twttr || {};
-  if (d.getElementById(id)) return t;
-  js = d.createElement(s);
-  js.id = id;
-  js.src = "https://platform.twitter.com/widgets.js";
-  fjs.parentNode.insertBefore(js, fjs);
+  <script src="/assets/js/mapbox.js"></script>
+  <script src="//twemoji.maxcdn.com/twemoji.min.js"></script>
+  <script>
+    twemoji.parse(document.body);
+  </script>
+  <script src="/assets/js/prism.js"></script>
+  <script>window.twttr = (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0],
+      t = window.twttr || {};
+    if (d.getElementById(id)) return t;
+    js = d.createElement(s);
+    js.id = id;
+    js.src = "https://platform.twitter.com/widgets.js";
+    fjs.parentNode.insertBefore(js, fjs);
 
-  t._e = [];
-  t.ready = function(f) {
-    t._e.push(f);
-  };
+    t._e = [];
+    t.ready = function(f) {
+      t._e.push(f);
+    };
 
-  return t;
-}(document, "script", "twitter-wjs"));</script>
+    return t;
+  }(document, "script", "twitter-wjs"));
+  </script>
 </body>
 </html>

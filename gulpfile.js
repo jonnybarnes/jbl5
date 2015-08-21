@@ -47,6 +47,5 @@ gulp.task('gzip-fa-fonts', function() {
 gulp.task('default', [
 	'gzip-css',
 	'gzip-js',
-	'gzip-fa-css',
-	'gzip-fa-fonts'
+	'gzip-fa-css'
 ]);
