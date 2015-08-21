@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <title>@if (App::environment() == 'local'){!! "[testing] -"!!}@endif @yield('title')</title>
   <meta name="viewport" content="width=device-width">
-  <script type="text/javascript" src="//use.typekit.net/kmb3cdb.js"></script>
-  <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
   <link rel="stylesheet" href="/assets/css/normalize.css">
   <link rel="stylesheet" href="/assets/css/<?php if (App::environment('local')) { echo 'global'; } else { echo 'style'; }?>.css">
   <link rel="stylesheet" href="/assets/css/mapbox.css">
@@ -39,6 +37,8 @@
 @section('scripts')
 <!--scripts go here when needed-->
 @show
+  <script src="//use.typekit.net/kmb3cdb.js"></script>
+  <script>try{Typekit.load({ async: true });}catch(e){}</script>
   <script src="/assets/js/mapbox.js"></script>
   <script src="//twemoji.maxcdn.com/twemoji.min.js"></script>
   <script>
