@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "cd4d3d3ceeadcec210c6b5da0dfb7123",
+    "hash": "56e7976874799d9ba8c8fc7b60f522e8",
     "packages": [
         {
             "name": "barnabywalters/mf-cleaner",
@@ -299,64 +299,6 @@
                 "html"
             ],
             "time": "2015-08-05 01:03:42"
-        },
-        {
-            "name": "filp/whoops",
-            "version": "1.1.7",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/filp/whoops.git",
-                "reference": "72538eeb70bbfb11964412a3d098d109efd012f7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/72538eeb70bbfb11964412a3d098d109efd012f7",
-                "reference": "72538eeb70bbfb11964412a3d098d109efd012f7",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "0.9.*"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.2-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Whoops": "src/"
-                },
-                "classmap": [
-                    "src/deprecated"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Filipe Dobreira",
-                    "homepage": "https://github.com/filp",
-                    "role": "Developer"
-                }
-            ],
-            "description": "php error handling for cool kids",
-            "homepage": "https://github.com/filp/whoops",
-            "keywords": [
-                "error",
-                "exception",
-                "handling",
-                "library",
-                "silex-provider",
-                "whoops",
-                "zf2"
-            ],
-            "time": "2015-06-29 05:42:04"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -2728,6 +2670,64 @@
             "time": "2015-06-14 21:17:01"
         },
         {
+            "name": "filp/whoops",
+            "version": "1.1.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/filp/whoops.git",
+                "reference": "72538eeb70bbfb11964412a3d098d109efd012f7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/72538eeb70bbfb11964412a3d098d109efd012f7",
+                "reference": "72538eeb70bbfb11964412a3d098d109efd012f7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "0.9.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "Whoops": "src/"
+                },
+                "classmap": [
+                    "src/deprecated"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Filipe Dobreira",
+                    "homepage": "https://github.com/filp",
+                    "role": "Developer"
+                }
+            ],
+            "description": "php error handling for cool kids",
+            "homepage": "https://github.com/filp/whoops",
+            "keywords": [
+                "error",
+                "exception",
+                "handling",
+                "library",
+                "silex-provider",
+                "whoops",
+                "zf2"
+            ],
+            "time": "2015-06-29 05:42:04"
+        },
+        {
             "name": "fzaninotto/faker",
             "version": "v1.5.0",
             "source": {
@@ -3408,16 +3408,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.5",
+            "version": "4.8.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "9b7417edaf28059ea63d86be941e6004dbfcc0cc"
+                "reference": "2246830f4a1a551c67933e4171bf2126dc29d357"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/9b7417edaf28059ea63d86be941e6004dbfcc0cc",
-                "reference": "9b7417edaf28059ea63d86be941e6004dbfcc0cc",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2246830f4a1a551c67933e4171bf2126dc29d357",
+                "reference": "2246830f4a1a551c67933e4171bf2126dc29d357",
                 "shasum": ""
             },
             "require": {
@@ -3476,7 +3476,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-08-19 09:20:57"
+            "time": "2015-08-24 04:09:38"
         },
         {
             "name": "phpunit/phpunit-mock-objects",

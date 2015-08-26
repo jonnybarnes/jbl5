@@ -13,7 +13,6 @@
 		"jonnybarnes/webmentions-parser": "dev-master",
 		"guzzlehttp/guzzle": "~6.0",
 		"predis/predis": "~1.0",
-		"filp/whoops": "~1.1",
 		"thujohn/twitter": "~2.0",
 		"mf2/mf2": "~0.2",
 		"martinbean/laravel-sluggable-trait": "0.2.*",
@@ -27,7 +26,8 @@
 		"phpunit/phpunit": "~4.0",
 		"phpspec/phpspec": "~2.1",
 		"barryvdh/laravel-debugbar": "~2.0",
-		"block8/php-docblock-checker": "^1.0"
+		"block8/php-docblock-checker": "^1.0",
+		"filp/whoops": "~1.1"
 	},
 	"autoload": {
 		"classmap": [
