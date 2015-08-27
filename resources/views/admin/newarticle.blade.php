@@ -27,8 +27,8 @@ New Article « Admin CP
 
 @section('scripts')
 @parent
-<script src="/assets/js/Markdown.Converter.js"></script>
-<script src="/assets/js/Markdown.Sanitizer.js"></script>
+<script src="/assets/js/libs/Markdown.Converter.20150827.js"></script>
+<script src="/assets/js/libs/Markdown.Sanitizer.20150827.js"></script>
 <script>
 (function() {
   // When using more than one `textarea` on your page, change the following line to match the one you’re after
@@ -56,9 +56,10 @@ New Article « Admin CP
   }
 }())
 </script>
-<script src="/assets/js/store2.min.js"></script>
-<script src="/assets/js/alertify.min.js"></script>
+<script src="/assets/js/libs/store2.v2.1.6.min.js"></script>
+<script src="/assets/js/libs/alertify.v0.10.2.min.js"></script>
 <script src="/assets/js/form-save.js"></script>
-<link rel="stylesheet" href="/assets/css/alertify.min.css">
-<link rel="stylesheet" href="/assets/css/alertify.default-theme.min.css">
+
+<link rel="stylesheet" href="/assets/css/alertify.v0.10.2.min.css">
+<link rel="stylesheet" href="/assets/css/alertify.default-theme.v0.10.2.min.css">
 @stop

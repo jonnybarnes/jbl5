@@ -4,11 +4,11 @@
   <meta charset="UTF-8">
   <title>@if (App::environment() == 'local'){!! "[testing] -"!!}@endif @yield('title')</title>
   <meta name="viewport" content="width=device-width">
-  <link rel="stylesheet" href="/assets/css/normalize.css">
-  <link rel="stylesheet" href="/assets/css/<?php if (App::environment('local')) { echo 'global'; } else { echo 'style'; }?>.css">
-  <link rel="stylesheet" href="/assets/css/mapbox.css">
-  <link rel="stylesheet" href="/assets/font-awesome/css/font-awesome.min.css">
-  <link rel="stylesheet" href="/assets/css/prism.css">
+  <link rel="stylesheet" href="/assets/css/normalize.v3.0.3.css">
+  <link rel="stylesheet" href="/assets/css/global.css">
+  <link rel="stylesheet" href="/assets/css/mapbox.v2.2.1.css">
+  <link rel="stylesheet" href="/assets/font-awesome-4.4.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/assets/css/prism.20150827.css">
   <link rel="openid.server" href="https://indieauth.com/openid">
   <link rel="openid.delegate" href="https://jonnybarnes.uk">
   <link rel="authorization_endpoint" href="https://indieauth.com/auth">

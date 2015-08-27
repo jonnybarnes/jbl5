@@ -26,8 +26,8 @@ Edit Article « Admin CP
 
 @section('scripts')
 @parent
-<script src="/assets/js/Markdown.Converter.js"></script>
-<script src="/assets/js/Markdown.Sanitizer.js"></script>
+<script src="/assets/js/libs/Markdown.Converter.20150827.js"></script>
+<script src="/assets/js/libs/Markdown.Sanitizer.20150827.js"></script>
 <script>
 (function() {
   // When using more than one `textarea` on your page, change the following line to match the one you’re after

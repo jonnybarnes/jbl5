@@ -31,17 +31,11 @@ body {
 	height: 150px;
 }
 
-//fonts
-@import "fonts.scss";
-
 //layout
-@import "layout.scss";
+@import "layout";
 
-//colours
-@import "colours.scss";
-
-//forms
-@import "forms.scss";
-
-//twitter
-@import "twitter.scss";
+//components
+@import "components/fonts";
+@import "components/colours";
+@import "components/forms";
+@import "components/twitter";

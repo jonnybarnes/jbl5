@@ -49,15 +49,15 @@ Notes « Jonny Barnes
 @stop
 
 @section('scripts')
-<script src="/assets/js/mapbox.js"></script>
-<script src="/assets/js/Autolinker.min.js"></script>
+<script src="/assets/js/libs/mapbox.v2.2.1.js"></script>
+<script src="/assets/js/libs/Autolinker.v0.15.0.min.js"></script>
 <script src="/assets/js/links.js"></script>
 <script src="/assets/js/maps.js"></script>
 <script src="//twemoji.maxcdn.com/twemoji.min.js"></script>
 <script>
   twemoji.parse(document.body);
 </script>
-<script src="/assets/js/prism.js"></script>
+<script src="/assets/js/libs/prism.20150827.js"></script>
 <script>window.twttr = (function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0],
     t = window.twttr || {};
