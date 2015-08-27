@@ -18,5 +18,5 @@ Edit Note « Admin CP
 @stop
 
 @section('scripts')
-<script src="/assets/js/maps.js"></script>
+<script src="{{ elixir('assets/js/maps.js') }}"></script>
 @stop

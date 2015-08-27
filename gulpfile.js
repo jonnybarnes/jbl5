@@ -13,4 +13,11 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix) {
     mix.sass('global.scss', 'public/assets/css');
+	mix.version([
+		'assets/css/global.css',
+		'assets/css/projects.css',
+		'assets/js/form-save.js',
+		'assets/js/links.js',
+		'assets/js/maps.js'
+	]);
 });

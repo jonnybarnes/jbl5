@@ -51,8 +51,8 @@ Notes « Jonny Barnes
 @section('scripts')
 <script src="/assets/js/libs/mapbox.v2.2.1.js"></script>
 <script src="/assets/js/libs/Autolinker.v0.15.0.min.js"></script>
-<script src="/assets/js/links.js"></script>
-<script src="/assets/js/maps.js"></script>
+<script src="{{ elixir('assets/js/links.js') }}"></script>
+<script src="{{ elixir('assets/js/maps.js') }}"></script>
 <script src="//twemoji.maxcdn.com/twemoji.min.js"></script>
 <script>
   twemoji.parse(document.body);
