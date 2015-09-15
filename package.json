@@ -4,7 +4,8 @@
   "repository": "https://github.com/jonnybarnes/jbl5",
   "license": "CC0-1.0",
   "devDependencies": {
-    "gulp": "~3.9"
+    "gulp": "~3.9",
+    "gulp-gzip": "^1.2.0"
   },
   "dependencies": {
     "laravel-elixir": "^3.0.0"

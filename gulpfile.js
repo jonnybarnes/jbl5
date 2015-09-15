@@ -1,3 +1,5 @@
+var gulp = require('gulp');
+var gzip = require('gulp-gzip');
 var elixir = require('laravel-elixir');
 
 /*
@@ -13,11 +15,23 @@ var elixir = require('laravel-elixir');
 
 elixir(function(mix) {
     mix.sass('global.scss', 'public/assets/css');
-	mix.version([
-		'assets/css/global.css',
-		'assets/css/projects.css',
-		'assets/js/form-save.js',
-		'assets/js/links.js',
-		'assets/js/maps.js'
-	]);
+    mix.version([
+        'assets/css/global.css',
+        'assets/css/projects.css',
+        'assets/js/form-save.js',
+        'assets/js/links.js',
+        'assets/js/maps.js'
+    ]);
+});
+
+gulp.task('gzip-built-css', function() {
+    return gulp.src('public/build/assets/css/*.css')
+        .pipe(gzip({ gzipOptions: { level: 9 }, append: true }))
+        .pipe(gulp.dest('public/build/assets/css/'));
+});
+
+gulp.task('gzip-built-js', function() {
+    return gulp.src('public/build/assets/js/*.js')
+        .pipe(gzip({ gzipOptions: { level: 9 }, append: true }))
+        .pipe(gulp.dest('public/build/assets/js/'));
 });
