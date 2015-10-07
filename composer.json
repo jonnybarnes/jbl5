@@ -18,7 +18,8 @@
 		"martinbean/laravel-sluggable-trait": "0.2.*",
 		"indieauth/client": "0.1.*",
 		"ezyang/htmlpurifier": "~4.6",
-		"league/commonmark": "^0.9.0"
+		"league/commonmark": "^0.9.0",
+		"spatie/laravel-medialibrary": "^3.5"
 	},
 	"require-dev": {
 		"fzaninotto/faker": "~1.4",
