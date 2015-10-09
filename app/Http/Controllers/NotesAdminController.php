@@ -71,7 +71,6 @@ class NotesAdminController extends Controller
                     'in_reply_to' => $request->input('in-reply-to'),
                     'location' => $location,
                     'client_id' => $clientId,
-                    'photo' => $request->hasFile('photo'),
                 ]
             );
         } catch (\Exception $e) {
@@ -82,8 +81,8 @@ class NotesAdminController extends Controller
 
         $realId = $numbers->numto60($note->id);
 
-        $photosController = new PhotosController();
-        $photosController->saveImage($request, $realId);
+        //add images to media library
+        $note->addMedia($request->file('photo'))->toMediaLibrary();
 
         $tags = $noteprep->getTags($request->input('content'));
         $tagsToSave = [];

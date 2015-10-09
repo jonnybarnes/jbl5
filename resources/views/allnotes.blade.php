@@ -19,7 +19,14 @@ a name property for the h-feed -->
     </div>
   @endif
     <div class="note">
-      <div class="e-content p-name">{!! $note->note !!}@if($note->photopath)<img src="{{ $note->photopath }}" alt="" class="note-photo">@endif</div>
+      <div class="e-content p-name">
+        {!! $note->note !!}
+        @if(count($note->photoURLs) > 0)
+          @foreach($note->photoURLs as $photoURL)
+            <img src="{{ $photoURL }}" alt="" class="note-photo">
+          @endforeach
+        @endif
+      </div>
       <div class="note-metadata">
         <a class="u-url" href="/notes/{{ $note->nb60id }}"><time class="dt-published" datetime="{{ $note->iso8601_time }}">{{ $note->human_time }}</time></a>
         @if($note->address)<span class="note-address p-location">in <span class="p-name">{{ $note->address }}</span></span>@endif
