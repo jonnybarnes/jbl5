@@ -82,7 +82,12 @@ class NotesAdminController extends Controller
         $realId = $numbers->numto60($note->id);
 
         //add images to media library
-        $note->addMedia($request->file('photo'))->toMediaLibrary();
+        if ($request->hasFile('photo')) {
+            $files = $request->file('photo');
+            foreach ($files as $file) {
+                $note->addMedia($file)->toMediaLibrary();
+            }
+        }
 
         $tags = $noteprep->getTags($request->input('content'));
         $tagsToSave = [];
