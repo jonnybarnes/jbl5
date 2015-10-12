@@ -9,7 +9,7 @@
     <label for="syndication" accesskey="s">Syndication: </label>@if($syndication)<ul class="syndication-targets-list" name="syndication">@foreach($syndication as $target)<li><input type="checkbox" name="mp-syndicate-to[]" id="{{ $target }}" value="{{ $target }}" checked="checked"> <label for="{{ $target }}">{{ $target }}</label></li>@endforeach</ul>@endif
     <a href="/refresh-syndication-targets">Refresh Syndication Targets</a><br>
 @endif
-    <label for="photo" accesskey="p">Photo: </label><input type="file" accept="image/*" value="Upload" name="photo" id="photo">
+    <label for="photo" accesskey="p">Photo: </label><input type="file" accept="image/*" value="Upload" name="photo[]" id="photo" multiple>
     <label for="locate" accesskey="l"></label><button type="button" name="locate" id="locate" value="Locate">Locate</button>
     <label for="kludge"></label><button type="submit" name="submit" id="submit" value="Submit">Submit</button>
   </fieldset>
