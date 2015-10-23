@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Tag;
 use App\Note;
+use Validator;
 use Illuminate\Http\Request;
 use App\Jobs\SyndicateToTwitter;
 use Jonnybarnes\IndieWeb\Numbers;
@@ -59,6 +60,23 @@ class NotesAdminController extends Controller
      */
     public function postNewNote(Request $request, $clientId = null)
     {
+        $validator = Validator::make(
+            $request->all(),
+            ['photo' => 'sometimes|photosize'],
+            ['photosize' => 'At least one uploaded file exceeds size limit of 5MB']
+        );
+        if ($validator->fails()) {
+            if ($clientId === null) {
+                return redirect('/admin/note/new')
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+            // Client Id is set, so this was made by a micropub client
+            return (new Response('The attached picture’s filesize is too large', 400));
+            die("Validator fails");
+        }
+        die("It isnt catching the error");
+
         $numbers = new Numbers();
         $noteprep = new NotePrep();
 

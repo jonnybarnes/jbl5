@@ -64,9 +64,6 @@ class MicropubController extends Controller
      */
     public function note(Request $request)
     {
-        $this->validate($request, [
-            'photo' => 'max:5000'
-        ]);
         $httpAuth = $request->header('Authorization');
         if (preg_match('/Bearer (.+)/', $httpAuth, $match)) {
             $token = $match[1];
