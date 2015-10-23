@@ -16,12 +16,13 @@ class AppServiceProvider extends ServiceProvider
     {
         // Validate photos for a maximum filesize
         Validator::extend('photosize', function ($attribute, $value, $parameters, $validator) {
-            foreach ($value as $file) {
-                if ($file->getSize() > 5000000) {
-                    return false;
+            if ($value[0] !== null) {
+                foreach ($value as $file) {
+                    if ($file->getSize() > 5000000) {
+                        return false;
+                    }
                 }
             }
-
             return true;
         });
     }

@@ -62,7 +62,7 @@ class NotesAdminController extends Controller
     {
         $validator = Validator::make(
             $request->all(),
-            ['photo' => 'sometimes|photosize'],
+            ['photo' => 'photosize'],
             ['photosize' => 'At least one uploaded file exceeds size limit of 5MB']
         );
         if ($validator->fails()) {
@@ -73,9 +73,7 @@ class NotesAdminController extends Controller
             }
             // Client Id is set, so this was made by a micropub client
             return (new Response('The attached picture’s filesize is too large', 400));
-            die("Validator fails");
         }
-        die("It isnt catching the error");
 
         $numbers = new Numbers();
         $noteprep = new NotePrep();
