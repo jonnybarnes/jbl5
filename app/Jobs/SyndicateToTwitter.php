@@ -5,6 +5,8 @@ namespace App\Jobs;
 use Twitter;
 use App\Note;
 use App\Contact;
+use Imagine\Image\Box;
+use Imagine\Gd\Imagine;
 use Jonnybarnes\IndieWeb\Numbers;
 use Jonnybarnes\IndieWeb\NotePrep;
 use Illuminate\Queue\SerializesModels;
@@ -45,6 +47,7 @@ class SyndicateToTwitter extends Job implements SelfHandling, ShouldQueue
         if ($this->note->in_reply_to) {
             $tweetOpts['in_reply_to_status_id'] = $noteprep->replyTweetId($this->note->in_reply_to);
         }
+
         /*if ($this->note->location) {
             $explode = explode(':', $this->note->location);
             $location = (count($explode) == 2) ? explode(',', $explode[0]) : explode(',', $explode);
@@ -59,16 +62,14 @@ class SyndicateToTwitter extends Job implements SelfHandling, ShouldQueue
                 $tweetOpts['place_id'] = $placeId;
             }
         }*/
-        if ($this->note->photo) {
-            $photoFilename = 'note-' . $numbers->numto60($this->note->id);
-            $photosController = new PhotosController();
-            $photoFilenameSmall = $photosController->makeSmallPhotoForTwitter($photoFilename);
-            $file = ($photoFilenameSmall !== null) ?
-                file_get_contents(public_path() . '/assets/img/notes/' . $photoFilenameSmall)
-                :
-                file_get_contents(public_path() . '/assets/img/notes/' . $photoFilename);
-            $uploadedMedia = Twitter::uploadMedia(['media' => $file]);
-            $tweetOpts['media_ids'] = $uploadedMedia->media_id_string;
+
+        $mediaItems = $this->note->getMedia();
+        if (count($mediaItems) > 0) {
+            foreach ($mediaItems as $item) {
+                $uploadedMedia = Twitter::uploadMedia(['media' => file_get_contents($item->getPath())]);
+                $mediaIds[] = $uploadedMedia->media_id_string;
+            }
+            $tweetOpts['media_ids'] = implode(',', $mediaIds);
         }
 
         $responseJson = Twitter::postTweet($tweetOpts);

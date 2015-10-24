@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Jonnybarnes\UnicodeTools\UnicodeTools;
 use League\CommonMark\CommonMarkConverter;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
+use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
 
-class Note extends Model
+class Note extends Model implements HasMedia
 {
     use SoftDeletes;
+    use HasMediaTrait;
 
     /**
      * The database table used by the model.

@@ -47,10 +47,12 @@ class NotesController extends Controller
                     $note->address = $pieces[1];
                 }
             }
-            if ($note->photo == true) {
-                $photosController = new PhotosController();
-                $note->photopath = $photosController->getPhotoPath($note->nb60id);
+            $photoURLs = [];
+            $photos = $note->getMedia();
+            foreach ($photos as $photo) {
+                $photoURLs[] = $photo->getUrl();
             }
+            $note->photoURLs = $photoURLs;
         }
 
         return view('allnotes', ['notes' => $notes]);
@@ -113,10 +115,12 @@ class NotesController extends Controller
                 $note->address = $pieces[1];
             }
         }
-        if ($note->photo == true) {
-            $photosController = new PhotosController();
-            $note->photopath = $photosController->getPhotoPath($note->nb60id);
+        $photoURLs = [];
+        $photos = $note->getMedia();
+        foreach ($photos as $photo) {
+            $photoURLs[] = $photo->getUrl();
         }
+        $note->photoURLs = $photoURLs;
 
         return view('singlenote', [
             'note' => $note,

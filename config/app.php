@@ -155,6 +155,11 @@ return [
          */
         Thujohn\Twitter\TwitterServiceProvider::class,
 
+        /*
+         * Laravel Medialibrary
+         */
+        Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
+
     ],
 
     /*
