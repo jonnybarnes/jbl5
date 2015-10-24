@@ -1635,8 +1635,6 @@
             "time": "2015-10-23 13:21:37"
         },
         {
-<<<<<<< HEAD
-=======
             "name": "patchwork/utf8",
             "version": "v1.2.5",
             "source": {
@@ -1696,7 +1694,6 @@
             "time": "2015-10-14 08:58:12"
         },
         {
->>>>>>> media
             "name": "predis/predis",
             "version": "v1.0.3",
             "source": {
