@@ -153,7 +153,7 @@ class NotesController extends Controller
         $tagId = Tag::where('tag', $tag)->pluck('id');
         $notes = Tag::find($tagId)->notes()->orderBy('updated_at', 'desc')->get();
         foreach ($notes as $note) {
-            $note->note = $this->TransformNote($note->note);
+            $note->note = $this->autoLinkHashtag($this->makeHCards($note->note));
             $note->iso8601_time = $note->updated_at->toISO8601String();
             $note->human_time = $note->updated_at->diffForHumans();
         }

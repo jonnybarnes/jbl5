@@ -88,7 +88,7 @@ class NotesAdminController extends Controller
         $tags = $noteprep->getTags($request->input('content'));
         $tagsToSave = [];
         foreach ($tags as $text) {
-            $tag = Tag::firstOrCreate(['tag', $text]);
+            $tag = Tag::firstOrCreate(['tag' => $text]);
             $tagsToSave[] = $tag->id;
         }
         $note->tags()->attach($tagsToSave);
