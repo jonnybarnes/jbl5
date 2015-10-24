@@ -145,15 +145,15 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-				/*
-				 * Laravel Debugbar
-				 */
-				Barryvdh\Debugbar\ServiceProvider::class,
+        /*
+         * Laravel Debugbar
+         */
+        Barryvdh\Debugbar\ServiceProvider::class,
 
-				/*
-				 * Thujohn’s Twitter API client
-				 */
-				Thujohn\Twitter\TwitterServiceProvider::class,
+        /*
+         * Thujohn’s Twitter API client
+         */
+        Thujohn\Twitter\TwitterServiceProvider::class,
 
     ],
 
@@ -204,8 +204,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
 
-				'Debugbar'  => Barryvdh\Debugbar\Facade::class,
-				'Twitter'   => Thujohn\Twitter\Facades\Twitter::class,
+        'Debugbar'  => Barryvdh\Debugbar\Facade::class,
+        'Twitter'   => Thujohn\Twitter\Facades\Twitter::class,
 
     ],
 
