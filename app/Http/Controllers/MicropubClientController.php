@@ -180,13 +180,15 @@ class MicropubClientController extends Controller
             ],
         ];
         if ($request->hasFile('photo')) {
-            $photo = $request->file('photo');
-            $filename = $photo->getClientOriginalName();
-            $photo->move(storage_path(), $filename);
-            $multipart[] = [
-                'name' => 'photo',
-                'contents' => fopen(storage_path() . '/' . $filename, 'r'),
-            ];
+            $photos = $request->file('photo');
+            foreach ($photos as $photo) {
+                $filename = $photo->getClientOriginalName();
+                $photo->move(storage_path() . '/media-tmp', $filename);
+                $multipart[] = [
+                    'name' => 'photo',
+                    'contents' => fopen(storage_path() . '/media-tmp/' . $filename, 'r'),
+                ];
+            }
         }
         if ($request->input('in-reply-to') != '') {
             $multipart[] = [
@@ -225,13 +227,27 @@ class MicropubClientController extends Controller
                 'headers' => $headers,
             ]);
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-            if (file_exists(storage_path() . '/' . $filename)) {
-                unlink(storage_path() . '/' . $filename);
-            }
+            $this->cleanUpTmp();
 
             return redirect('notes/new')->with('error', 'There was a bad response from the micropub endpoint.');
         }
+        $this->cleanUpTmp();
 
         return $response;
+    }
+
+    /**
+     * Delete all the files in the temporary media folder
+     *
+     * @return void
+     */
+    private function cleanUpTmp()
+    {
+        $files = glob(storage_path() . '/media-tmp/*');
+        foreach ($files as $file) {
+            if (is_file($file)) {
+                unlink($file);
+            }
+        }
     }
 }
