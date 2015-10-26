@@ -5,14 +5,11 @@ namespace App\Jobs;
 use Twitter;
 use App\Note;
 use App\Contact;
-use Imagine\Image\Box;
-use Imagine\Gd\Imagine;
 use Jonnybarnes\IndieWeb\Numbers;
 use Jonnybarnes\IndieWeb\NotePrep;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Bus\SelfHandling;
-use App\Http\Controllers\PhotosController;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SyndicateToTwitter extends Job implements SelfHandling, ShouldQueue
