@@ -185,7 +185,7 @@ class MicropubClientController extends Controller
                 $filename = $photo->getClientOriginalName();
                 $photo->move(storage_path() . '/media-tmp', $filename);
                 $multipart[] = [
-                    'name' => 'photo',
+                    'name' => 'photo[]',
                     'contents' => fopen(storage_path() . '/media-tmp/' . $filename, 'r'),
                 ];
             }
@@ -237,13 +237,13 @@ class MicropubClientController extends Controller
     }
 
     /**
-     * Delete all the files in the temporary media folder
+     * Delete all the files in the temporary media folder.
      *
      * @return void
      */
     private function cleanUpTmp()
     {
-        $files = glob(storage_path() . '/media-tmp/*');
+        $files = glob(storage_path() . '/media-tmp/*') ?: [];
         foreach ($files as $file) {
             if (is_file($file)) {
                 unlink($file);
