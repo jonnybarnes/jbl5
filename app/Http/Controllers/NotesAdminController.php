@@ -101,7 +101,7 @@ class NotesAdminController extends Controller
         if ($request->hasFile('photo')) {
             $files = $request->file('photo');
             foreach ($files as $file) {
-                $note->addMedia($file)->toMediaLibrary();
+                $note->addMedia($file)->toMediaLibraryOnDisk('images', 's3');
             }
         }
 

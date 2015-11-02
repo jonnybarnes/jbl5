@@ -35,6 +35,6 @@ return [
         /*
          * The domain that should be prepended when generating urls.
          */
-        'domain' => 'https://xxxxxxx.s3.amazonaws.com',
+        'domain' => env('AWS_S3_URL'),
     ],
 ];
