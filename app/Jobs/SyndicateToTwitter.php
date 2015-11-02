@@ -63,7 +63,7 @@ class SyndicateToTwitter extends Job implements SelfHandling, ShouldQueue
         $mediaItems = $this->note->getMedia();
         if (count($mediaItems) > 0) {
             foreach ($mediaItems as $item) {
-                $uploadedMedia = Twitter::uploadMedia(['media' => file_get_contents($item->getPath())]);
+                $uploadedMedia = Twitter::uploadMedia(['media' => file_get_contents($item->getUrl())]);
                 $mediaIds[] = $uploadedMedia->media_id_string;
             }
             $tweetOpts['media_ids'] = implode(',', $mediaIds);
