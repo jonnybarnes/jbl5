@@ -40,8 +40,13 @@ nav a {
 
 .social-links {
 	float: right;
-	clear: both;
 }
+
+.social-links img {
+	width: auto;
+	height: 1em;
+}
+
 //the clear both in social links and maps is to stop weird layout issues
 .map {
 	clear: both;
