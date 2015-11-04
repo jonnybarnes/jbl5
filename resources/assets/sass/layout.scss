@@ -42,9 +42,14 @@ nav a {
 	float: right;
 }
 
-.social-links img {
+.social-links a {
+	text-decoration: none;
+}
+
+.icon {
 	width: auto;
 	height: 1em;
+	fill: $blue;
 }
 
 //the clear both in social links and maps is to stop weird layout issues

@@ -36,9 +36,13 @@ nav a {
 .social-links {
   float: right; }
 
-.social-links img {
+.social-links a {
+  text-decoration: none; }
+
+.icon {
   width: auto;
-  height: 1em; }
+  height: 1em;
+  fill: #268bd2; }
 
 .map {
   clear: both; }
