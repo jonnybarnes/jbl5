@@ -115,7 +115,7 @@ h1 {
 
 /* media queries */
 @media (min-width: 700px) {
-  section {
+  main {
     margin-left: 10em;
     margin-right: 10em; }
   footer {
@@ -126,7 +126,7 @@ h1 {
     height: 360px; } }
 
 @media (max-width: 699px) {
-  section {
+  main {
     margin-left: 10px;
     margin-right: 10px; }
   article {

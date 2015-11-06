@@ -29,9 +29,7 @@
   </header>
 
   <main role="main">
-    <section>
 @yield('content')
-    </section>
   </main>
   <script src="//use.typekit.net/kmb3cdb.js"></script>
   <script>try{Typekit.load({ async: true });}catch(e){}</script>

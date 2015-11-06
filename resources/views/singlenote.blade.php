@@ -5,19 +5,19 @@
 @stop
 
 @section('content')
-<div class="h-entry">
-  @include('templates.note', ['note' => $note])
+    <div class="h-entry">
+      @include('templates.note', ['note' => $note])
 @foreach($replies as $reply)
-  <div class="reply p-comment h-cite">
-    <a class="h-card vcard mini-h-card p-author" href="{{ $reply['url'] }}">
-      <img src="{{ $reply['photo'] }}" alt="" class="photo u-photo logo"> <span class="fn">{{ $reply['name'] }}</span>
-    </a> said at <a class="dt-published" href="{{ $reply['source'] }}">{{ $reply['date'] }}</a>
-    <div class="e-content p-name">
-      {!! $reply['reply'] !!}
-    </div>
-  </div>
+      <div class="reply p-comment h-cite">
+        <a class="h-card vcard mini-h-card p-author" href="{{ $reply['url'] }}">
+          <img src="{{ $reply['photo'] }}" alt="" class="photo u-photo logo"> <span class="fn">{{ $reply['name'] }}</span>
+        </a> said at <a class="dt-published" href="{{ $reply['source'] }}">{{ $reply['date'] }}</a>
+        <div class="e-content p-name">
+          {!! $reply['reply'] !!}
+        </div>
+      </div>
 @endforeach
-</div>
+    </div>
 @if(count($likes) > 0)<h1 class="notes-subtitle">Likes</h1>@endif
 @foreach($likes as $like)
 <a href="{{ $like['url'] }}"><img src="{{ $like['photo'] }}" alt="" class="like-photo"></a>
