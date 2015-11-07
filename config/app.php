@@ -160,6 +160,11 @@ return [
          */
         Spatie\MediaLibrary\MediaLibraryServiceProvider::class,
 
+        /*
+         * Phaza’s Postgis library
+         */
+        Phaza\LaravelPostgis\DatabaseServiceProvider::class,
+
     ],
 
     /*
