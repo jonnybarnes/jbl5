@@ -18,4 +18,7 @@ Admin CP
 
 <h2>Contacts</h2>
 <p>You can either <a href="/admin/contacts/new">create</a> new contacts, or <a href="/admin/contacts/edit">edit</a> them.</p>
+
+<h2>Places</h2>
+<p>You can either <a href="/admin/places/new">create</a> new places, or <a href="/admin/contatcs/edit">edit</a> them.</p>
 @stop

@@ -44,9 +44,6 @@ nav a {
   height: 1em;
   fill: #268bd2; }
 
-.map {
-  clear: both; }
-
 .reply {
   margin-left: 2em;
   margin-right: 2em;
@@ -112,6 +109,9 @@ h1 {
 
 .contact-info {
   margin-left: 2em; }
+
+#map {
+  height: 300px; }
 
 /* media queries */
 @media (min-width: 700px) {

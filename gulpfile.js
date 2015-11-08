@@ -20,7 +20,8 @@ elixir(function(mix) {
         'assets/css/projects.css',
         'assets/js/form-save.js',
         'assets/js/links.js',
-        'assets/js/maps.js'
+        'assets/js/maps.js',
+        'assets/js/newplace.js'
     ]);
 });
 

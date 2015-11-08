@@ -52,11 +52,6 @@ nav a {
 	fill: $blue;
 }
 
-//the clear both in social links and maps is to stop weird layout issues
-.map {
-	clear: both;
-}
-
 .reply {
 	margin-left: 2em;
 	margin-right: 2em;
@@ -138,6 +133,10 @@ h1 {
 
 .contact-info {
 	margin-left: 2em;
+}
+
+#map {
+	height: 300px;
 }
 
 /* media queries */
