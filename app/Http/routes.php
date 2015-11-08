@@ -69,6 +69,13 @@ Route::group(['domain' => config('url.longurl')], function () {
         post('admin/contacts/new', 'ContactsAdminController@postNewContact');
         post('admin/contacts/edit/{id}', 'ContactsAdminController@postEditContact');
         post('admin/contacts/delete/{id}', 'ContactsAdminController@postDeleteContact');
+
+        //Places
+        get('admin/places/new', 'PlacesAdminController@newPlace');
+        get('admin/places/edit', 'PlacesAdminController@listPlaces');
+        get('admin/places/edit/{id}', 'PlacesAdminController@editPlace');
+        post('admin/places/new', 'PlacesAdminController@postNewPlace');
+        post('admin/places/edit/{id}', 'PlacesAdminController@postEditPlace');
     });
 
     //Blog pages using ArticlesController
