@@ -16,7 +16,7 @@ class CreatePlacesTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->point('location');
-            $table->polygon('polygon');
+            $table->polygon('polygon')->nullable();
             $table->timestamps();
         });
     }
