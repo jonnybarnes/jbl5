@@ -117,6 +117,9 @@ Route::group(['domain' => config('url.longurl')], function () {
     get('contacts', 'ContactsController@showAll');
     get('contacts/{nick}', 'ContactsController@showSingle');
 
+    //Places
+    get('places/near/{lat}/{lng}', 'PlacesController@nearbyPlaces');
+
     get('feed', 'ArticlesController@makeRSS');
 });
 

@@ -21,7 +21,8 @@ elixir(function(mix) {
         'assets/js/form-save.js',
         'assets/js/links.js',
         'assets/js/maps.js',
-        'assets/js/newplace.js'
+        'assets/js/newplace.js',
+        'assets/js/newnote.js',
     ]);
 });
 
