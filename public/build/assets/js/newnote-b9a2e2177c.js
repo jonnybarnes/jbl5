@@ -103,7 +103,25 @@ function addMap(latitude, longitude, places) {
                 map.panTo([placeLat, placeLon]);
             }
         });
+    } else {
+        var noPlacesText = document.createTextNode('There are no nearby places.');
+        var noPlacesPTag = document.createElement('p');
+        noPlacesPTag.appendChild(noPlacesText);
+        form.insertBefore(noPlacesPTag, div);
     }
+    var newLocPTag = document.createElement('p');
+    var newLocATag = document.createElement('a');
+    var newLocText = document.createTextNode('Create a new place?');
+    newLocATag.appendChild(newLocText);
+    var url = window.location.href;
+    var admin = /admin/.test(url);
+    if (admin) {
+        newLocATag.setAttribute('href', '/admin/place/new');
+    } else {
+        newLocATag.setAttribute('href', '/places/new');
+    }
+    newLocPTag.appendChild(newLocATag);
+    form.insertBefore(newLocPTag, div);
 }
 
 function parseLocation(point) {
