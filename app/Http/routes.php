@@ -118,7 +118,12 @@ Route::group(['domain' => config('url.longurl')], function () {
     get('contacts/{nick}', 'ContactsController@showSingle');
 
     //Places
+    get('places', 'PlacesController@index');
+    get('places/{slug}', 'PlacesController@show');
     get('places/near/{lat}/{lng}', 'PlacesController@nearbyPlaces');
+    get('places/new', function () {
+        return 'This will let me add new places via micorpub I hope';
+    });
 
     get('feed', 'ArticlesController@makeRSS');
 });

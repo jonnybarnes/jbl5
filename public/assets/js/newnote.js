@@ -116,7 +116,7 @@ function addMap(latitude, longitude, places) {
     var url = window.location.href;
     var admin = /admin/.test(url);
     if (admin) {
-        newLocATag.setAttribute('href', '/admin/place/new');
+        newLocATag.setAttribute('href', '/admin/places/new');
     } else {
         newLocATag.setAttribute('href', '/places/new');
     }

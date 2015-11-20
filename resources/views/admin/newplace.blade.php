@@ -9,6 +9,7 @@ New Place « Admin CP
 <form action="/admin/places/new" method="post" accept-charset="utf-8">
   <input type="hidden" name="_token" value="{{ csrf_token() }}">
   <label for="name">Name:</label> <input type="text" name="name" id="name" placeholder="Place Name"><br>
+  <label for="description">Description:</label> <input type="text" name="description" id="description" placeholder="Description"><br>
   <label for="latitude">Latitude:</label> <input type="text" name="latitude" id="latitude" placeholder="Latitude"><br>
   <label for="longitude">Longitude:</label> <input type="text" name="longitude" id="longitude" placeholder="Longitude"><br>
   <input type="submit" name="submit" value="Submit">

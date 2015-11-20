@@ -33,6 +33,7 @@ class PlacesAdminController extends Controller
         return view('admin.editplace', [
             'id' => $placeId,
             'name' => $place->name,
+            'description' => $place->description,
             'latitude' => $latitude,
             'longitude' => $longitude,
         ]);
@@ -42,6 +43,7 @@ class PlacesAdminController extends Controller
     {
         $place = new Place();
         $place->name = $request->name;
+        $place->description = $request->description;
         $place->location = new Point((float) $request->latitude, (float) $request->longitude);
         try {
             $place->save();
@@ -56,6 +58,7 @@ class PlacesAdminController extends Controller
     {
         $place = Place::findOrFail($placeId);
         $place->name = $request->name;
+        $place->description = $request->description;
         $place->location = new Point((float) $request->latitude, (float) $request->longitude);
         $place->save();
 
