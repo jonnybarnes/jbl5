@@ -24,7 +24,7 @@ class NotesController extends Controller
     public function showNotes()
     {
         $numbers = new Numbers();
-        $notes = Note::orderBy('updated_at', 'desc')->with('webmentions')->simplePaginate(10);
+        $notes = Note::orderBy('updated_at', 'desc')->with('webmentions', 'place')->simplePaginate(10);
         foreach ($notes as $note) {
             $note->nb60id = $numbers->numto60($note->id);
             $replies = 0;
@@ -38,7 +38,7 @@ class NotesController extends Controller
             $note->note = $this->autoLinkHashtag($this->makeHCards($note->note));
             $note->iso8601_time = $note->updated_at->toISO8601String();
             $note->human_time = $note->updated_at->diffForHumans();
-            if ($note->location) {
+            if ($note->location && ($note->place === null)) {
                 $pieces = explode(':', $note->location);
                 $latlng = explode(',', $pieces[0]);
                 $note->latitude = trim($latlng[0]);
@@ -46,6 +46,14 @@ class NotesController extends Controller
                 if (count($pieces) == 2) {
                     $note->address = $pieces[1];
                 }
+            }
+            if ($note->place !== null) {
+                preg_match('/\((.*)\)/', $note->place->location, $matches);
+                $lnglat = explode(' ', $matches[1]);
+                $note->latitude = $lnglat[1];
+                $note->longitude = $lnglat[0];
+                $note->address = $note->place->name;
+                $note->placeLink = '/places/' . $note->place->slug;
             }
             $photoURLs = [];
             $photos = $note->getMedia();
@@ -106,7 +114,7 @@ class NotesController extends Controller
         $note->note = $this->autoLinkHashtag($this->makeHCards($note->note));
         $note->iso8601_time = $note->updated_at->toISO8601String();
         $note->human_time = $note->updated_at->diffForHumans();
-        if ($note->location) {
+        if ($note->location && ($note->place === null)) {
             $pieces = explode(':', $note->location);
             $latlng = explode(',', $pieces[0]);
             $note->latitude = trim($latlng[0]);
@@ -115,6 +123,15 @@ class NotesController extends Controller
                 $note->address = $pieces[1];
             }
         }
+        if ($note->place !== null) {
+            preg_match('/\((.*)\)/', $note->place->location, $matches);
+            $lnglat = explode(' ', $matches[1]);
+            $note->latitude = $lnglat[1];
+            $note->longitude = $lnglat[0];
+            $note->address = $note->place->name;
+            $note->placeLink = '/places/' . $note->place->slug;
+        }
+
         $photoURLs = [];
         $photos = $note->getMedia();
         foreach ($photos as $photo) {
