@@ -5,6 +5,7 @@ namespace App;
 use DB;
 use Illuminate\Database\Eloquent\Model;
 use Phaza\LaravelPostgis\Geometries\Point;
+use MartinBean\Database\Eloquent\Sluggable;
 use Phaza\LaravelPostgis\Geometries\Polygon;
 use Phaza\LaravelPostgis\Eloquent\PostgisTrait;
 
@@ -12,12 +13,19 @@ class Place extends Model
 {
     use PostgisTrait;
 
+    /*
+     * We want to turn the names into slugs.
+     */
+    use Sluggable;
+    const DISPLAY_NAME = 'name';
+    const SLUG = 'slug';
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'slug'];
 
     /**
      * The attributes that are Postgis geometry objects.
@@ -25,6 +33,16 @@ class Place extends Model
      * @var array
      */
     protected $postgisFields = [Point::class, Polygon::class];
+
+    /**
+     * Define the relationship with Notes.
+     *
+     * @var array
+     */
+    public function notes()
+    {
+        return $this->hasMany('App\Note');
+    }
 
     /**
      * Get all places within a specified distance.
@@ -40,6 +58,7 @@ class Place extends Model
         $distace = $distance ?? 1000;
         $places = DB::select(DB::raw("select
             name,
+            slug,
             ST_AsText(location) AS location,
             ST_Distance(
                 ST_GeogFromText('SRID=4326;POINT($point)'),

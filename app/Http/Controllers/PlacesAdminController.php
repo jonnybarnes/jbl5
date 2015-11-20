@@ -43,7 +43,11 @@ class PlacesAdminController extends Controller
         $place = new Place();
         $place->name = $request->name;
         $place->location = new Point((float) $request->latitude, (float) $request->longitude);
-        $place->save();
+        try {
+            $place->save();
+        } catch (PDOException $e) {
+            return back()->withInput();
+        }
 
         return view('admin.newplacesuccess');
     }

@@ -43,6 +43,16 @@ class Note extends Model implements HasMedia
     }
 
     /**
+     * Definte the relationship with places.
+     *
+     * @var array
+     */
+    public function place()
+    {
+        return $this->belongsTo('App\Place');
+    }
+
+    /**
      * We shall set a blacklist of non-modifiable model attributes.
      *
      * @var array

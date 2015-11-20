@@ -29,7 +29,8 @@ function addPlaces(latitude, longitude) {
             for (i = 0; i < j.length; ++i) {
                 var latlng = parseLocation(j[i].location);
                 var name = j[i].name;
-                places.push([name, latlng[0], latlng[1]]);
+                var slug = j[i].slug;
+                places.push([name, slug, latlng[0], latlng[1]]);
             }
             addMap(latitude, longitude, places);
         } else {
@@ -59,8 +60,26 @@ function addMap(latitude, longitude, places) {
         draggable: true,
     }).addTo(map);
     if (places !== null) {
+        //create the <select> element and give it a no location default
+        var selectEl = document.createElement('select');
+        selectEl.setAttribute('name', 'location');
+        var noLocation = document.createElement('option');
+        noLocation.setAttribute('selected', 'selected');
+        noLocation.setAttribute('value', 'no-location');
+        noLocText = document.createTextNode('Select no location');
+        noLocation.appendChild(noLocText);
+        selectEl.appendChild(noLocation);
+        form.insertBefore(selectEl, div);
+        //add the places both to the map and <select>
         places.forEach(function (item, index, array) {
-            var placeMarker = L.marker([item[1], item[2]], {
+            var option = document.createElement('option');
+            option.setAttribute('value', item[1]);
+            var text = document.createTextNode(item[0]);
+            option.appendChild(text);
+            option.dataset.latitude = item[2];
+            option.dataset.longitude = item[3];
+            selectEl.appendChild(option);
+            var placeMarker = L.marker([item[2], item[3]], {
                 icon: L.mapbox.marker.icon({
                     'marker-size': 'large',
                     'marker-symbol': 'building',
@@ -71,6 +90,18 @@ function addMap(latitude, longitude, places) {
             placeMarker.bindPopup(name, {
                 closeButton: true
             });
+            placeMarker.on('click', function (e) {
+                map.panTo([item[2], item[3]]);
+                selectPlace(item[1]);
+            });
+        });
+        //add an event listener
+        selectEl.addEventListener('change', function () {
+            if (selectEl.value !== 'no-location') {
+                var placeLat = selectEl[selectEl.selectedIndex].dataset.latitude;
+                var placeLon = selectEl[selectEl.selectedIndex].dataset.longitude;
+                map.panTo([placeLat, placeLon]);
+            }
         });
     }
 }
@@ -81,4 +112,8 @@ function parseLocation(point) {
     var location = resultArray[1].split(' ');
 
     return [location[1], location[0]];
+}
+
+function selectPlace(slug) {
+    document.querySelector('select [value=' + slug + ']').selected = true;
 }

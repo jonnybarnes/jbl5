@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Tag;
 use App\Note;
+use App\Place;
 use Validator;
 use Illuminate\Http\Request;
 use App\Jobs\SyndicateToTwitter;
@@ -78,21 +79,25 @@ class NotesAdminController extends Controller
         $numbers = new Numbers();
         $noteprep = new NotePrep();
 
-        $location = $this->getLocation($request);
-
         try {
             $note = Note::create(
                 [
                     'note' => $request->input('content'),
                     'in_reply_to' => $request->input('in-reply-to'),
-                    'location' => $location,
-                    'client_id' => $clientId,
+                    'client_id' => $clientId
                 ]
             );
         } catch (\Exception $e) {
             $msg = $e->getMessage(); //do something
 
             return 'Error saving note' . $msg;
+        }
+
+        $placeSlug = $request->input('location');
+        if ($placeSlug !== null && $placeSlug !== 'no-location') {
+            $place = Place::where('slug', '=', $placeSlug)->first();
+            $note->place()->associate($place);
+            $note->save();
         }
 
         $realId = $numbers->numto60($note->id);
