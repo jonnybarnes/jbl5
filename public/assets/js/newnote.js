@@ -1,20 +1,15 @@
-var button = document.querySelector('#locate');
-
-if (button.addEventListener) {
-    button.addEventListener('click', getLocation);
-} else {
-    button.attachEvent('onclick', getLocation);
+if ('geolocation' in navigator) {
+    var button = document.querySelector('#locate');
+    if (button.addEventListener) {
+        button.disabled = false;
+        button.addEventListener('click', getLocation);
+    }
 }
 
 function getLocation() {
-    if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            addPlaces(position.coords.latitude, position.coords.longitude);
-            //addMap(position.coords.latitude, position.coords.longitude);
-        });
-    } else {
-        console.log('Geolocation unavaliable');
-    }
+    navigator.geolocation.getCurrentPosition(function (position) {
+        addPlaces(position.coords.latitude, position.coords.longitude);
+    });
 }
 
 function addPlaces(latitude, longitude) {
@@ -109,19 +104,11 @@ function addMap(latitude, longitude, places) {
         noPlacesPTag.appendChild(noPlacesText);
         form.insertBefore(noPlacesPTag, div);
     }
-    var newLocPTag = document.createElement('p');
-    var newLocATag = document.createElement('a');
-    var newLocText = document.createTextNode('Create a new place?');
-    newLocATag.appendChild(newLocText);
+    var newLocButton = document.createElement('button');
+    newLocButton.appendChild(document.createTextNode('Create New Place?'));
     var url = window.location.href;
     var admin = /admin/.test(url);
-    if (admin) {
-        newLocATag.setAttribute('href', '/admin/places/new');
-    } else {
-        newLocATag.setAttribute('href', '/places/new');
-    }
-    newLocPTag.appendChild(newLocATag);
-    form.insertBefore(newLocPTag, div);
+    form.insertBefore(newLocButton, div);
 }
 
 function parseLocation(point) {

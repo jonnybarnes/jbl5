@@ -203,6 +203,10 @@ button:hover {
   background-color: #fdf6e3;
   color: #002b36; }
 
+button:disabled {
+  background-color: #93a1a1;
+  color: #002b36; }
+
 input[type="checkbox"] {
   -webkit-appearance: checkbox;
   -moz-appearance: checkbox; }

@@ -10,7 +10,7 @@
     <a href="/refresh-syndication-targets">Refresh Syndication Targets</a><br>
 @endif
     <label for="photo" accesskey="p">Photo: </label><input type="file" accept="image/*" value="Upload" name="photo[]" id="photo" multiple>
-    <label for="locate" accesskey="l"></label><button type="button" name="locate" id="locate" value="Locate">Locate</button>
+    <label for="locate" accesskey="l"></label><button type="button" name="locate" id="locate" value="Locate" disabled>Locate</button>
     <label for="kludge"></label><button type="submit" name="submit" id="submit" value="Submit">Submit</button>
   </fieldset>
 </form>

@@ -28,6 +28,11 @@ button:hover {
 	color: $base03;
 }
 
+button:disabled {
+	background-color: $base1;
+	color: $base03;
+}
+
 input[type="checkbox"] {
 	-webkit-appearance: checkbox;
 	-moz-appearance: checkbox;
