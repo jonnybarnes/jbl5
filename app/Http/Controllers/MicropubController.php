@@ -57,20 +57,17 @@ class MicropubController extends Controller
 
     /**
      * This function receives an API request, verifies the authenticity
-     * then passes over the info to the AdminController.
+     * then passes over the info to the relavent AdminController.
      *
      * @param  \Illuminate\Http\Request request
      * @return \Illuminate\Http\Response
      */
-    public function note(Request $request)
+    public function post(Request $request)
     {
         $httpAuth = $request->header('Authorization');
         if (preg_match('/Bearer (.+)/', $httpAuth, $match)) {
             $token = $match[1];
-
             $tokensController = new TokensController();
-
-            //$scope = 'post';
             $tokenData = $tokensController->tokenValidity($token);
             if ($tokenData === false) {
                 $tokenData = ['scopes' => []];
@@ -78,12 +75,25 @@ class MicropubController extends Controller
 
             if (in_array('post', $tokenData['scopes'])) { //this may need double checking
                 $clientId = $tokenData['client_id'];
-                $admin = new NotesAdminController();
-                $longurl = $admin->postNewNote($request, $clientId);
-                $content = 'Note created at ' . $longurl;
+                $type = $request->input('h');
+                switch ($type) {
+                    case 'entry':
+                        $admin = new NotesAdminController();
+                        $longurl = $admin->postNewNote($request, $clientId);
+                        $content = 'Note created at ' . $longurl;
 
-                return (new Response($content, 201))
-                              ->header('Location', $longurl);
+                        return (new Response($content, 201))
+                                      ->header('Location', $longurl);
+                        break;
+                    case 'card':
+                        $admin = new PlacesAdminController();
+                        $longurl = $admin->postNewPlace($request);
+                        $content = 'Place created at ' . $longurl;
+
+                        return (new Response($content, 201))
+                                      ->header('Location', $longurl);
+                        break;
+                }
             }
             $content = http_build_query([
                 'error' => 'invalid_token',

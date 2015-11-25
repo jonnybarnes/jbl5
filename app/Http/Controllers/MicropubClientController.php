@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Cookie\CookieJar;
 use IndieAuth\Client as IndieClient;
 use GuzzleHttp\Client as GuzzleClient;
@@ -17,12 +19,11 @@ class MicropubClientController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\View\Factory view
      */
-    public function micropubNewNotePage(CookieJar $cookie, Request $request)
+    public function newNotePage(CookieJar $cookie, Request $request)
     {
         $authed = false;
         $url = '';
-        $syndication = [];
-        $syndicationType = null;
+        $syndication = false;
         $errorMessage = session('error');
         if ($request->cookie('me') && $request->cookie('me') != 'loggedout') {
             $authed = true;
@@ -36,7 +37,6 @@ class MicropubClientController extends Controller
                     $cookie->queue('token_last_verified', date('Y-m-d'), 86400);
                 }
             }
-            $syndication = false;
             $syndicationTargets = $request->cookie('syndication');
             if ($syndicationTargets) {
                 $mpSyndicateTo = [];
@@ -56,7 +56,6 @@ class MicropubClientController extends Controller
             'url' => $url,
             'errorMessage' => $errorMessage,
             'syndication' => $syndication,
-            'syndicationType' => $syndicationType,
         ]);
     }
 
@@ -70,7 +69,7 @@ class MicropubClientController extends Controller
      * @param  \GuzzleHttp\Client $guzzleClient
      * @return mixed
      */
-    public function post(Request $request, IndieClient $indieClient, GuzzleClient $guzzleClient)
+    public function postNewNote(Request $request, IndieClient $indieClient, GuzzleClient $guzzleClient)
     {
         $domain = $request->cookie('me');
         $token = $request->cookie('token');
@@ -80,7 +79,7 @@ class MicropubClientController extends Controller
             return redirect('notes/new')->with('error', 'Unable to determine micropub API endpoint');
         }
 
-        $response = $this->postRequest($request, $micropubEndpoint, $token, $guzzleClient);
+        $response = $this->postNoteRequest($request, $micropubEndpoint, $token, $guzzleClient);
 
         if ($response->getStatusCode() == 201) {
             $location = $response->getHeader('Location');
@@ -163,7 +162,7 @@ class MicropubClientController extends Controller
      * @param  \GuzzleHttp\Client $client
      * @return \GuzzleHttp\Response $response | \Illuminate\RedirectFactory redirect
      */
-    private function postRequest(
+    private function postNoteRequest(
         Request $request,
         $micropubEndpoint,
         $token,
@@ -234,6 +233,87 @@ class MicropubClientController extends Controller
         $this->cleanUpTmp();
 
         return $response;
+    }
+
+    /**
+     * Create a new place.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \IndieAuth\Client $indieClient
+     * @param  \GuzzleHttp\Client $guzzleClient
+     * @return mixed
+     */
+    public function postNewPlace(Request $request, IndieClient $indieClient, GuzzleClient $guzzleClient)
+    {
+        $domain = $request->cookie('me');
+        $token = $request->cookie('token');
+
+        $micropubEndpoint = $indieClient->discoverMicropubEndpoint($domain);
+        if (!$micropubEndpoint) {
+            return (new Response(json_encode([
+                'error' => true,
+                'message' => 'Could not determine the micropub endpoint.',
+            ]), 400))
+            ->header('Content-Type', 'application/json');
+        }
+
+        $place = $this->postPlaceRequest($request, $micropubEndpoint, $token, $guzzleClient);
+        if ($place === false) {
+            return (new Response(json_encode([
+                'error' => true,
+                'message' => 'Unable to create the new place',
+            ]), 400))
+            ->header('Content-Type', 'application/json');
+        }
+        $parts = explode('/', $place);
+        $slug = array_pop($parts);
+
+        return (new Response(json_encode([
+            'name' => $request->input('place_name'),
+            'slug' => $slug,
+            'latitude' => $request->input('place-latitude'),
+            'longitude' => $request->input('place-longitude')
+        ]), 200))
+        ->header('Content-Type', 'application/json');
+    }
+
+    /**
+     * Actually make a micropub request to make a new place.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  string The Micropub endpoint to post to
+     * @param  string The token to authenticate the request with
+     * @param  \GuzzleHttp\Client $client
+     * @return \GuzzleHttp\Response $response | \Illuminate\RedirectFactory redirect
+     */
+    private function postPlaceRequest(
+        Request $request,
+        $micropubEndpoint,
+        $token,
+        GuzzleClient $guzzleClient
+    ) {
+        $formParams = [
+            'h' => 'card',
+            'name' => $request->input('place_name'),
+            'description' => $request->input('place_description'),
+            'geo' => 'geo:' . $request->input('latitude') . ',' . $request->input('longitude'),
+        ];
+        $headers = [
+            'Authorization' => 'Bearer ' . $token,
+        ];
+        try {
+            $response = $guzzleClient->request('POST', $micropubEndpoint, [
+                'form_params' => $formParams,
+                'headers' => $headers,
+            ]);
+        } catch (ClientException $e) {
+            //not sure yet...
+        }
+        if ($response->getStatusCode == 201) {
+            return $response->getHeader('Location');
+        }
+
+        return false;
     }
 
     /**

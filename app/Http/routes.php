@@ -85,8 +85,8 @@ Route::group(['domain' => config('url.longurl')], function () {
 
     //micropub new notes page
     //this needs to be first so `notes/new` doesn't match `notes/{id}`
-    get('notes/new', 'MicropubClientController@micropubNewNotePage');
-    post('notes/new', 'MicropubClientController@post');
+    get('notes/new', 'MicropubClientController@newNotePage');
+    post('notes/new', 'MicropubClientController@postNewNote');
 
     //Notes pages using NotesController
     get('notes', 'NotesController@showNotes');
@@ -101,7 +101,7 @@ Route::group(['domain' => config('url.longurl')], function () {
 
     //micropub endoints
     post('api/token', 'MicropubController@tokenEndpoint');
-    post('api/post', 'MicropubController@note');
+    post('api/post', 'MicropubController@post');
     get('api/post', 'MicropubController@getEndpoint');
 
     //micropub refresh syndication targets
@@ -121,9 +121,7 @@ Route::group(['domain' => config('url.longurl')], function () {
     get('places', 'PlacesController@index');
     get('places/{slug}', 'PlacesController@show');
     get('places/near/{lat}/{lng}', 'PlacesController@nearbyPlaces');
-    get('places/new', function () {
-        return 'This will let me add new places via micorpub I hope';
-    });
+    post('places/new', 'MicropubClientController@postNewPlace');
 
     get('feed', 'ArticlesController@makeRSS');
 });
