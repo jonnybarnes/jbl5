@@ -8,6 +8,6 @@
     "gulp-gzip": "^1.2.0"
   },
   "dependencies": {
-    "laravel-elixir": "^3.0.0"
+    "laravel-elixir": "^4.0.0"
   }
 }
