@@ -41,14 +41,35 @@ class PlacesAdminController extends Controller
 
     public function postNewPlace(Request $request)
     {
+        //we should check if this is a micropub request
+        $micropub = ($request->path() == 'api/post') ? true : false;
+        //we’ll either have latitude and longitude sent seperately (/admin)
+        //or together on a geo-link (micropub)
+        if ($request->input('geo') !== null) {
+            $parts = explode(':', $request->input('geo'));
+            $latlng = explode(',', $parts[1]);
+            $latitude = $latlng[0];
+            $longitude = $latlng[1];
+        }
+        if ($request->input('latitude') !== null) {
+            $latitude = $request->input('latitude');
+            $longitude = $request->input('longitude');
+        }
         $place = new Place();
-        $place->name = $request->name;
-        $place->description = $request->description;
-        $place->location = new Point((float) $request->latitude, (float) $request->longitude);
+        $place->name = $request->input('name');
+        $place->description = $request->input('description');
+        $place->location = new Point((float) $latitude, (float) $longitude);
         try {
             $place->save();
         } catch (PDOException $e) {
+            if ($micropub) {
+                return;
+            }
+
             return back()->withInput();
+        }
+        if ($micropub) {
+            return 'https://' . config('url.longurl') . '/places/' . $place->slug;
         }
 
         return view('admin.newplacesuccess');
