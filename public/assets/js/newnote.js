@@ -74,17 +74,17 @@ function addMap(latitude, longitude, places) {
             placeFormLongitude.value = getLongitudeFromMapboxMarker(marker.getLatLng());
         }
     });
+    //create the <select> element and give it a no location default
+    var selectEl = document.createElement('select');
+    selectEl.setAttribute('name', 'location');
+    var noLocation = document.createElement('option');
+    noLocation.setAttribute('selected', 'selected');
+    noLocation.setAttribute('value', 'no-location');
+    noLocText = document.createTextNode('Select no location');
+    noLocation.appendChild(noLocText);
+    selectEl.appendChild(noLocation);
+    form.insertBefore(selectEl, div);
     if (places !== null) {
-        //create the <select> element and give it a no location default
-        var selectEl = document.createElement('select');
-        selectEl.setAttribute('name', 'location');
-        var noLocation = document.createElement('option');
-        noLocation.setAttribute('selected', 'selected');
-        noLocation.setAttribute('value', 'no-location');
-        noLocText = document.createTextNode('Select no location');
-        noLocation.appendChild(noLocText);
-        selectEl.appendChild(noLocation);
-        form.insertBefore(selectEl, div);
         //add the places both to the map and <select>
         places.forEach(function (item, index, array) {
             var option = document.createElement('option');
@@ -118,12 +118,6 @@ function addMap(latitude, longitude, places) {
                 map.panTo([placeLat, placeLon]);
             }
         });
-    } else {
-        //indicate there are now nearby places
-        var noPlacesText = document.createTextNode('There are no nearby places.');
-        var noPlacesPTag = document.createElement('p');
-        noPlacesPTag.appendChild(noPlacesText);
-        form.insertBefore(noPlacesPTag, div);
     }
     //add a button to add a new place
     var newLocButton = document.createElement('button');
@@ -198,11 +192,10 @@ function addMap(latitude, longitude, places) {
                 credentials: 'same-origin',
                 method: 'post',
                 body: formData
-            }).then(function (placeResponse) {
-                if (placeResponse.headers.get('Content-Type' == 'application/json')) {
-                    return placeResponse.json();
-                }
-            }).then(function (placeJson) {
+            })
+            .then(status)
+            .then(json)
+            .then(function (placeJson) {
                 //remove un-needed form elements
                 form.removeChild(document.querySelector('#place-name'));
                 form.removeChild(document.querySelector('#place-description'));
@@ -272,4 +265,16 @@ function getLongitudeFromMapboxMarker(latlng) {
     var location = resultArray[1].split(' ');
 
     return location[1];
+}
+
+function status(response) {
+    if (response.status >= 200 && response.status < 300) {
+        return Promise.resolve(response);
+    } else {
+        return Promise.reject(new Error(response.statusText));
+    }
+}
+
+function json(response) {
+    return response.json();
 }
