@@ -61,6 +61,7 @@ class PlacesAdminController extends Controller
         $place->location = new Point((float) $latitude, (float) $longitude);
         try {
             $place->save();
+            $placeId = $place->id;
         } catch (PDOException $e) {
             if ($micropub) {
                 return;
@@ -69,7 +70,7 @@ class PlacesAdminController extends Controller
             return back()->withInput();
         }
         if ($micropub) {
-            $slug = Place::find($place->id)->value('slug');
+            $slug = Place::find($placeId)->value('slug');
             return 'https://' . config('url.longurl') . '/places/' . $slug;
         }
 
