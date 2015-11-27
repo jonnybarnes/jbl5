@@ -293,9 +293,9 @@ class MicropubClientController extends Controller
     ) {
         $formParams = [
             'h' => 'card',
-            'name' => $request->input('place_name'),
-            'description' => $request->input('place_description'),
-            'geo' => 'geo:' . $request->input('latitude') . ',' . $request->input('longitude'),
+            'name' => $request->input('place-name'),
+            'description' => $request->input('place-description'),
+            'geo' => 'geo:' . $request->input('place-latitude') . ',' . $request->input('place-longitude'),
         ];
         $headers = [
             'Authorization' => 'Bearer ' . $token,
