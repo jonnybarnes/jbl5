@@ -90,7 +90,7 @@ class MicropubController extends Controller
                     if ($longurl === null) {
                         return (new Response(json_encode([
                             'error' => true,
-                            'message' => 'Unable to create place.'
+                            'message' => 'Unable to create place.',
                         ]), 400))->header('Content-Type', 'application/json');
                     }
                     $content = 'Place created at ' . $longurl;

@@ -70,6 +70,7 @@ class PlacesAdminController extends Controller
         }
         if ($micropub) {
             $slug = Place::where('name', $place->name)->value('slug');
+
             return 'https://' . config('url.longurl') . '/places/' . $slug;
         }
 
