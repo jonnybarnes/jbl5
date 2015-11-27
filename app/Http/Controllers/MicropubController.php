@@ -76,29 +76,27 @@ class MicropubController extends Controller
             if (in_array('post', $tokenData['scopes'])) { //this may need double checking
                 $clientId = $tokenData['client_id'];
                 $type = $request->input('h');
-                switch ($type) {
-                    case 'entry':
-                        $admin = new NotesAdminController();
-                        $longurl = $admin->postNewNote($request, $clientId);
-                        $content = 'Note created at ' . $longurl;
+                if ($type == 'entry') {
+                    $admin = new NotesAdminController();
+                    $longurl = $admin->postNewNote($request, $clientId);
+                    $content = 'Note created at ' . $longurl;
 
-                        return (new Response($content, 201))
+                    return (new Response($content, 201))
                                       ->header('Location', $longurl);
-                        break;
-                    case 'card':
-                        $admin = new PlacesAdminController();
-                        $longurl = $admin->postNewPlace($request);
-                        if ($longurl === null) {
-                            return (new Response(json_encode([
-                                'error' => true,
-                                'message' => 'Unable to create place.'
-                            ]), 400))->header('Content-Type', 'application/json');
-                        }
-                        $content = 'Place created at ' . $longurl;
+                }
+                if ($type == 'card') {
+                    $admin = new PlacesAdminController();
+                    $longurl = $admin->postNewPlace($request);
+                    if ($longurl === null) {
+                        return (new Response(json_encode([
+                            'error' => true,
+                            'message' => 'Unable to create place.'
+                        ]), 400))->header('Content-Type', 'application/json');
+                    }
+                    $content = 'Place created at ' . $longurl;
 
-                        return (new Response($content, 201))
+                    return (new Response($content, 201))
                                       ->header('Location', $longurl);
-                        break;
                 }
             }
             $content = http_build_query([
