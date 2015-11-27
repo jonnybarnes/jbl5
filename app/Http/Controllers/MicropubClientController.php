@@ -309,7 +309,7 @@ class MicropubClientController extends Controller
             //not sure yet...
         }
         if ($response->getStatusCode() == 201) {
-            return $response->getHeader('Location');
+            return $response->getHeader('Location')[0];
         }
 
         return false;
