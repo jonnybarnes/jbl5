@@ -199,7 +199,9 @@ function addMap(latitude, longitude, places) {
                 method: 'post',
                 body: formData
             }).then(function (placeResponse) {
-                return placeResponse.json();
+                if (placeResponse.headers.get('Content-Type' == 'application/json')) {
+                    return placeResponse.json();
+                }
             }).then(function (placeJson) {
                 //remove un-needed form elements
                 form.removeChild(document.querySelector('#place-name'));

@@ -88,6 +88,12 @@ class MicropubController extends Controller
                     case 'card':
                         $admin = new PlacesAdminController();
                         $longurl = $admin->postNewPlace($request);
+                        if ($longurl === null) {
+                            return (new Response(json_encode([
+                                'error' => true,
+                                'message' => 'Unable to create place.'
+                            ]), 400))->header('Content-Type', 'application/json');
+                        }
                         $content = 'Place created at ' . $longurl;
 
                         return (new Response($content, 201))
