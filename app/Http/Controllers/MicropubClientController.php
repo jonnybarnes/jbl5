@@ -268,7 +268,7 @@ class MicropubClientController extends Controller
         $slug = array_pop($parts);
 
         return (new Response(json_encode([
-            'name' => $request->input('place_name'),
+            'name' => $request->input('place-name'),
             'slug' => $slug,
             'latitude' => $request->input('place-latitude'),
             'longitude' => $request->input('place-longitude'),
