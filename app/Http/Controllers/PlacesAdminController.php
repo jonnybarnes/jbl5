@@ -69,7 +69,8 @@ class PlacesAdminController extends Controller
             return back()->withInput();
         }
         if ($micropub) {
-            return 'https://' . config('url.longurl') . '/places/' . $place->slug;
+            $slug = Place::find($place->id)->value('slug');
+            return 'https://' . config('url.longurl') . '/places/' . $slug;
         }
 
         return view('admin.newplacesuccess');
