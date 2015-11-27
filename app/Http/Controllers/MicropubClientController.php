@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -249,7 +248,7 @@ class MicropubClientController extends Controller
         $token = $request->cookie('token');
 
         $micropubEndpoint = $indieClient->discoverMicropubEndpoint($domain);
-        if (!$micropubEndpoint) {
+        if (! $micropubEndpoint) {
             return (new Response(json_encode([
                 'error' => true,
                 'message' => 'Could not determine the micropub endpoint.',
@@ -272,7 +271,7 @@ class MicropubClientController extends Controller
             'name' => $request->input('place_name'),
             'slug' => $slug,
             'latitude' => $request->input('place-latitude'),
-            'longitude' => $request->input('place-longitude')
+            'longitude' => $request->input('place-longitude'),
         ]), 200))
         ->header('Content-Type', 'application/json');
     }

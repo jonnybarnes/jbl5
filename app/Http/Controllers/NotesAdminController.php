@@ -84,7 +84,7 @@ class NotesAdminController extends Controller
                 [
                     'note' => $request->input('content'),
                     'in_reply_to' => $request->input('in-reply-to'),
-                    'client_id' => $clientId
+                    'client_id' => $clientId,
                 ]
             );
         } catch (\Exception $e) {
