@@ -16,7 +16,3 @@ Edit Note « Admin CP
   </fieldset>
 </form>
 @stop
-
-@section('scripts')
-<script src="{{ elixir('assets/js/maps.js') }}"></script>
-@stop
