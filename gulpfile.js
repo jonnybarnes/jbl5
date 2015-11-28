@@ -18,12 +18,14 @@ elixir(function(mix) {
     mix.version([
         'assets/css/global.css',
         'assets/css/projects.css',
+        'assets/css/alertify.css',
         'assets/js/form-save.js',
         'assets/js/links.js',
         'assets/js/maps.js',
         'assets/js/newplace.js',
         'assets/js/newnote.js',
         'assets/js/fetch.js',
+        'assets/js/alertify.js',
     ]);
 });
 
@@ -40,8 +42,15 @@ gulp.task('gzip-built-js', function() {
 });
 
 gulp.task('bower', function() {
-    return gulp.src([
+    //copy JS files
+    gulp.src([
             'bower_components/fetch/fetch.js',
+            'bower_components/alertify.js/dist/js/alertify.js',
         ])
         .pipe(gulp.dest('public/assets/js/'));
+    //copy CSS files
+    gulp.src([
+            'bower_components/alertify.js/dist/css/alertify.css',
+        ])
+        .pipe(gulp.dest('public/assets/css/'));
 });

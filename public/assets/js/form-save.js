@@ -25,8 +25,7 @@ var timerId = window.setInterval(function() {
     }
   }
   if(saved === true) {
-    alertify.set('notifier', 'position', 'top-right');
-    alertify.set('notifier', 'delay', 2);
+    alertify.logPosition('top right');
     alertify.success('Auto saved text');
   }
 }, 5000);

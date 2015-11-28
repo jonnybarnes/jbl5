@@ -16,6 +16,7 @@
     "tests"
   ],
   "dependencies": {
-    "fetch": "~0.10.1"
+    "fetch": "~0.10.1",
+    "alertify.js": "alertifyjs#~1.0.5"
   }
 }
