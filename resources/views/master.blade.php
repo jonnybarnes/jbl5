@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>@if (App::environment() == 'local'){!! "[testing] -"!!}@endif @yield('title')</title>
   <meta name="viewport" content="width=device-width">
-  <link rel="stylesheet" href="/assets/css/normalize.v3.0.3.css">
+  <link rel="stylesheet" href="{{ elixir('assets/css/normalize.css') }}">
   <link rel="stylesheet" href="{{ elixir('assets/css/global.css') }}">
   <link rel="stylesheet" href="/assets/css/mapbox.v2.2.1.css">
   <link rel="stylesheet" href="/assets/css/prism.20150827.css">

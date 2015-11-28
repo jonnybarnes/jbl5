@@ -19,6 +19,7 @@ elixir(function(mix) {
         'assets/css/global.css',
         'assets/css/projects.css',
         'assets/css/alertify.css',
+        'assets/css/normalize.css',
         'assets/js/form-save.js',
         'assets/js/links.js',
         'assets/js/maps.js',
@@ -53,6 +54,7 @@ gulp.task('bower', function() {
     //copy CSS files
     gulp.src([
             'bower_components/alertify.js/dist/css/alertify.css',
+            'bower_components/normalize-css/normalize.css',
         ])
         .pipe(gulp.dest('public/assets/css/'));
 });

@@ -18,6 +18,7 @@
   "dependencies": {
     "fetch": "~0.10.1",
     "alertify.js": "alertifyjs#~1.0.5",
-    "store2": "~2.3.2"
+    "store2": "~2.3.2",
+    "normalize-css": "normalize.css#~3.0.3"
   }
 }
