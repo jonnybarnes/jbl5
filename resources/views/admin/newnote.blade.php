@@ -24,7 +24,7 @@ New Note « Admin CP
 @section('scripts')
 <script src="/assets/js/libs/mapbox.v2.2.1.js"></script>
 <script src="{{ elixir('assets/js/newnote.js') }}"></script>
-<script src="/assets/js/libs/store2.v2.1.6.min.js"></script>
+<script src="{{ elixir('assets/js/store2.min.js') }}"></script>
 <script src="{{ elixir('assets/js/alertify.js') }}"></script>
 <script src="{{ elixir('assets/js/form-save.js') }}"></script>
 

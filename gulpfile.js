@@ -26,6 +26,7 @@ elixir(function(mix) {
         'assets/js/newnote.js',
         'assets/js/fetch.js',
         'assets/js/alertify.js',
+        'assets/js/store2.min.js',
     ]);
 });
 
@@ -46,6 +47,7 @@ gulp.task('bower', function() {
     gulp.src([
             'bower_components/fetch/fetch.js',
             'bower_components/alertify.js/dist/js/alertify.js',
+            'bower_components/store2/dist/store2.min.js',
         ])
         .pipe(gulp.dest('public/assets/js/'));
     //copy CSS files
