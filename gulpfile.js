@@ -23,6 +23,7 @@ elixir(function(mix) {
         'assets/js/maps.js',
         'assets/js/newplace.js',
         'assets/js/newnote.js',
+        'assets/js/fetch.js',
     ]);
 });
 
@@ -36,4 +37,11 @@ gulp.task('gzip-built-js', function() {
     return gulp.src('public/build/assets/js/*.js')
         .pipe(gzip({ gzipOptions: { level: 9 }, append: true }))
         .pipe(gulp.dest('public/build/assets/js/'));
+});
+
+gulp.task('bower', function() {
+    return gulp.src([
+            'bower_components/fetch/fetch.js',
+        ])
+        .pipe(gulp.dest('public/assets/js/'));
 });
