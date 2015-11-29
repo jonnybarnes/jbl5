@@ -20,6 +20,7 @@ elixir(function(mix) {
         'assets/css/projects.css',
         'assets/css/alertify.css',
         'assets/css/normalize.css',
+        'assets/css/prism.css',
         'assets/js/form-save.js',
         'assets/js/links.js',
         'assets/js/maps.js',

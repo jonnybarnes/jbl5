@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="{{ elixir('assets/css/normalize.css') }}">
   <link rel="stylesheet" href="{{ elixir('assets/css/global.css') }}">
   <link rel="stylesheet" href="/assets/css/mapbox.v2.2.1.css">
-  <link rel="stylesheet" href="/assets/css/prism.20150827.css">
   <link rel="openid.server" href="https://indieauth.com/openid">
   <link rel="openid.delegate" href="https://jonnybarnes.uk">
   <link rel="authorization_endpoint" href="https://indieauth.com/auth">

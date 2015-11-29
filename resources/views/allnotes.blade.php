@@ -45,4 +45,6 @@ Notes « Jonny Barnes
   return t;
 }(document, "script", "twitter-wjs"));
 </script>
+
+<link rel="stylesheet" href="{{ elixir('assets/css/prism.css') }}">
 @stop
