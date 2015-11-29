@@ -27,8 +27,8 @@ New Note « Jonny Barnes
 @stop
 
 @section('scripts')
+<script src="https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js"></script>
 <script src="{{ elixir('assets/js/fetch.js') }}"></script>
-<script src="/assets/js/libs/mapbox.v2.2.1.js"></script>
 <script src="{{ elixir('assets/js/store2.min.js') }}"></script>
 <script src="{{ elixir('assets/js/alertify.js') }}"></script>
 <script src="{{ elixir('assets/js/maps.js') }}"></script>
@@ -36,4 +36,5 @@ New Note « Jonny Barnes
 <script src="{{ elixir('assets/js/newnote.js') }}"></script>
 
 <link rel="stylesheet" href="{{ elixir('assets/css/alertify.css') }}">
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css">
 @stop
