@@ -30,6 +30,7 @@ elixir(function(mix) {
         'assets/js/store2.min.js',
         'assets/js/Autolinker.min.js',
         'assets/js/marked.min.js',
+        'assets/js/prism.js',
     ]);
 });
 

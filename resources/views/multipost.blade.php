@@ -29,7 +29,7 @@ Articles « Jonny Barnes
 <script>
   twemoji.parse(document.body);
 </script>
-<script src="/assets/js/prism.js"></script>
+<script src="{{ elixir('assets/js/prism.js') }}"></script>
 <script>window.twttr = (function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0],
     t = window.twttr || {};
