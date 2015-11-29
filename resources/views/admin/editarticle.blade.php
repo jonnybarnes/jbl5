@@ -26,33 +26,16 @@ Edit Article « Admin CP
 
 @section('scripts')
 @parent
-<script src="/assets/js/libs/Markdown.Converter.20150827.js"></script>
-<script src="/assets/js/libs/Markdown.Sanitizer.20150827.js"></script>
+<script src="{{ elixir('assets/js/marked.min.js') }}"></script>
 <script>
-(function() {
-  // When using more than one `textarea` on your page, change the following line to match the one you’re after
-  var textarea = document.getElementsByTagName('textarea')[0];
-  var section = document.getElementsByTagName('section')[0];
   var preview = document.createElement('div');
-  var convert = new Markdown.getSanitizingConverter().makeHtml;
-  function update() {
-    preview.innerHTML = convert(textarea.value);
-  }
-  // Continue only if the `textarea` is found
-  if (textarea) {
-    preview.id = 'preview';
-    // Insert the preview `div` at end of document
-    section.appendChild(preview);
-    textarea.oninput = function() {
-      textarea.onkeyup = null;
-      update();
-    }
-    textarea.onkeyup = update;
-    // Trigger the `onkeyup` event
-    textarea.onkeyup.call(textarea);
-  } else {
-  	console.log('no textarea found');
-  }
-}())
+  preview.classList.add('preview');
+  var main = document.querySelector('main');
+  main.appendChild(preview);
+  var textarea = document.querySelector('textarea');
+  window.setInterval(function () {
+    var markdown = textarea.value;
+    preview.innerHTML = marked(markdown);
+  }, 5000);
 </script>
 @stop

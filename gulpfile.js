@@ -28,6 +28,8 @@ elixir(function(mix) {
         'assets/js/fetch.js',
         'assets/js/alertify.js',
         'assets/js/store2.min.js',
+        'assets/js/Autolinker.min.js',
+        'assets/js/marked.min.js',
     ]);
 });
 
@@ -49,6 +51,8 @@ gulp.task('bower', function() {
             'bower_components/fetch/fetch.js',
             'bower_components/alertify.js/dist/js/alertify.js',
             'bower_components/store2/dist/store2.min.js',
+            'bower_components/Autolinker.js/dist/Autolinker.min.js',
+            'bower_components/marked/marked.min.js',
         ])
         .pipe(gulp.dest('public/assets/js/'));
     //copy CSS files
