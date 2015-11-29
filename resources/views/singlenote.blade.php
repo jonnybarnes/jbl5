@@ -31,7 +31,9 @@
 @stop
 
 @section('scripts')
+<link rel="stylesheet" href="https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css">
 <script src="https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.js"></script>
+
 <script src="{{ elixir('assets/js/Autlinker.min.js') }}"></script>
 <script src="{{ elixir('assets/js/links.js') }}"></script>
 <script src="{{ elixir('assets/js/maps.js') }}"></script>
@@ -59,5 +61,4 @@
 </script>
 
 <link rel="stylesheet" href="{{ elixir('assets/css/prism.css') }}">
-<link rel="styelsheet" href="https://api.mapbox.com/mapbox.js/v2.2.3/mapbox.css">
 @stop
