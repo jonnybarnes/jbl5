@@ -19,11 +19,6 @@
 @stop
 
 @section('scripts')
-<script src="//twemoji.maxcdn.com/twemoji.min.js"></script>
-<script>
-  twemoji.parse(document.body);
-</script>
 <script src="{{ elixir('assets/js/prism.js') }}"></script>
-
 <link rel="stylesheet" href="{{ elixir('assets/css/prism.css') }}">
 @stop

@@ -25,11 +25,7 @@ Notes « Jonny Barnes
 <script src="{{ elixir('assets/js/Autolinker.min.js') }}"></script>
 <script src="{{ elixir('assets/js/links.js') }}"></script>
 <script src="{{ elixir('assets/js/maps.js') }}"></script>
-<script src="//twemoji.maxcdn.com/twemoji.min.js"></script>
-<script>
-  twemoji.parse(document.body);
-</script>
-<script src="{{ elixir('assets/js/prism.js') }}"></script>
 
+<script src="{{ elixir('assets/js/prism.js') }}"></script>
 <link rel="stylesheet" href="{{ elixir('assets/css/prism.css') }}">
 @stop
