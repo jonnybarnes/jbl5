@@ -26,6 +26,13 @@ nav a {
 	margin-top: 1em;
 }
 
+.note:after {
+	content: " ";
+	display: block;
+	height: 0;
+	clear: both;
+}
+
 .note a {
 	word-wrap: break-word;
 }
