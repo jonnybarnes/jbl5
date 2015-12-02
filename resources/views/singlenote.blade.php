@@ -38,6 +38,6 @@
 <script src="{{ elixir('assets/js/links.js') }}"></script>
 <script src="{{ elixir('assets/js/maps.js') }}"></script>
 
-<script src="{{ elixir('assets/js/libs/prism.js') }}"></script>
+<script src="{{ elixir('assets/js/prism.js') }}"></script>
 <link rel="stylesheet" href="{{ elixir('assets/css/prism.css') }}">
 @stop
