@@ -197,6 +197,9 @@ function addMap(latitude, longitude, places) {
             .then(status)
             .then(json)
             .then(function (placeJson) {
+                //create the slug from the url
+                var urlParts = placeJson.split('/');
+                var slug = urlParts.pop();
                 //remove un-needed form elements
                 form.removeChild(document.querySelector('#place-name'));
                 form.removeChild(document.querySelector('#place-description'));
@@ -212,7 +215,7 @@ function addMap(latitude, longitude, places) {
                 map.removeLayer(marker);
                 //add place marker
                 var newOption = document.createElement('option');
-                newOption.setAttribute('value', placeJson['slug']);
+                newOption.setAttribute('value', slug);
                 newOption.appendChild(document.createTextNode(placeJson['name']));
                 newOption.dataset.latitude = placeJson['latitude'];
                 newOption.dataset.longitude = placeJson['longitude'];
@@ -230,10 +233,10 @@ function addMap(latitude, longitude, places) {
                 });
                 newPlaceMarker.on('click', function (e) {
                     map.panTo([placeJson['latitude'], placeJson['longitude']]);
-                    selectPlace(placeJson['slug']);
+                    selectPlace(slug);
                 });
                 //make selected
-                selectPlace(placeJson['slug']);
+                selectPlace(slug);
             }).catch(function (placeError) {
                 console.log(placeError);
             });

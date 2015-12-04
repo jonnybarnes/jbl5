@@ -264,12 +264,10 @@ class MicropubClientController extends Controller
             ]), 400))
             ->header('Content-Type', 'application/json');
         }
-        $parts = explode('/', $place);
-        $slug = array_pop($parts);
 
         return (new Response(json_encode([
+            'url' => $place,
             'name' => $request->input('place-name'),
-            'slug' => $slug,
             'latitude' => $request->input('place-latitude'),
             'longitude' => $request->input('place-longitude'),
         ]), 200))
