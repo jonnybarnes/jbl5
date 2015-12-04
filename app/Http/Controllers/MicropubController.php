@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Place;
 use IndieAuth\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -142,6 +143,17 @@ class MicropubController extends Controller
 
                 return (new Response($content, 200))
                               ->header('Content-Type', 'application/x-www-form-urlencoded');
+            }
+            //nope, how about a geo URL?
+            if (substr($request->input('q'), 0, 4) === 'geo:') {
+                $geo = explode(':', $request->input('q'));
+                $latlng = explode(',', $geo[1]);
+                $latitude = $latlng[0];
+                $longitude = $latlng[1];
+                $places = Place::near($latitude, $longitude, 1000);
+
+                return (new Response($places->toJson(), 200))
+                        ->header('Content-Type', 'application/json');
             }
             //nope, just return the token
             $content = http_build_query([

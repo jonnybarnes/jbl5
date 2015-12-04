@@ -18,6 +18,7 @@ function getLocation() {
 function addPlaces(latitude, longitude) {
     //get the nearby places
     fetch('/places/near/' + latitude + '/' + longitude, {
+        credentials: 'same-origin',
         method: 'get'
     }).then(function (response) {
         return response.json();

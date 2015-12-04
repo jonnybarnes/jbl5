@@ -120,7 +120,8 @@ Route::group(['domain' => config('url.longurl')], function () {
     //Places
     get('places', 'PlacesController@index');
     get('places/{slug}', 'PlacesController@show');
-    get('places/near/{lat}/{lng}', 'PlacesController@nearbyPlaces');
+    //Places micropub
+    get('places/near/{lat}/{lng}', 'MicropubClientController@nearbyPlaces');
     post('places/new', 'MicropubClientController@postNewPlace');
 
     get('feed', 'ArticlesController@makeRSS');

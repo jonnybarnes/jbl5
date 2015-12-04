@@ -316,6 +316,42 @@ class MicropubClientController extends Controller
     }
 
     /**
+     * Make a request to the micripub endpoint requesting any nearby places.
+     *
+     * @param  \Illuminate\Http\Request $request
+     * @param  \IndieAuth\Client $indieClient
+     * @param  \GuzzleHttp\Client $guzzleClient
+     * @return \Illuminate\Http\Response
+     */
+    public function nearbyPlaces(
+        Request $request,
+        IndieClient $indieClient,
+        GuzzleClient $guzzleClient,
+        $latitude,
+        $longitude
+    ) {
+        $domain = $request->cookie('me');
+        $token = $request->cookie('token');
+        $micropubEndpoint = $indieClient->discoverMicropubEndpoint($domain);
+
+        if (!$micropubEndpoint) {
+            return;
+        }
+
+        try {
+            $response = $guzzleClient->get($micropubEndpoint, [
+                'headers' => ['Authorization' => 'Bearer ' . $token],
+                'query' => ['q' => 'geo:' . $latitude . ',' . $longitude],
+            ]);
+        } catch (\GuzzleHttp\Exception\BadResponseException $e) {
+            return;
+        }
+
+        return (new Response($response->getBody(), 200))
+                ->header('Content-Type', 'application/json');
+    }
+
+    /**
      * Delete all the files in the temporary media folder.
      *
      * @return void
