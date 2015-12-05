@@ -73,7 +73,7 @@ class NotesAdminController extends Controller
                     ->withInput();
             }
             // Client Id is set, so this was made by a micropub client
-            return (new Response('The attached picture’s filesize is too large', 400));
+            return new Response('The attached picture’s filesize is too large', 400);
         }
 
         $numbers = new Numbers();

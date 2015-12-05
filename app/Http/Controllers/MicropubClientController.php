@@ -332,7 +332,7 @@ class MicropubClientController extends Controller
         $token = $request->cookie('token');
         $micropubEndpoint = $indieClient->discoverMicropubEndpoint($domain);
 
-        if (!$micropubEndpoint) {
+        if (! $micropubEndpoint) {
             return;
         }
 

@@ -49,11 +49,11 @@ class MicropubController extends Controller
             }
             $contents = 'There was an error verifying the authorisation code. Sorry.';
 
-            return (new Response($contents, 400));
+            return new Response($contents, 400);
         }
         $contents = 'There was an error discovering the authorisation endpoint.';
 
-        return (new Response($contents, 400));
+        return new Response($contents, 400);
     }
 
     /**
@@ -110,7 +110,7 @@ class MicropubController extends Controller
         }
         $content = 'No OAuth token sent with request.';
 
-        return (new Response($content, 400));
+        return new Response($content, 400);
     }
 
     /**
@@ -133,7 +133,7 @@ class MicropubController extends Controller
             $valid = $tokensController->tokenValidity($token);
 
             if ($valid === false) {
-                return (new Response('Invalid token', 400));
+                return new Response('Invalid token', 400);
             }
             //we have a valid token, is `syndicate-to` set?
             if ($request->input('q') === 'syndicate-to') {
@@ -167,6 +167,6 @@ class MicropubController extends Controller
         }
         $content = 'No OAuth token sent with request.';
 
-        return (new Response($content, 400));
+        return new Response($content, 400);
     }
 }
