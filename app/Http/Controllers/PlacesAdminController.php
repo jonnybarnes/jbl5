@@ -25,10 +25,8 @@ class PlacesAdminController extends Controller
         $place = Place::findOrFail($placeId);
 
         $location = $place->location;
-        preg_match('/\((.*?)\)/', $location, $num);
-        $parts = explode(' ', $num[1]);
-        $latitude = $parts[1];
-        $longitude = $parts[0];
+        $latitude = $place->getLatitude();
+        $longitude = $place->getLongitude();
 
         return view('admin.editplace', [
             'id' => $placeId,
