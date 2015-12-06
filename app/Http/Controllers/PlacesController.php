@@ -51,6 +51,8 @@ class PlacesController extends Controller
     public function show($slug)
     {
         $place = Place::where('slug', '=', $slug)->first();
+        $place->latitude = $place->getLatitude();
+        $place->longitude = $place->getLongitude();
 
         return view('singleplace', ['place' => $place]);
     }

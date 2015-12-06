@@ -85,4 +85,26 @@ class Place extends Model
 
         return $result[0]->st_astext;
     }
+
+    /**
+     * Get the latitude from the `location` property.
+     *
+     * @return string latitude
+     */
+    public function getLatitude()
+    {
+        preg_match('/\((.*)\)/', $this->location, $latlng);
+        return explode(' ', $latlng[1])[1];
+    }
+
+    /**
+     * Get the longitude from the `location` property.
+     *
+     * @return string longitude
+     */
+    public function getLongitude()
+    {
+        preg_match('/\((.*)\)/', $this->location, $latlng);
+        return explode(' ', $latlng[1])[0];
+    }
 }
