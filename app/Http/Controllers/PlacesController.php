@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Place;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Http\Controllers\Controller;
 
 class PlacesController extends Controller
 {

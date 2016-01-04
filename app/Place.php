@@ -70,6 +70,7 @@ class Place extends Model
             location,
             $distance
         ) ORDER BY distance"));
+
         return collect($places);
     }
 
@@ -94,6 +95,7 @@ class Place extends Model
     public function getLatitude()
     {
         preg_match('/\((.*)\)/', $this->location, $latlng);
+
         return explode(' ', $latlng[1])[1];
     }
 
@@ -105,6 +107,7 @@ class Place extends Model
     public function getLongitude()
     {
         preg_match('/\((.*)\)/', $this->location, $latlng);
+
         return explode(' ', $latlng[1])[0];
     }
 }
