@@ -2030,16 +2030,16 @@
         },
         {
             "name": "phaza/laravel-postgis",
-            "version": "2.15",
+            "version": "2.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phaza/laravel-postgis.git",
-                "reference": "0a326bf7f9ac4520c69ac5535c3f17e1648c5ee2"
+                "reference": "45b5e519108f2f02ed14f25fd8961fea4cc684bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phaza/laravel-postgis/zipball/0a326bf7f9ac4520c69ac5535c3f17e1648c5ee2",
-                "reference": "0a326bf7f9ac4520c69ac5535c3f17e1648c5ee2",
+                "url": "https://api.github.com/repos/phaza/laravel-postgis/zipball/45b5e519108f2f02ed14f25fd8961fea4cc684bb",
+                "reference": "45b5e519108f2f02ed14f25fd8961fea4cc684bb",
                 "shasum": ""
             },
             "require": {
@@ -2073,7 +2073,7 @@
                 }
             ],
             "description": "Postgis extensions for laravel. Aims to make it easy to work with geometries from laravel models",
-            "time": "2015-11-11 08:02:39"
+            "time": "2016-01-04 07:20:47"
         },
         {
             "name": "predis/predis",
