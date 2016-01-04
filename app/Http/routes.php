@@ -11,7 +11,7 @@
 |
 */
 
-Route::group(['domain' => config('url.longurl')], function () {
+Route::group(['domain' => config('url.longurl'), 'middleware' => 'web'], function () {
     //Static homepage
     Route::get('/', function () {
         return view('homepage');
@@ -128,7 +128,7 @@ Route::group(['domain' => config('url.longurl')], function () {
 });
 
 //Short URL
-Route::group(['domain' => config('url.shorturl')], function () {
+Route::group(['domain' => config('url.shorturl'), 'middleware' => 'web'], function () {
     Route::get('/', 'ShortURLsController@baseURL');
     Route::get('@', 'ShortURLsController@twitter');
     Route::get('+', 'ShortURLsController@googlePlus');
