@@ -15,18 +15,18 @@
   <link rel="shortcut icon" href="/assets/img/jmb-bw.png">
 </head>
 <body>
-  <header id="topheader" role="banner">
+  <header id="topheader">
     <a rel="author" href="/">
       <h1>Jonny Barnes</h1>
     </a>
-    <nav role="navigation">
+    <nav>
       <a href="/blog">Articles</a>
       <a href="/notes">Notes</a>
       <a href="/projects">Projects</a>
     </nav>
   </header>
 
-  <main role="main">
+  <main>
 @yield('content')
   </main>
   <script src="//use.typekit.net/kmb3cdb.js"></script>

@@ -22,7 +22,7 @@ Jonny Barnes
           <li>I push code to <a rel="me" href="https://github.com/jonnybarnes" class="u-url">GitHub</a></li>
           <li>I scrobble songs to <a rel="me" href="https://last.fm/user/jonnymbarnes" class="u-url">last.fm</a> that I listen to on <a rel="me" href="https://open.spotify.com/user/jonnybarnes89" class="u-url">Spotify</a></li>
         </ul>
-        <p>My usual online handle is <span class="nickname">jonnybarnes</span> for other services, though if they’re not listed above then I don’t actively use the service. My usual <a href="/assets/img/jmb-bw.png" class="u-photo photo">profile pic</a>. I also have a <a rel="pgpkey" href="/assets/jonnybarnes-public-key-ecc.asc">PGP key</a>, with <a href="/notes/5g">fingerprint</a>.</p>
+        <p>My usual online handle is <span class="nickname">jonnybarnes</span> for other services, though if they’re not listed above then I don’t actively use the service. My usual <a href="/assets/img/jmb-bw.png" class="u-photo photo">profile pic</a>. I also have a <a class="pgpkey" href="/assets/jonnybarnes-public-key-ecc.asc">PGP key</a>, with <a href="/notes/5g">fingerprint</a>.</p>
 
         <p>Though of course all this activity should eventually “flow” through this website if it is to truely be my online identity.</p>
       </div>
