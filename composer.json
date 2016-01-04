@@ -18,7 +18,7 @@
         "martinbean/laravel-sluggable-trait": "0.2.*",
         "indieauth/client": "0.1.*",
         "ezyang/htmlpurifier": "~4.6",
-        "league/commonmark": "^0.9.0",
+        "league/commonmark": "^0.12.0",
         "spatie/laravel-medialibrary": "^3.5",
         "league/flysystem-aws-s3-v3": "^1.0",
         "phaza/laravel-postgis": "^2.14"
@@ -31,7 +31,7 @@
         "symfony/dom-crawler": "2.8.*|3.0.*",
         "barryvdh/laravel-debugbar": "~2.0",
         "block8/php-docblock-checker": "^1.0",
-        "filp/whoops": "~1.1"
+        "filp/whoops": "~2.0.0@alpha"
     },
     "autoload": {
         "classmap": [

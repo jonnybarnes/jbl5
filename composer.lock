@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f9a5d0eb76b1034e6d24fc324c081419",
-    "content-hash": "3d806db8c44a47f3fb3973bc0f8b3b8d",
+    "hash": "10ea1a2defe594bd67a1224a752a2bdd",
+    "content-hash": "fc90d192e89b9288234f06d8087704f5",
     "packages": [
         {
             "name": "anahkiasen/underscore-php",
@@ -781,16 +781,16 @@
         },
         {
             "name": "intervention/image",
-            "version": "2.3.4",
+            "version": "2.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
-                "reference": "a67ee32df0c6820cc6e861ad4144ee0ef9c74aa3"
+                "reference": "9f29360b8ab94585cb9e80cf9045abd5b85feb89"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image/zipball/a67ee32df0c6820cc6e861ad4144ee0ef9c74aa3",
-                "reference": "a67ee32df0c6820cc6e861ad4144ee0ef9c74aa3",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/9f29360b8ab94585cb9e80cf9045abd5b85feb89",
+                "reference": "9f29360b8ab94585cb9e80cf9045abd5b85feb89",
                 "shasum": ""
             },
             "require": {
@@ -839,7 +839,7 @@
                 "thumbnail",
                 "watermark"
             ],
-            "time": "2015-11-30 17:03:21"
+            "time": "2016-01-02 19:15:13"
         },
         {
             "name": "jakub-onderka/php-console-color",
@@ -1300,16 +1300,16 @@
         },
         {
             "name": "league/commonmark",
-            "version": "0.9.0",
+            "version": "0.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/commonmark.git",
-                "reference": "8b681a57233f00578195573d7d251c2f143c1a5d"
+                "reference": "3eb64850ee688623db494398a5284a7a4cdf7b47"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/8b681a57233f00578195573d7d251c2f143c1a5d",
-                "reference": "8b681a57233f00578195573d7d251c2f143c1a5d",
+                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/3eb64850ee688623db494398a5284a7a4cdf7b47",
+                "reference": "3eb64850ee688623db494398a5284a7a4cdf7b47",
                 "shasum": ""
             },
             "require": {
@@ -1321,16 +1321,21 @@
             },
             "require-dev": {
                 "erusev/parsedown": "~1.0",
-                "jgm/commonmark": "0.20",
+                "jgm/commonmark": "0.22",
+                "jgm/smartpunct": "0.22",
                 "michelf/php-markdown": "~1.4",
-                "phpunit/phpunit": "~4.3",
-                "phpunit/phpunit-mock-objects": "2.3.0",
+                "mikehaertl/php-shellcommand": "~1.1.0",
+                "phpunit/phpunit": "~4.3|~5.0",
+                "scrutinizer/ocular": "^1.1",
                 "symfony/finder": "~2.3"
             },
+            "bin": [
+                "bin/commonmark"
+            ],
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "0.9-dev"
+                    "dev-master": "0.13-dev"
                 }
             },
             "autoload": {
@@ -1357,7 +1362,7 @@
                 "markdown",
                 "parser"
             ],
-            "time": "2015-06-19 00:39:51"
+            "time": "2015-11-04 14:24:41"
         },
         {
             "name": "league/flysystem",
@@ -3747,36 +3752,41 @@
         },
         {
             "name": "filp/whoops",
-            "version": "1.1.10",
+            "version": "2.0.0-alpha2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "72538eeb70bbfb11964412a3d098d109efd012f7"
+                "reference": "eb1ce6439db161a9f00cd57f33a9cfa1355229ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/72538eeb70bbfb11964412a3d098d109efd012f7",
-                "reference": "72538eeb70bbfb11964412a3d098d109efd012f7",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/eb1ce6439db161a9f00cd57f33a9cfa1355229ec",
+                "reference": "eb1ce6439db161a9f00cd57f33a9cfa1355229ec",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=5.5.9"
             },
             "require-dev": {
-                "mockery/mockery": "0.9.*"
+                "mockery/mockery": "0.9.*",
+                "phpunit/phpunit": "^4.8 || ^5.0"
+            },
+            "suggest": {
+                "symfony/var-dumper": "Pretty print complex values better with var-dumper available",
+                "whoops/soap": "Formats errors as SOAP responses"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.2-dev"
+                    "dev-master": "2.0-dev"
                 }
             },
             "autoload": {
-                "psr-0": {
-                    "Whoops": "src/"
+                "psr-4": {
+                    "Whoops\\": "src/Whoops/"
                 },
-                "classmap": [
-                    "src/deprecated"
+                "files": [
+                    "src/Whoops/functions.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -3797,11 +3807,10 @@
                 "exception",
                 "handling",
                 "library",
-                "silex-provider",
                 "whoops",
                 "zf2"
             ],
-            "time": "2015-06-29 05:42:04"
+            "time": "2015-12-15 12:27:17"
         },
         {
             "name": "fzaninotto/faker",
@@ -5038,7 +5047,8 @@
     "stability-flags": {
         "jonnybarnes/unicode-tools": 20,
         "jonnybarnes/indieweb": 20,
-        "jonnybarnes/webmentions-parser": 20
+        "jonnybarnes/webmentions-parser": 20,
+        "filp/whoops": 15
     },
     "prefer-stable": false,
     "prefer-lowest": false,
