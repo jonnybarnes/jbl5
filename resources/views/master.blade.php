@@ -13,6 +13,7 @@
   <link rel="micropub" href="https://{{ config('url.longurl') }}/api/post">
   <link rel="webmention" href="https://{{ config('url.longurl') }}/webmention">
   <link rel="shortcut icon" href="/assets/img/jmb-bw.png">
+  <link rel="pgpkey" href="/assets/jonnybarnes-public-key-ecc.asc">
 </head>
 <body>
   <header id="topheader">
