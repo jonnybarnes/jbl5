@@ -5,10 +5,9 @@ namespace App\Jobs;
 use GuzzleHttp\Client;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendWebMentions extends Job implements SelfHandling, ShouldQueue
+class SendWebMentions extends Job implements ShouldQueue
 {
     use InteractsWithQueue, SerializesModels;
 

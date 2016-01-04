@@ -12,10 +12,9 @@ use Jonnybarnes\IndieWeb\Numbers;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Jonnybarnes\WebmentionsParser\Parser;
-use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ProcessWebMention extends Job implements SelfHandling, ShouldQueue
+class ProcessWebMention extends Job implements ShouldQueue
 {
     use InteractsWithQueue, SerializesModels;
 

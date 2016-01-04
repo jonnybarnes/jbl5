@@ -9,10 +9,9 @@ use Jonnybarnes\IndieWeb\Numbers;
 use Jonnybarnes\IndieWeb\NotePrep;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SyndicateToTwitter extends Job implements SelfHandling, ShouldQueue
+class SyndicateToTwitter extends Job implements ShouldQueue
 {
     use InteractsWithQueue, SerializesModels;
 
