@@ -6,7 +6,7 @@
     "type": "project",
     "require": {
         "ext-intl": "*",
-        "php": ">=5.5.9",
+        "php": ">=7.0.0",
         "laravel/framework": "5.2.*",
         "jonnybarnes/unicode-tools": "dev-master",
         "jonnybarnes/indieweb": "dev-master",
