@@ -141,7 +141,7 @@ class ContactsAdminController extends Controller
             } catch (\GuzzleHttp\Exception\BadResponseException $e) {
                 return "Bad Response from $homepage";
             }
-            $avatarURL = null; # Initialising
+            $avatarURL = null; // Initialising
             foreach ($mf2['items'] as $microformat) {
                 if ($microformat['type'][0] == 'h-card') {
                     $avatarURL = $microformat['properties']['photo'][0];
