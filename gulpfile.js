@@ -1,5 +1,6 @@
 var gulp = require('gulp');
 var gzip = require('gulp-gzip');
+var brotli = require('gulp-brotli');
 var elixir = require('laravel-elixir');
 
 /*
@@ -41,9 +42,21 @@ gulp.task('gzip-built-css', function() {
         .pipe(gulp.dest('public/build/assets/css/'));
 });
 
+gulp.task('br-built-css', function() {
+    return gulp.src('public/build/assets/css/*.css')
+        .pipe(brotli.compress({mode: 1, quality: 11}))
+        .pipe(gulp.dest('public/build/assets/css/'));
+});
+
 gulp.task('gzip-built-js', function() {
     return gulp.src('public/build/assets/js/*.js')
         .pipe(gzip({ gzipOptions: { level: 9 }, append: true }))
+        .pipe(gulp.dest('public/build/assets/js/'));
+});
+
+gulp.task('br-built-js', function() {
+    return gulp.src('public/build/assets/js/*.js')
+        .pipe(brotli.compress({mode: 1, quality: 11}))
         .pipe(gulp.dest('public/build/assets/js/'));
 });
 
