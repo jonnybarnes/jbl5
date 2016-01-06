@@ -77,3 +77,5 @@ gulp.task('bower', function() {
         ])
         .pipe(gulp.dest('public/assets/css/'));
 });
+
+gulp.task('compress', ['gzip-built-css', 'br-built-css', 'gzip-built-js', 'br-built-js']);
