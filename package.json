@@ -5,6 +5,7 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "gulp": "~3.9",
+    "gulp-brotli": "^1.0.1",
     "gulp-gzip": "^1.2.0"
   },
   "dependencies": {
