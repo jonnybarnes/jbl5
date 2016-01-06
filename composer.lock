@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "6d3290388e82dbb5eaa6db1c4bbe1e8a",
-    "content-hash": "25a9367ad77e8e6aeed6165480ce9b9a",
+    "hash": "eaf9fe695876e30a9bed46d3c7d2088a",
+    "content-hash": "8d97824adafd3b3cb8a5bd44dec8e9e1",
     "packages": [
         {
             "name": "anahkiasen/underscore-php",
@@ -3752,16 +3752,16 @@
         },
         {
             "name": "filp/whoops",
-            "version": "2.0.0-alpha2",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filp/whoops.git",
-                "reference": "eb1ce6439db161a9f00cd57f33a9cfa1355229ec"
+                "reference": "a327942c50cbd62b25c6fbe08f173031ce25fbff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filp/whoops/zipball/eb1ce6439db161a9f00cd57f33a9cfa1355229ec",
-                "reference": "eb1ce6439db161a9f00cd57f33a9cfa1355229ec",
+                "url": "https://api.github.com/repos/filp/whoops/zipball/a327942c50cbd62b25c6fbe08f173031ce25fbff",
+                "reference": "a327942c50cbd62b25c6fbe08f173031ce25fbff",
                 "shasum": ""
             },
             "require": {
@@ -3784,10 +3784,7 @@
             "autoload": {
                 "psr-4": {
                     "Whoops\\": "src/Whoops/"
-                },
-                "files": [
-                    "src/Whoops/functions.php"
-                ]
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -3810,7 +3807,7 @@
                 "whoops",
                 "zf2"
             ],
-            "time": "2015-12-15 12:27:17"
+            "time": "2016-01-06 17:51:21"
         },
         {
             "name": "fzaninotto/faker",
@@ -5047,8 +5044,7 @@
     "stability-flags": {
         "jonnybarnes/unicode-tools": 20,
         "jonnybarnes/indieweb": 20,
-        "jonnybarnes/webmentions-parser": 20,
-        "filp/whoops": 15
+        "jonnybarnes/webmentions-parser": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

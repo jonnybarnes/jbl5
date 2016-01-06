@@ -31,7 +31,7 @@
         "symfony/dom-crawler": "2.8.*|3.0.*",
         "barryvdh/laravel-debugbar": "~2.0",
         "block8/php-docblock-checker": "^1.0",
-        "filp/whoops": "~2.0.0@alpha"
+        "filp/whoops": "~2.0"
     },
     "autoload": {
         "classmap": [
