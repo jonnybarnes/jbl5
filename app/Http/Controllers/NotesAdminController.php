@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Tag;
 use App\Note;
 use App\Place;
 use Validator;
 use Illuminate\Http\Request;
 use App\Jobs\SyndicateToTwitter;
 use Jonnybarnes\IndieWeb\Numbers;
-use Jonnybarnes\IndieWeb\NotePrep;
 
 class NotesAdminController extends Controller
 {
@@ -77,7 +75,6 @@ class NotesAdminController extends Controller
         }
 
         $numbers = new Numbers();
-        $noteprep = new NotePrep();
 
         try {
             $note = Note::create(
@@ -93,14 +90,16 @@ class NotesAdminController extends Controller
             return 'Error saving note' . $msg;
         }
 
+        $realId = $numbers->numto60($note->id);
+        $longurl = 'https://' . config('url.longurl') . '/notes/' . $realId;
+        $shorturl = 'https://' . config('url.shorturl') . '/t/' . $numbers->numto60($note->id);
+
         $placeSlug = $request->input('location');
         if ($placeSlug !== null && $placeSlug !== 'no-location') {
             $place = Place::where('slug', '=', $placeSlug)->first();
             $note->place()->associate($place);
             $note->save();
         }
-
-        $realId = $numbers->numto60($note->id);
 
         //add images to media library
         if ($request->hasFile('photo')) {
@@ -110,22 +109,10 @@ class NotesAdminController extends Controller
             }
         }
 
-        $tags = $noteprep->getTags($request->input('content'));
-        $tagsToSave = [];
-        foreach ($tags as $text) {
-            $tag = Tag::firstOrCreate(['tag' => $text]);
-            $tagsToSave[] = $tag->id;
-        }
-        $note->tags()->attach($tagsToSave);
-
-        $longurl = 'https://' . config('url.longurl') . '/notes/' . $realId;
-
         if ($request->input('webmentions')) {
             $wmc = new WebMentionsController();
             $wmc->send($note, $longurl);
         }
-
-        $shorturl = 'https://' . config('url.shorturl') . '/t/' . $numbers->numto60($note->id);
 
         if ((is_array($request->input('mp-syndicate-to'))
                 &&
