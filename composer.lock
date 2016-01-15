@@ -59,16 +59,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.12.2",
+            "version": "3.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "07e01f31ebfe283f24d06544c0cd615b5758486c"
+                "reference": "dff1c76551777fcc5890d2d5324f9f9e5cdd4e3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/07e01f31ebfe283f24d06544c0cd615b5758486c",
-                "reference": "07e01f31ebfe283f24d06544c0cd615b5758486c",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/dff1c76551777fcc5890d2d5324f9f9e5cdd4e3d",
+                "reference": "dff1c76551777fcc5890d2d5324f9f9e5cdd4e3d",
                 "shasum": ""
             },
             "require": {
@@ -90,7 +90,7 @@
                 "ext-simplexml": "*",
                 "ext-spl": "*",
                 "nette/neon": "^2.3",
-                "phpunit/phpunit": "~4.0"
+                "phpunit/phpunit": "~4.0|~5.0"
             },
             "suggest": {
                 "aws/aws-php-sns-message-validator": "To validate incoming SNS notifications",
@@ -134,7 +134,7 @@
                 "s3",
                 "sdk"
             ],
-            "time": "2016-01-13 02:19:36"
+            "time": "2016-01-15 02:01:24"
         },
         {
             "name": "barnabywalters/mf-cleaner",
@@ -1088,16 +1088,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/jonnybarnes/indieweb.git",
-                "reference": "a7a20d1865dd48ff8d060e0c1347025551b47c11"
+                "reference": "a1de61e99dddd4a5800565bff3802a892a693b35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jonnybarnes/indieweb/zipball/a7a20d1865dd48ff8d060e0c1347025551b47c11",
-                "reference": "a7a20d1865dd48ff8d060e0c1347025551b47c11",
+                "url": "https://api.github.com/repos/jonnybarnes/indieweb/zipball/a1de61e99dddd4a5800565bff3802a892a693b35",
+                "reference": "a1de61e99dddd4a5800565bff3802a892a693b35",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.5"
+                "php": ">=5.6"
             },
             "require-dev": {
                 "phpunit/phpunit": "~5.0"
@@ -1124,7 +1124,7 @@
                 "indieweb",
                 "posse"
             ],
-            "time": "2015-11-04 16:57:14"
+            "time": "2016-01-14 15:10:20"
         },
         {
             "name": "jonnybarnes/unicode-tools",
