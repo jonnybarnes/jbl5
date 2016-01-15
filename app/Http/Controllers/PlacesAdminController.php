@@ -8,6 +8,11 @@ use Phaza\LaravelPostgis\Geometries\Point;
 
 class PlacesAdminController extends Controller
 {
+    /**
+     * List the places that can be edited.
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function listPlaces()
     {
         $places = Place::all();
@@ -15,16 +20,26 @@ class PlacesAdminController extends Controller
         return view('admin.listplaces', ['places' => $places]);
     }
 
+    /**
+     * Show the form to make a new place.
+     *
+     * @return \Illuminate\View\Factory view
+     */
     public function newPlace()
     {
         return view('admin.newplace');
     }
 
+    /**
+     * Display the form to edit a specific place.
+     *
+     * @param  string The place id
+     * @return \Illuminate\View\Factory view
+     */
     public function editPlace($placeId)
     {
         $place = Place::findOrFail($placeId);
 
-        $location = $place->location;
         $latitude = $place->getLatitude();
         $longitude = $place->getLongitude();
 
@@ -37,6 +52,12 @@ class PlacesAdminController extends Controller
         ]);
     }
 
+    /**
+     * Process a request to make a new place.
+     *
+     * @param Illuminate\Http\Request $request
+     * @return mixed
+     */
     public function postNewPlace(Request $request)
     {
         //we should check if this is a micropub request
@@ -75,6 +96,13 @@ class PlacesAdminController extends Controller
         return view('admin.newplacesuccess');
     }
 
+    /**
+     * Process a request to edit a place.
+     *
+     * @param string The place id
+     * @param Illuminate\Http\Request $request
+     * @return Illuminate\View\Factory view
+     */
     public function postEditPlace($placeId, Request $request)
     {
         $place = Place::findOrFail($placeId);
