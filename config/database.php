@@ -85,6 +85,17 @@ return [
             'prefix'   => '',
         ],
 
+        'testing' => [
+            'driver'   => 'pgsql',
+            'host'     => env('localhost'),
+            'database' => env('travis_ci_test'),
+            'username' => env('postgres'),
+            'password' => env(''),
+            'charset'  => 'utf8',
+            'prefix'   => '',
+            'schema'   => 'public',
+        ]
+
     ],
 
     /*
