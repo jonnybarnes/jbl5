@@ -10,7 +10,8 @@ before_script:
   - cp .env.travis .env
   - travis_retry composer self-update
   - travis_retry composer install --no-interaction
-  - php artisan serve
+  - php artisan serve &
+  - sleep 5 # Give artisan some time to start serving
 
 script:
   - vendor/bin/phpunit
