@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "9790674f197a52c4f8904997c352ef29",
-    "content-hash": "77b791369ee5436c635084cc365d891e",
+    "hash": "dd5e032f55e46d7225d22a191911a6c7",
+    "content-hash": "7e19fc27e645df473b21439ece773923",
     "packages": [
         {
             "name": "anahkiasen/underscore-php",
@@ -178,16 +178,16 @@
         },
         {
             "name": "bosnadev/database",
-            "version": "0.12",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Bosnadev/Database.git",
-                "reference": "79c4f136bd88cc7b5a84e30cb38a29442d7a46a7"
+                "url": "https://github.com/jonnybarnes/Database.git",
+                "reference": "c447f3381227355da0df2fa58ec0ae8c0abcad7a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Bosnadev/Database/zipball/79c4f136bd88cc7b5a84e30cb38a29442d7a46a7",
-                "reference": "79c4f136bd88cc7b5a84e30cb38a29442d7a46a7",
+                "url": "https://api.github.com/repos/jonnybarnes/Database/zipball/c447f3381227355da0df2fa58ec0ae8c0abcad7a",
+                "reference": "c447f3381227355da0df2fa58ec0ae8c0abcad7a",
                 "shasum": ""
             },
             "require": {
@@ -207,7 +207,14 @@
                     "Bosnadev\\Database\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "Bosnadev\\Tests\\Database\\": "tests/"
+                },
+                "classmap": [
+                    "tests/BaseTestCase.php"
+                ]
+            },
             "authors": [
                 {
                     "name": "Mirza Pasic",
@@ -221,12 +228,16 @@
             "description": "Eloquent Extended, added some PostgreSql features",
             "keywords": [
                 "database",
+                "database",
                 "eloquent",
                 "laravel",
                 "mysql",
                 "postgresql"
             ],
-            "time": "2015-09-17 06:20:21"
+            "support": {
+                "source": "https://github.com/jonnybarnes/Database/tree/master"
+            },
+            "time": "2016-01-18 15:44:08"
         },
         {
             "name": "classpreloader/classpreloader",
@@ -2080,20 +2091,20 @@
         },
         {
             "name": "phaza/laravel-postgis",
-            "version": "2.16",
+            "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/phaza/laravel-postgis.git",
-                "reference": "45b5e519108f2f02ed14f25fd8961fea4cc684bb"
+                "url": "https://github.com/jonnybarnes/laravel-postgis.git",
+                "reference": "93c358fb014d2c1038f50bbdb996100c2548d74d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phaza/laravel-postgis/zipball/45b5e519108f2f02ed14f25fd8961fea4cc684bb",
-                "reference": "45b5e519108f2f02ed14f25fd8961fea4cc684bb",
+                "url": "https://api.github.com/repos/jonnybarnes/laravel-postgis/zipball/93c358fb014d2c1038f50bbdb996100c2548d74d",
+                "reference": "93c358fb014d2c1038f50bbdb996100c2548d74d",
                 "shasum": ""
             },
             "require": {
-                "bosnadev/database": "~0.1",
+                "bosnadev/database": "*",
                 "geo-io/wkb-parser": "~1.0",
                 "illuminate/database": "~5.1",
                 "jmikola/geojson": "~1.0",
@@ -2112,7 +2123,12 @@
                     "Phaza\\LaravelPostgis\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "classmap": [
+                    "tests/BaseTestCase.php",
+                    "tests/Stubs/"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -2123,7 +2139,10 @@
                 }
             ],
             "description": "Postgis extensions for laravel. Aims to make it easy to work with geometries from laravel models",
-            "time": "2016-01-04 07:20:47"
+            "support": {
+                "source": "https://github.com/jonnybarnes/laravel-postgis/tree/master"
+            },
+            "time": "2016-01-18 15:55:27"
         },
         {
             "name": "predis/predis",
@@ -5146,7 +5165,9 @@
     "stability-flags": {
         "jonnybarnes/unicode-tools": 20,
         "jonnybarnes/indieweb": 20,
-        "jonnybarnes/webmentions-parser": 20
+        "jonnybarnes/webmentions-parser": 20,
+        "bosnadev/database": 20,
+        "phaza/laravel-postgis": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

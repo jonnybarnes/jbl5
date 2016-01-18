@@ -21,8 +21,19 @@
         "league/commonmark": "^0.13.0",
         "spatie/laravel-medialibrary": "^3.5",
         "league/flysystem-aws-s3-v3": "^1.0",
-        "phaza/laravel-postgis": "^2.14"
+        "bosnadev/database": "dev-master#c447f3381227355da0df2fa58ec0ae8c0abcad7a",
+        "phaza/laravel-postgis": "dev-master#93c358fb014d2c1038f50bbdb996100c2548d74d"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/jonnybarnes/Database"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/jonnybarnes/laravel-postgis"
+        }
+    ],
     "require-dev": {
         "fzaninotto/faker": "~1.4",
         "mockery/mockery": "0.9.*",
