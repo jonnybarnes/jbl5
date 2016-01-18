@@ -2,18 +2,28 @@ language: php
 
 sudo: false
 
+addons:
+  postgresql: "9.5"
+
+services:
+  - postgresql
+
 php:
   - 7.0
   - nightly
 
 before_script:
+  - psql -c 'create database travis_ci_test' -U postgres
+  - psql -U postgres -c 'create extension postgis'
   - cp .env.travis .env
   - travis_retry composer self-update
   - travis_retry composer install --no-interaction
   - php artisan key:generate
+  - php artisan migrate
+  - php artisan db:seed
   - php artisan serve &
   - sleep 5 # Give artisan some time to start serving
 
 script:
-  - vendor/bin/phpunit
+  - phpdbg -qrr vendor/bin/phpunit --coverage-text
   - vendor/bin/phpdoccheck -d ./app/ --skip-classes
