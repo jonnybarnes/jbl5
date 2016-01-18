@@ -3,7 +3,7 @@ language: php
 sudo: false
 
 addons:
-  postgresql: "main"
+  postgresql: "9.4"
 
 services:
   - postgresql
