@@ -208,7 +208,7 @@ class NotesController extends Controller
                 :
                     '/assets/profile-images/default-image';
 
-                return view('mini-hcard-template', ['contact' => $contact])->render();
+                return trim(view('mini-hcard-template', ['contact' => $contact])->render());
             },
             $text
         );
