@@ -6,6 +6,16 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class NotesTest extends TestCase
 {
+    protected $appurl;
+    protected $notesController;
+
+    public function setUp()
+    {
+        parent::setUp();
+        $this->appurl = config('app.url');
+        $this->notesController = new App\Http\Controllers\NotesController();
+    }
+
     /**
      * Test the `/notes` page returns 200, this should
      * mean the database is being hit.
@@ -14,13 +24,132 @@ class NotesTest extends TestCase
      */
     public function testNotesPage()
     {
-        $this->visit(config('app.url') . '/notes')
+        $this->visit($this->appurl . '/notes')
              ->assertResponseOk();
     }
 
+    /**
+     * Test a specific note so that `singleNote()` get called.
+     *
+     * @return void
+     */
     public function testSpecificNote()
     {
-        $this->visit(config('app.url') . '/notes/B')
+        $this->visit($this->appurl . '/notes/B')
              ->see('#beer');
+    }
+
+    /**
+     * Test that `/note/{decID}` redirects to `/notes/{nb60id}`.
+     *
+     * @return void
+     */
+    public function testDecIDRedirect()
+    {
+        $this->get($this->appurl . '/note/11')
+             ->assertRedirectedTo(config('app.url') . '/notes/B');
+    }
+
+    /**
+     * Visit the tagged page and see text from the note.
+     *
+     * @return void
+     */
+    public function testTaggedNotesPage()
+    {
+        $this->visit($this->appurl . '/notes/tagged/beer')
+             ->see('at the local.');
+    }
+
+    /**
+     * A unit test to ensure `makeHCards()` returns correct results when
+     * the contact is unkown.
+     *
+     * @return void
+     */
+    public function testMakeHCardsNoContact()
+    {
+        $input = 'Hi @bob';
+        $expected = 'Hi <a href="https://twitter.com/bob">@bob</a>';
+        $this->assertEquals($expected, $this->notesController->makeHCards($input));
+    }
+
+    /**
+     * A unit test to ensure `makeHCards()` returns correct results when
+     * the contact is kown.
+     *
+     * @return void
+     */
+    public function testMakeHCardsWithContact()
+    {
+        $input = 'Hi @tantek';
+        $expected = <<<'EOD'
+Hi <a class="h-card vcard mini-h-card" href="http://tantek.com">
+  <img class="u-photo photo logo" alt="" src="/assets/profile-images/default-image">
+  Tantek Çelik
+</a>
+EOD;
+        $this->assertEquals($expected, $this->notesController->makeHCards($input));
+    }
+
+    /**
+     * Test hashtag linking.
+     *
+     * @return void
+     */
+    public function testHashtags()
+    {
+        $note = 'I love the #indieweb';
+        $expected = <<<'EOD'
+I love the <a rel="tag" class="p-category" href="/notes/tagged/indieweb">#indieweb</a>
+EOD;
+        $this->assertEquals($expected, $this->notesController->autoLinkHashtag($note));
+    }
+
+    /**
+     * Test the bridgy url shim method.
+     *
+     * @return void
+     */
+    public function testBridgy()
+    {
+        $url = 'https://brid-gy.appspot.com/comment/twitter/jonnybarnes/497778866816299008/497781260937203712';
+        $expected = 'https://twitter.com/_/status/497781260937203712';
+        $this->assertEquals($expected, $this->notesController->bridgyReply($url));
+    }
+
+    /**
+     * Test a correct profile link is formed from a generic URL.
+     *
+     * @return void
+     */
+    public function testCreatePhotoLinkWithGenericURL()
+    {
+        $homepage = 'https://example.org';
+        $expected = '/assets/profile-images/example.org/image';
+        $this->assertEquals($expected, $this->notesController->createPhotoLink($homepage));
+    }
+
+    /**
+     * Test a correct profile link is formed from a twitter URL.
+     *
+     * @return void
+     */
+    public function testCreatePhotoLinkWithTwitterProfileImageURL()
+    {
+        $twitterProfileImage = 'http://pbs.twimg.com/1234';
+        $expected = 'https://pbs.twimg.com/1234';
+        $this->assertEquals($expected, $this->notesController->createPhotoLink($twitterProfileImage));
+    }
+
+    /**
+     * Test `null` is returned for a twitter profile.
+     *
+     * @return void
+     */
+    public function testCreatePhotoLinkWithTwitterURL()
+    {
+        $twitterURL = 'https://twitter.com/example';
+        $this->assertNull($this->notesController->createPhotoLink($twitterURL));
     }
 }

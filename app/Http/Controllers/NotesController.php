@@ -24,7 +24,7 @@ class NotesController extends Controller
     public function showNotes()
     {
         $numbers = new Numbers();
-        $notes = Note::orderBy('updated_at', 'desc')->with('webmentions', 'place')->simplePaginate(10);
+        $notes = Note::orderBy('id', 'desc')->with('webmentions', 'place')->simplePaginate(10);
         foreach ($notes as $note) {
             $note->nb60id = $numbers->numto60($note->id);
             $replies = 0;

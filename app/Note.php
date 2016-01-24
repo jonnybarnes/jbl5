@@ -99,8 +99,75 @@ class Note extends Model implements HasMedia
         $unicode = new UnicodeTools();
         $codepoints = $unicode->convertUnicodeCodepoints($value);
         $markdown = new CommonMarkConverter();
-        $transformed = $markdown->convertToHtml($codepoints);
+        $html = $markdown->convertToHtml($codepoints);
+        $hcards = $this->makeHCards($html);
 
         return $transformed;
+    }
+
+    /**
+     * Take note that this method does two things, given @username (NOT [@username](URL)!)
+     * we try to create a fancy hcard from our contact info. If this is not possible
+     * due to lack of contact info, we assume @username is a twitter handle and link it
+     * as such.
+     *
+     * @param  string  The note’s text
+     * @return string
+     */
+    private function makeHCards($text)
+    {
+        $regex = '/\[.*?\](*SKIP)(*F)|@(\w+)/'; //match @alice but not [@bob](...)
+        $hcards = preg_replace_callback(
+            $regex,
+            function ($matches) {
+                try {
+                    $contact = Contact::where('nick', '=', mb_strtolower($matches[1]))->firstOrFail();
+                } catch (ModelNotFoundException $e) {
+                    return '<a href="https://twitter.com/' . $matches[1] . '">' . $matches[0] . '</a>';
+                }
+                $path = parse_url($contact->homepage)['host'];
+                $contact->photo = (file_exists(public_path() . '/assets/profile-images/' . $path . '/image')) ?
+                    '/assets/profile-images/' . $path . '/image'
+                :
+                    '/assets/profile-images/default-image';
+
+                return trim(view('mini-hcard-template', ['contact' => $contact])->render());
+            },
+            $text
+        );
+
+        return $hcards;
+    }
+
+    /**
+     * Given a string and section, finds all hashtags matching
+     * `#[\-_a-zA-Z0-9]+` and wraps them in an `a` element with
+     * `rel=tag` set and a `href` of 'section/tagged/' + tagname without the #.
+     *
+     * @param  string  The note
+     * @param  string  The section (such as blog)
+     * @return string
+     */
+    private function autoLinkHashtag($text)
+    {
+        // $replacements = ["#tag" => "<a rel="tag" href="/tags/tag">#tag</a>]
+        $replacements = [];
+        $matches = [];
+
+        if (preg_match_all('/(?<=^|\s)\#([a-zA-Z0-9\-\_]+)/i', $text, $matches, PREG_PATTERN_ORDER)) {
+            // Look up #tags, get Full name and URL
+            foreach ($matches[0] as $name) {
+                $name = str_replace('#', '', $name);
+                $replacements[$name] =
+                  '<a rel="tag" class="p-category" href="/notes/tagged/' . $name . '">#' . $name . '</a>';
+            }
+
+            // Replace #tags with valid microformat-enabled link
+            foreach ($replacements as $name => $replacement) {
+                $text = str_replace('#' . $name, $replacement, $text);
+            }
+        }
+
+        return $text;
     }
 }
