@@ -9,7 +9,6 @@ use App\Note;
 use App\Client;
 use Carbon\Carbon;
 use Jonnybarnes\IndieWeb\Numbers;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 // Need to sort out Twitter and webmentions!
 

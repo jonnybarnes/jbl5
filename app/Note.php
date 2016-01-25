@@ -3,7 +3,6 @@
 namespace App;
 
 use Normalizer;
-use App\Contact;
 use Illuminate\Database\Eloquent\Model;
 use Jonnybarnes\UnicodeTools\UnicodeTools;
 use League\CommonMark\CommonMarkConverter;

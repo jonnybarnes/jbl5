@@ -47,7 +47,7 @@ class NotesTest extends TestCase
     public function testDecIDRedirect()
     {
         $this->get($this->appurl . '/note/11')
-             ->assertRedirectedTo(config('app.url') . '/notes/B');
+             ->assertRedirectedTo('https://' . config('url.longurl') . '/notes/B');
     }
 
     /**
