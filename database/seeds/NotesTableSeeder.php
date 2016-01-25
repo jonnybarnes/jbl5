@@ -12,11 +12,17 @@ class NotesTableSeeder extends Seeder
     public function run()
     {
         factory(App\Note::class, 10)->create();
-        $note = App\Note::create([
-            'note' => 'A note with a #beer at the local.'
+        $noteWithPlace = App\Note::create([
+            'note' => 'Having a #beer at the local.'
         ]);
         $place = App\Place::find(1);
-        $note->place()->associate($place);
-        $note->save();
+        $noteWithPlace->place()->associate($place);
+        $noteWithPlace->save();
+        $noteWithContact = App\Note::create([
+            'note' => 'Hi @tantek'
+        ]);
+        $noteWithoutContact = App\Note::create([
+            'note' => 'Hi @bob'
+        ]);
     }
 }

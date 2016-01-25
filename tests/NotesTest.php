@@ -69,9 +69,8 @@ class NotesTest extends TestCase
      */
     public function testMakeHCardsNoContact()
     {
-        $input = 'Hi @bob';
-        $expected = 'Hi <a href="https://twitter.com/bob">@bob</a>';
-        $this->assertEquals($expected, $this->notesController->makeHCards($input));
+        $this->visit($this->appurl . '/notes/D')
+             ->see('@bob');
     }
 
     /**
@@ -82,14 +81,8 @@ class NotesTest extends TestCase
      */
     public function testMakeHCardsWithContact()
     {
-        $input = 'Hi @tantek';
-        $expected = <<<'EOD'
-Hi <a class="h-card vcard mini-h-card" href="http://tantek.com">
-  <img class="u-photo photo logo" alt="" src="/assets/profile-images/default-image">
-  Tantek Çelik
-</a>
-EOD;
-        $this->assertEquals($expected, $this->notesController->makeHCards($input));
+        $this->visit($this->appurl . '/notes/C')
+             ->see('Tantek Çelik');
     }
 
     /**
@@ -99,11 +92,8 @@ EOD;
      */
     public function testHashtags()
     {
-        $note = 'I love the #indieweb';
-        $expected = <<<'EOD'
-I love the <a rel="tag" class="p-category" href="/notes/tagged/indieweb">#indieweb</a>
-EOD;
-        $this->assertEquals($expected, $this->notesController->autoLinkHashtag($note));
+        $this->visit($this->appurl . '/notes/B')
+             ->see('<a rel="tag" class="p-category" href="/notes/tagged/beer">#beer</a>');
     }
 
     /**

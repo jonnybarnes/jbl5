@@ -3,12 +3,14 @@
 namespace App;
 
 use Normalizer;
+use App\Contact;
 use Illuminate\Database\Eloquent\Model;
 use Jonnybarnes\UnicodeTools\UnicodeTools;
 use League\CommonMark\CommonMarkConverter;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia\HasMediaTrait;
 use Spatie\MediaLibrary\HasMedia\Interfaces\HasMedia;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class Note extends Model implements HasMedia
 {
@@ -101,8 +103,9 @@ class Note extends Model implements HasMedia
         $markdown = new CommonMarkConverter();
         $html = $markdown->convertToHtml($codepoints);
         $hcards = $this->makeHCards($html);
+        $hashtags = $this->autoLinkHashtag($hcards);
 
-        return $transformed;
+        return $hashtags;
     }
 
     /**
@@ -145,7 +148,6 @@ class Note extends Model implements HasMedia
      * `rel=tag` set and a `href` of 'section/tagged/' + tagname without the #.
      *
      * @param  string  The note
-     * @param  string  The section (such as blog)
      * @return string
      */
     private function autoLinkHashtag($text)
