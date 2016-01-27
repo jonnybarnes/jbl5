@@ -3,6 +3,7 @@
 namespace App;
 
 use Normalizer;
+use Jonnybarnes\IndieWeb\Numbers;
 use Illuminate\Database\Eloquent\Model;
 use Jonnybarnes\UnicodeTools\UnicodeTools;
 use League\CommonMark\CommonMarkConverter;
@@ -105,6 +106,18 @@ class Note extends Model implements HasMedia
         $hashtags = $this->autoLinkHashtag($hcards);
 
         return $hashtags;
+    }
+
+    /**
+     * Generate the NewBase60 ID from primary ID.
+     *
+     * @return string
+     */
+    public function getNb60idAttribute()
+    {
+        $numbers = new Numbers();
+
+        return $numbers->numto60($this->id);
     }
 
     /**

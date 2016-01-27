@@ -21,10 +21,8 @@ class NotesController extends Controller
      */
     public function showNotes()
     {
-        $numbers = new Numbers();
         $notes = Note::orderBy('id', 'desc')->with('webmentions', 'place')->simplePaginate(10);
         foreach ($notes as $note) {
-            $note->nb60id = $numbers->numto60($note->id);
             $replies = 0;
             foreach ($note->webmentions as $webmention) {
                 if ($webmention->type == 'reply') {
@@ -74,9 +72,7 @@ class NotesController extends Controller
     {
         $numbers = new Numbers();
         $realId = $numbers->b60tonum($urlId);
-        $carbon = new Carbon();
         $note = Note::find($realId);
-        $note->nb60id = $urlId;
         if ($note->client_id) {
             $note->client_name = $client->getClientName($note->client_id);
         }
@@ -129,7 +125,6 @@ class NotesController extends Controller
         }
 
         $note->photoURLs = [];
-        $photos = $note->getMedia();
         foreach ($note->getMedia() as $photo) {
             $note->photoURLs[] = $photo->getUrl();
         }
