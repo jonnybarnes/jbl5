@@ -7,7 +7,6 @@ use Twitter;
 use App\Tag;
 use App\Note;
 use App\Client;
-use Carbon\Carbon;
 use Jonnybarnes\IndieWeb\Numbers;
 
 // Need to sort out Twitter and webmentions!

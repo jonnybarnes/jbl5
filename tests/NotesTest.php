@@ -62,27 +62,36 @@ class NotesTest extends TestCase
     }
 
     /**
-     * A unit test to ensure `makeHCards()` returns correct results when
-     * the contact is unkown.
+     * Look for a default image in the contact’s h-card.
      *
      * @return void
      */
-    public function testMakeHCardsNoContact()
+    public function testDefaultImageUsed()
     {
-        $this->visit($this->appurl . '/notes/E')
-             ->see('@bob');
+        $this->visit($this->appurl . '/notes/C')
+             ->see('<img class="u-photo photo logo" alt="" src="/assets/profile-images/default-image">');
     }
 
     /**
-     * A unit test to ensure `makeHCards()` returns correct results when
-     * the contact is kown.
+     * Look for a specific profile image in the contact’s h-card.
      *
      * @return void
      */
-    public function testMakeHCardsWithContact()
+    public function testProfileImageUsed()
     {
-        $this->visit($this->appurl . '/notes/C')
-             ->see('Tantek Çelik');
+        $this->visit($this->appurl . '/notes/D')
+             ->see('<img class="u-photo photo logo" alt="" src="/assets/profile-images/aaronparecki.com/image">');
+    }
+
+    /**
+     * Look for twitter URL when there’s no associated contact.
+     *
+     * @return void
+     */
+    public function testTwitterLinkCreatedWhenNoContactFound()
+    {
+        $this->visit($this->appurl . '/notes/E')
+             ->see('<a href="https://twitter.com/bob">@bob</a>');
     }
 
     /**
