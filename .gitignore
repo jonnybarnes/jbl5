@@ -6,3 +6,5 @@ Homestead.json
 .env
 /.sass-cache
 /public/files
+/public/keybase.txt
+/coverage
