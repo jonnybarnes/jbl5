@@ -106,6 +106,28 @@ class NotesTest extends TestCase
     }
 
     /**
+     * Look for the client name after the note.
+     *
+     * @return void
+     */
+    public function testClientNameDisplayed()
+    {
+        $this->visit($this->appurl . '/notes/D')
+             ->see('JBL5');
+    }
+
+    /**
+     * Look for the client URL after the note.
+     *
+     * @return void
+     */
+    public function testClientURLDisplayed()
+    {
+        $this->visit($this->appurl . '/notes/E')
+             ->see('quill.p3k.io');
+    }
+
+    /**
      * Test the bridgy url shim method.
      *
      * @return void

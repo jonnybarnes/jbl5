@@ -6,7 +6,6 @@ use Cache;
 use Twitter;
 use App\Tag;
 use App\Note;
-use App\Client;
 use Jonnybarnes\IndieWeb\Numbers;
 
 // Need to sort out Twitter and webmentions!
@@ -64,17 +63,13 @@ class NotesController extends Controller
      * Show a single note.
      *
      * @param  string The id of the note
-     * @param  \App\Client $client
      * @return \Illuminate\View\Factory view
      */
-    public function singleNote($urlId, Client $client)
+    public function singleNote($urlId)
     {
         $numbers = new Numbers();
         $realId = $numbers->b60tonum($urlId);
         $note = Note::find($realId);
-        if ($note->client_id) {
-            $note->client_name = $client->getClientName($note->client_id);
-        }
         $replies = [];
         $reposts = [];
         $likes = [];

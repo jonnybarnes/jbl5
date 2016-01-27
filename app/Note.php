@@ -121,6 +121,29 @@ class Note extends Model implements HasMedia
     }
 
     /**
+     * Get the relavent client name assocaited with the client id.
+     *
+     * @return string|null
+     */
+    public function getClientNameAttribute()
+    {
+        if ($this->client_id == null) {
+            return;
+        }
+        $name = Client::where('client_url', $this->client_id)->value('client_name');
+        if ($name == null) {
+            $url = parse_url($this->client_id);
+            if (isset($url['path'])) {
+                return $url['host'] . $url['path'];
+            }
+
+            return $url['host'];
+        }
+
+        return $name;
+    }
+
+    /**
      * Take note that this method does two things, given @username (NOT [@username](URL)!)
      * we try to create a fancy hcard from our contact info. If this is not possible
      * due to lack of contact info, we assume @username is a twitter handle and link it

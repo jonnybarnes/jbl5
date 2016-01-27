@@ -22,10 +22,12 @@ class NotesTableSeeder extends Seeder
             'note' => 'Hi @tantek'
         ]);
         $noteWithContactPlusPic = App\Note::create([
-            'note' => 'Hi @aaron'
+            'note' => 'Hi @aaron',
+            'client_id' => 'https://jbl5.dev/notes/new'
         ]);
         $noteWithoutContact = App\Note::create([
-            'note' => 'Hi @bob'
+            'note' => 'Hi @bob',
+            'client_id' => 'https://quill.p3k.io'
         ]);
         //copy aaron’s profile pic in place
         $spl = new SplFileInfo(public_path() . '/assets/profile-images/aaronparecki.com');
