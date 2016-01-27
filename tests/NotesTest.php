@@ -69,7 +69,7 @@ class NotesTest extends TestCase
      */
     public function testMakeHCardsNoContact()
     {
-        $this->visit($this->appurl . '/notes/D')
+        $this->visit($this->appurl . '/notes/E')
              ->see('@bob');
     }
 

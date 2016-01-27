@@ -21,8 +21,17 @@ class NotesTableSeeder extends Seeder
         $noteWithContact = App\Note::create([
             'note' => 'Hi @tantek'
         ]);
+        $noteWithContactPlusPic = App\Note::create([
+            'note' => 'Hi @aaron'
+        ]);
         $noteWithoutContact = App\Note::create([
             'note' => 'Hi @bob'
         ]);
+        //copy aaron’s profile pic in place
+        $spl = new SplFileInfo(public_path() . '/assets/profile-images/aaronparecki.com');
+        if ($spl->isDir() === false) {
+            mkdir(public_path() . '/assets/profile-images/aaronparecki.com', 0755);
+            copy(base_path() . '/tests/aaron.png', public_path() . '/assets/profile-images/aaronparecki.com/image');
+        }
     }
 }
