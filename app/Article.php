@@ -58,12 +58,20 @@ class Article extends Model
         if ($year == null) {
             return $query;
         }
-        $time = $year;
-        if ($month !== null) {
-            $time .= '-' . $month;
+        $start = $year . '-01-01 00:00:00';
+        $end = ($year + 1) . '-01-01 00:00:00';
+        if (($month !== null) && ($month !== '12')) {
+            $start = $year . '-' . $month . '-01 00:00:00';
+            $end = $year . '-' . ($month + 1) . '-01 00:00:00';
         }
-        $time .= '%';
+        if ($month === '12') {
+            $start = $year . '-12-01 00:00:00';
+            //$end as above
+        }
 
-        return $query->where('updated_at', 'like', $time);
+        return $query->where([
+            ['updated_at', '>=', $start],
+            ['updated_at', '<', $end]
+        ]);
     }
 }
