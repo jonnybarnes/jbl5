@@ -71,7 +71,7 @@ class Article extends Model
 
         return $query->where([
             ['updated_at', '>=', $start],
-            ['updated_at', '<', $end]
+            ['updated_at', '<', $end],
         ]);
     }
 }
