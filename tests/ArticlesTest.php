@@ -49,4 +49,15 @@ class ArticlesTest extends TestCase
         $this->visit($this->appurl . '/blog/2016/01')
              ->see('My New Blog');
     }
+
+    /**
+     * Test a single article page.
+     *
+     * @return void
+     */
+    public function testSingleArticlePage()
+    {
+        $this->visit($this->appurl . '/blog/2016/01/my-new-blog')
+             ->see('My New Blog');
+    }
 }
