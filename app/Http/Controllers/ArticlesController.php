@@ -23,14 +23,6 @@ class ArticlesController extends Controller
                     ->orderBy('updated_at', 'desc')
                     ->simplePaginate(5);
 
-        foreach ($articles as $article) {
-            $article['main'] = $this->markdown($article['main']);
-            $article['w3c_time'] = $article['updated_at']->toW3CString();
-            $article['tooltip_time'] = $article['updated_at']->toRFC850String();
-            $article['human_time'] = $article['updated_at']->diffForHumans();
-            $article['link'] = $this->createLink($article['updated_at'], $article['titleurl']);
-        }
-
         return view('multipost', ['data' => $articles]);
     }
 
@@ -45,11 +37,6 @@ class ArticlesController extends Controller
         if ($article->updated_at->year != $year || $article->updated_at->month != $month) {
             throw new \Exception;
         }
-        $article->main = $this->markdown($article->main);
-        $article->w3c_time = $article->updated_at->toW3CString();
-        $article->tooltip_time = $article->updated_at->toRFC850String();
-        $article->human_time = $article->updated_at->diffForHumans();
-        $article->link = $this->createLink($article->updated_at, $article->titleurl);
 
         return view('singlepost', ['article' => $article]);
     }
@@ -86,7 +73,6 @@ class ArticlesController extends Controller
         $pubdates = [];
         $articles = Article::where('published', '1')->where('deleted', '0')->orderBy('date_time', 'desc')->get();
         foreach ($articles as $article) {
-            $article['main'] = $this->markdown($article['main']);
             $article['pubdate'] = $carbon->createFromTimeStamp($article['date_time'])->toRSSString();
             $pubdates[] = $article['pubdate'];
         }
@@ -96,41 +82,5 @@ class ArticlesController extends Controller
         $contents = (string) view('rss', ['data' => $articles, 'pubdate' => $last]);
 
         return (new Response($contents, '200'))->header('Content-Type', 'application/rss+xml');
-    }
-
-    /**
-     * This applies the Commonmark Markdown transform, before though
-     * it applies my \uXXXXX\ to chr transform.
-     *
-     * @param  string
-     * @return string
-     */
-    public function markdown($text)
-    {
-        $unicode = new UnicodeTools();
-        $codepoints = $unicode->convertUnicodeCodepoints($text);
-        $markdown = new CommonMarkConverter();
-        $transformed = $markdown->convertToHtml($codepoints);
-
-        //change <pre><code>[lang] -> <pre><code data-language="lang">
-        $match = '/<pre><code>\[(.*)\]\n/';
-        $replace = '<pre><code class="language-$1">';
-        $text = preg_replace($match, $replace, $transformed);
-        $default = preg_replace('/<pre><code>/', '<pre><code class="language-markdown">', $text);
-
-        return $default;
-    }
-
-    /**
-     * Creates a dynamic link to the article.
-     * That is a link of the form /blog/1999/11/i-am-a-slug.
-     *
-     * @param  \Carbon\Carbon  the upated time of the model
-     * @param  string  A slug of blog post
-     * @return string
-     */
-    private function createLink($updatedAt, $titleurl)
-    {
-        return '/blog/' . $updatedAt->year . '/' . $updatedAt->format('m') . '/' . $titleurl;
     }
 }

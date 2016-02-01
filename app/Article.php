@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Jonnybarnes\UnicodeTools\UnicodeTools;
+use League\CommonMark\CommonMarkConverter;
 use MartinBean\Database\Eloquent\Sluggable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -47,6 +49,65 @@ class Article extends Model
      * @var array
      */
     protected $guarded = ['id'];
+
+    /**
+     * Process the article for display.
+     *
+     * @return string
+     */
+    public function getMainAttribute($value)
+    {
+        $unicode = new UnicodeTools();
+        $markdown = new CommonMarkConverter();
+        $html = $markdown->convertToHtml($unicode->convertUnicodeCodepoints($value));
+        //change <pre><code>[lang] ~> <pre><code data-language="lang">
+        $match = '/<pre><code>\[(.*)\]\n/';
+        $replace = '<pre><code class="language-$1">';
+        $text = preg_replace($match, $replace, $html);
+        $default = preg_replace('/<pre><code>/', '<pre><code class="language-markdown">', $text);
+
+        return $default;
+    }
+
+    /**
+     * Convert updated_at to W3C time format.
+     *
+     * @return string
+     */
+    public function getW3cTimeAttribute()
+    {
+        return $this->updated_at->toW3CString();
+    }
+
+    /**
+     * Convert updated_at to a tooltip appropriate format.
+     *
+     * @return string
+     */
+    public function getTooltipTimeAttribute()
+    {
+        return $this->updated_at->toRFC850String();
+    }
+
+    /**
+     * Convert updated_at to a human readable format.
+     *
+     * @return string
+     */
+    public function getHumanTimeAttribute()
+    {
+        return $this->updated_at->diffForHumans();
+    }
+
+    /**
+     * A link to the article, i.e. `/blog/1999/12/25/merry-christmas`
+     *
+     * @return string
+     */
+    public function getLinkAttribute()
+    {
+        return '/blog/' . $this->updated_at->year . '/' . $this->updated_at->format('m') . '/' . $this->titleurl;
+    }
 
     /**
      * Scope a query to only include articles from a particular year/month.
