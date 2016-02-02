@@ -52,14 +52,8 @@ class ArticlesController extends Controller
         $numbers = new Numbers();
         $realId = $numbers->b60tonum($inURLId);
         $article = Article::findOrFail($realId);
-        $redirect = '/blog/'
-                    . $article->updated_at->year
-                    . '/'
-                    . $article->updated_at->format('m')
-                    . '/'
-                    . $article->titleurl;
 
-        return redirect($redirect);
+        return redirect($article->link);
     }
 
     /**
@@ -69,17 +63,9 @@ class ArticlesController extends Controller
      */
     public function makeRSS()
     {
-        $carbon = new Carbon();
-        $pubdates = [];
-        $articles = Article::where('published', '1')->where('deleted', '0')->orderBy('date_time', 'desc')->get();
-        foreach ($articles as $article) {
-            $article['pubdate'] = $carbon->createFromTimeStamp($article['date_time'])->toRSSString();
-            $pubdates[] = $article['pubdate'];
-        }
-
-        $last = array_pop($pubdates);
-
-        $contents = (string) view('rss', ['data' => $articles, 'pubdate' => $last]);
+        $articles = Article::where('published', '1')->orderBy('updated_at', 'desc')->get();
+        $buildDate = $articles->first()->updated_at->toRssString();
+        $contents = (string) view('rss', ['articles' => $articles, 'buildDate' => $buildDate]);
 
         return (new Response($contents, '200'))->header('Content-Type', 'application/rss+xml');
     }

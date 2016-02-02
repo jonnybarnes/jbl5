@@ -100,6 +100,16 @@ class Article extends Model
     }
 
     /**
+     * Get the pubdate value for RSS feeds.
+     *
+     * @return string
+     */
+    public function getPubdateAttribute()
+    {
+        return $this->updated_at->toRSSString();
+    }
+
+    /**
      * A link to the article, i.e. `/blog/1999/12/25/merry-christmas`
      *
      * @return string

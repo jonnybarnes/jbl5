@@ -60,4 +60,16 @@ class ArticlesTest extends TestCase
         $this->visit($this->appurl . '/blog/2016/01/my-new-blog')
              ->see('My New Blog');
     }
+
+    /**
+     * Test the RSS feed.
+     *
+     * @return void
+     */
+    public function testRSSFeed()
+    {
+        $response = $this->call('GET', $this->appurl . '/feed');
+
+        $this->assertEquals('application/rss+xml', $response->headers->get('Content-Type'));
+    }
 }
