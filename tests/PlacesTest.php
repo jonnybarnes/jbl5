@@ -38,4 +38,15 @@ class PlacesTest extends TestCase
         $this->visit($this->appurl . '/places/the-bridgewater-pub')
              ->see('The Bridgewater Pub');
     }
+
+    /**
+     * Test the nearby method returns a collection.
+     *
+     * @return void
+     */
+    public function testNearbyMethod()
+    {
+        $nearby = \App\Place::near(53.49, -2.37, 1000);
+        $this->assertEquals('the-bridgewater-pub', $nearby[0]->slug);
+    }
 }

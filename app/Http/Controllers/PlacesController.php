@@ -50,8 +50,6 @@ class PlacesController extends Controller
     public function show($slug)
     {
         $place = Place::where('slug', '=', $slug)->first();
-        $place->latitude = $place->getLatitude();
-        $place->longitude = $place->getLongitude();
 
         return view('singleplace', ['place' => $place]);
     }
@@ -88,22 +86,5 @@ class PlacesController extends Controller
     public function destroy($id)
     {
         //
-    }
-
-    /**
-     * Show places near a given Lat/Lng value.
-     *
-     * @param  float latitude
-     * @param  float longitude
-     * @param  int distance limit
-     * @return Collection
-     */
-    public function nearbyPlaces($latitude, $longitude, $distance = null)
-    {
-        $distance = $distance ?? 1000;
-        $places = Place::near($latitude, $longitude, $distance);
-
-        return (new Response($places->toJson(), 200))
-                        ->header('Content-Type', 'application/json');
     }
 }
