@@ -16,7 +16,7 @@ class NotesTest extends TestCase
     {
         parent::setUp();
         $this->appurl = config('app.url');
-        $this->notesController = new App\Http\Controllers\NotesController();
+        $this->notesController = new \App\Http\Controllers\NotesController();
     }
 
     /**
