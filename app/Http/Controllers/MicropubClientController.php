@@ -24,7 +24,6 @@ class MicropubClientController extends Controller
         $authed = false;
         $url = '';
         $syndication = false;
-        $errorMessage = session('error');
         if ($request->cookie('me') && $request->cookie('me') != 'loggedout') {
             $authed = true;
             $url = $request->cookie('me');
@@ -54,7 +53,6 @@ class MicropubClientController extends Controller
         return view('micropubnewnotepage', [
             'authed' => $authed,
             'url' => $url,
-            'errorMessage' => $errorMessage,
             'syndication' => $syndication,
         ]);
     }
@@ -117,7 +115,7 @@ class MicropubClientController extends Controller
         $micropubEndpoint = $indieClient->discoverMicropubEndpoint($domain);
 
         if (! $micropubEndpoint) {
-            return redirect('notes/new')->with('error', 'Unable to determine micropub API endpoint');
+            return redirect('notes/new')->withErrors('Unable to determine micropub API endpoint', 'endpoint');
         }
 
         try {
@@ -126,7 +124,7 @@ class MicropubClientController extends Controller
                 'query' => ['q' => 'syndicate-to'],
             ]);
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-            return redirect('notes/new')->with('error-message', 'Bad response when refreshing syndication targets');
+            return redirect('notes/new')->withErrors('Bad response when refreshing syndication targets', 'endpoint');
         }
         $body = (string) $response->getBody();
         $syndication = str_replace(['&', '[]'], [';', ''], $body);
