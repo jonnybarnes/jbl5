@@ -16,9 +16,10 @@ class MicropubClientController extends Controller
      *
      * @param  \Illuminate\Cookie\CookieJar $cookie
      * @param  \Illuminate\Http\Request $request
+     * @param  \Carbon\Carbon $carbon
      * @return \Illuminate\View\Factory view
      */
-    public function newNotePage(CookieJar $cookie, Request $request)
+    public function newNotePage(CookieJar $cookie, Request $request, Carbon $carbon)
     {
         $authed = false;
         $url = '';
@@ -28,8 +29,8 @@ class MicropubClientController extends Controller
             $authed = true;
             $url = $request->cookie('me');
             $lastChecked = $request->cookie('token_last_verified');
-            $then = Carbon::createFromFormat('Y-m-d', $lastChecked, 'Europe/London');
-            $diff = $then->diffInDays(Carbon::now());
+            $then = $carbon->createFromFormat('Y-m-d', $lastChecked, 'Europe/London');
+            $diff = $then->diffInDays($carbon->now());
             if ($diff >= 31) {
                 $valid = $this->checkTokenValidity($request->cookie('token'));
                 if ($valid == true) {
