@@ -96,11 +96,11 @@ Route::group(['domain' => config('url.longurl'), 'middleware' => 'web'], functio
 
     //indieauth
     Route::any('beginauth', 'IndieAuthController@beginauth');
-    Route::get('auth', 'IndieAuthController@indieauth');
+    Route::get('indieauth', 'IndieAuthController@indieauth');
+    Route::get('api/post', 'IndieAuthController@tokenEndpoint');
     Route::get('logout', 'IndieAuthController@indieauthLogout');
 
     //micropub endoints
-    Route::post('api/token', 'MicropubController@tokenEndpoint');
     Route::post('api/post', 'MicropubController@post');
     Route::get('api/post', 'MicropubController@getEndpoint');
 

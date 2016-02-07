@@ -3,59 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Place;
-use IndieAuth\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class MicropubController extends Controller
 {
-    /**
-     * If the user has auth’d via IndieAuth, issue a valid token.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \IndieAuth\Client $client
-     * @return \Illuminate\Http\Response
-     */
-    public function tokenEndpoint(Request $request, Client $client)
-    {
-        $authEndpoint = $client->discoverAuthorizationEndpoint($request->input('me'));
-        if ($authEndpoint) {
-            $auth = $client->verifyIndieAuthCode(
-                $authEndpoint,
-                $request->input('code'),
-                $request->input('me'),
-                $request->input('redirect_uri'),
-                $request->input('client_id'),
-                $request->input('state')
-            );
-            if (array_key_exists('me', $auth)) {
-                $scope = array_key_exists('scope', $auth) ? $auth['scope'] : '';
-                $scopes = explode(' ', $scope);
-                $tokensController = new TokensController();
-                $token = $tokensController->saveToken(
-                    $auth['me'],
-                    $request->input('client_id'),
-                    $scopes
-                );
-
-                $content = http_build_query([
-                    'me' => $request->input('me'),
-                    'scopes' => $scopes,
-                    'access_token' => $token,
-                ]);
-
-                return (new Response($content, 200))
-                               ->header('Content-Type', 'application/x-www-form-urlencoded');
-            }
-            $contents = 'There was an error verifying the authorisation code. Sorry.';
-
-            return new Response($contents, 400);
-        }
-        $contents = 'There was an error discovering the authorisation endpoint.';
-
-        return new Response($contents, 400);
-    }
-
     /**
      * This function receives an API request, verifies the authenticity
      * then passes over the info to the relavent AdminController.
