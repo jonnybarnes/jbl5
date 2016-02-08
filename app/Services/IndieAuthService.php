@@ -28,12 +28,11 @@ class IndieAuthService
      */
     public function buildAuthorizationURL($authEndpoint, $domain, $client)
     {
-        $bytes = openssl_random_pseudo_bytes(16);
-        $hex = bin2hex($bytes);
-        session(['state' => $hex]);
+        $domain = $client->normalizeMeURL($domain);
+        $state = bin2hex(openssl_random_pseudo_bytes(16));
+        session(['state' => $state]);
         $redirectURL = 'https://' . config('url.longurl') . '/indieauth';
         $clientId = 'https://' . config('url.longurl') . '/notes/new';
-        $state = $hex;
         $scope = 'post';
         $authorizationURL = $client->buildAuthorizationURL(
             $authEndpoint,

@@ -38,7 +38,7 @@ class IndieAuthController extends Controller
         if ($authorizationEndpoint) {
             $authorizationURL = $this->indieAuthService->buildAuthorizationURL(
                 $authorizationEndpoint,
-                $domain,
+                $request->input('me'),
                 $this->indieClient
             );
             var_dump($authorizationURL);
