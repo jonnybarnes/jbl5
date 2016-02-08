@@ -113,6 +113,10 @@ class ShortURLsController extends Controller
             }
         }
 
-        return 'This id was never used. Old redirects are lcoated at <code><a href="https://jonnybarnes.net/assets/old-shorturls.json">old-shorturls.json</a></code>';
+        return 'This id was never used.
+        Old redirects are lcoated at
+        <code>
+            <a href="https://jonnybarnes.net/assets/old-shorturls.json">old-shorturls.json</a>
+        </code>.';
     }
 }

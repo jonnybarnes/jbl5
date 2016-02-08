@@ -57,7 +57,7 @@ class IndieAuthTest extends TestCase
      *
      * @return void
      */
-    public function testIndieAuthControllerBeginAuthREdirectsToEndpoint()
+    public function testIndieAuthControllerBeginAuthRedirectsToEndpoint()
     {
         $response = $this->call('GET', $this->appurl . '/beginauth', ['me' => $this->appurl]);
         $this->assertSame(
