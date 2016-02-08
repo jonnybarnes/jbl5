@@ -34,14 +34,12 @@ class IndieAuthController extends Controller
     public function beginauth(Request $request)
     {
         $authorizationEndpoint = $this->indieAuthService->getAuthorizationEndpoint($request->input('me'), $this->indieClient);
-        var_dump($authorizationEndpoint);
         if ($authorizationEndpoint) {
             $authorizationURL = $this->indieAuthService->buildAuthorizationURL(
                 $authorizationEndpoint,
                 $request->input('me'),
                 $this->indieClient
             );
-            var_dump($authorizationURL);
             if ($authorizationURL) {
                 return redirect($authorizationURL);
             }

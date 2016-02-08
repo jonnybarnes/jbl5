@@ -25,12 +25,8 @@ class IndieAuthTest extends TestCase
      */
     public function testIndieAuthServiceDiscoversEndpoint()
     {
-        $client = \Mockery::mock(\IndieAuth\Client::class)
-                    ->shouldReceive('normalizeMeURL')
-                    ->andReturn($this->appurl)
-                    ->shouldReceive('discoverAuthorizationEndpoint')
-                    ->with($this->appurl)->andReturn('https://indieauth.com/auth')->getMock();
         $service = new \App\Services\IndieAuthService();
+        $client = new \IndieAuth\Client();
         $result = $service->getAuthorizationEndpoint($this->appurl, $client);
         $this->assertSame('https://indieauth.com/auth', $result);
     }
@@ -61,10 +57,12 @@ class IndieAuthTest extends TestCase
      *
      * @return void
      */
-    public function testIndieAuthControllerFailsThenReturnsToClient()
+    public function testIndieAuthControllerBeginAuthREdirectsToEndpoint()
     {
         $response = $this->call('GET', $this->appurl . '/beginauth', ['me' => $this->appurl]);
-        var_dump($response->status());
-        $this->assertSame($this->appurl . '/notes/new', $response->headers->get('Location'));
+        $this->assertSame(
+            'https://indieauth.com/auth?me=',
+            substr($response->headers->get('Location'), 0, 30)
+        );
     }
 }
