@@ -63,7 +63,8 @@ class IndieAuthTest extends TestCase
      */
     public function testIndieAuthControllerFailsThenReturnsToClient()
     {
-        $response = $this->call('GET', $this->appurl . '/beginauth',['me' => $this->appurl]);
+        $response = $this->call('GET', $this->appurl . '/beginauth', ['me' => $this->appurl]);
+        var_dump($response->status());
         $this->assertSame($this->appurl . '/notes/new', $response->headers->get('Location'));
     }
 }
