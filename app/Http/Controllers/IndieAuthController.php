@@ -26,11 +26,7 @@ class IndieAuthController extends Controller
      */
     public function beginauth(Request $request)
     {
-        $domain = $request->input('me');
-        if (substr($domain, 0, 4) !== 'http') {
-            $domain = 'http://' . $domain;
-        }
-        $authorizationEndpoint = $this->indieAuthService->getAuthorizationEndpoint($domain, $this->indieClient);
+        $authorizationEndpoint = $this->indieAuthService->getAuthorizationEndpoint($request->input('me'), $this->indieClient);
         if ($authorizationEndpoint) {
             $authorizationURL = $this->indieAuthService->buildAuthorizationURL(
                 $authorizationEndpoint,
@@ -42,12 +38,12 @@ class IndieAuthController extends Controller
             }
         }
 
-        return redirect('notes/new')->withErrors('Unable to determine authorisation endpoint', 'indieauth');
+        return redirect('/notes/new')->withErrors('Unable to determine authorisation endpoint', 'indieauth');
     }
 
     /**
      * Once they have verified themselves through the authorisation endpint
-     * the next step is retreiveing a token from the token endpoint. here
+     * the next step is retreiveing a token from the token endpoint. Here
      * we request a token and then save it in a cookie on the user’s browser.
      *
      * @param  \Illuminate\Http\Rrequest $request
@@ -57,12 +53,12 @@ class IndieAuthController extends Controller
     public function indieauth(Request $request, CookieJar $cookie)
     {
         if (session('state') != $request->input('state')) {
-            return redirect('notes/new')->withErrors(
+            return redirect('/notes/new')->withErrors(
                 'Invalid <code>state</code> value returned from indieauth server',
                 'indieauth'
             );
         }
-        $tokenEndpoint = $this->indieAuthService->discoverTokenEndpoint($request->input('me'));
+        $tokenEndpoint = $this->indieAuthService->discoverTokenEndpoint($request->input('me'), $this->indieClient);
         $redirectURL = 'https://' . config('url.longurl') . '/indieauth';
         $clientId = 'https://' . config('url.longurl') . '/notes/new';
         $data = [
@@ -73,7 +69,7 @@ class IndieAuthController extends Controller
             'client_id' => $clientId,
             'state' => $request->input('state'),
         ];
-        $token = $this->indieAuthService->getToken($data);
+        $token = $this->indieAuthService->getToken($data, $this->indieClient);
 
         if (array_key_exists('access_token', $token)) {
             $cookie->queue('me', $token['me'], 86400);
@@ -83,7 +79,7 @@ class IndieAuthController extends Controller
             return redirect('/notes/new');
         }
 
-        return redirect('notes/new')->withErrors('Unable to get a token from the endpoint', 'indieauth');
+        return redirect('/notes/new')->withErrors('Unable to get a token from the endpoint', 'indieauth');
     }
 
     /**
@@ -102,7 +98,7 @@ class IndieAuthController extends Controller
             'client_id' => $request->input('client_id'),
             'state' => $request->input('state'),
         ];
-        $auth = $this->indieAuthService->verifyIndieAuthCode($data);
+        $auth = $this->indieAuthService->verifyIndieAuthCode($data, $this->indieClient);
         if (array_key_exists('me', $auth)) {
             $scope = $auth['scope'] ?? '';
             $scopes = explode(' ', $scope);
