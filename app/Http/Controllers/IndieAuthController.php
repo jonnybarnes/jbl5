@@ -9,6 +9,13 @@ use App\Services\IndieAuthService;
 
 class IndieAuthController extends Controller
 {
+    /**
+     * Inject the dependencies.
+     *
+     * @param  \App\Services\IndieAuthService $indieAuthService
+     * @param  \IndieAuth\Client $client
+     * @return void
+     */
     public function __construct(IndieAuthService $indieAuthService, Client $client)
     {
         $this->indieAuthService = $indieAuthService;
