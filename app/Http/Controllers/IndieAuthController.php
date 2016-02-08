@@ -41,6 +41,7 @@ class IndieAuthController extends Controller
                 $domain,
                 $this->indieClient
             );
+            var_dump($authorizationURL);
             if ($authorizationURL) {
                 return redirect($authorizationURL);
             }
