@@ -10,6 +10,16 @@ use App\Services\IndieAuthService;
 class IndieAuthController extends Controller
 {
     /**
+     * This service isolates the IndieAuth Client code.
+     */
+    protected $indieAuthService;
+
+    /**
+     * The IndieAuth Client implementation.
+     */
+    protected $client;
+
+    /**
      * Inject the dependencies.
      *
      * @param  \App\Services\IndieAuthService $indieAuthService
@@ -19,7 +29,7 @@ class IndieAuthController extends Controller
     public function __construct(IndieAuthService $indieAuthService, Client $client)
     {
         $this->indieAuthService = $indieAuthService;
-        $this->indieClient = $client;
+        $this->client = $client;
     }
 
     /**
@@ -35,13 +45,13 @@ class IndieAuthController extends Controller
     {
         $authorizationEndpoint = $this->indieAuthService->getAuthorizationEndpoint(
             $request->input('me'),
-            $this->indieClient
+            $this->client
         );
         if ($authorizationEndpoint) {
             $authorizationURL = $this->indieAuthService->buildAuthorizationURL(
                 $authorizationEndpoint,
                 $request->input('me'),
-                $this->indieClient
+                $this->client
             );
             if ($authorizationURL) {
                 return redirect($authorizationURL);
@@ -68,7 +78,7 @@ class IndieAuthController extends Controller
                 'indieauth'
             );
         }
-        $tokenEndpoint = $this->indieAuthService->discoverTokenEndpoint($request->input('me'), $this->indieClient);
+        $tokenEndpoint = $this->indieAuthService->discoverTokenEndpoint($request->input('me'), $this->client);
         $redirectURL = 'https://' . config('url.longurl') . '/indieauth';
         $clientId = 'https://' . config('url.longurl') . '/notes/new';
         $data = [
@@ -79,7 +89,7 @@ class IndieAuthController extends Controller
             'client_id' => $clientId,
             'state' => $request->input('state'),
         ];
-        $token = $this->indieAuthService->getToken($data, $this->indieClient);
+        $token = $this->indieAuthService->getToken($data, $this->client);
 
         if (array_key_exists('access_token', $token)) {
             $cookie->queue('me', $token['me'], 86400);
@@ -96,10 +106,9 @@ class IndieAuthController extends Controller
      * If the user has auth’d via IndieAuth, issue a valid token.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \IndieAuth\Client $client
      * @return \Illuminate\Http\Response
      */
-    public function tokenEndpoint(Request $request, Client $client)
+    public function tokenEndpoint(Request $request)
     {
         $data = [
             'code' => $request->input('code'),
@@ -108,7 +117,7 @@ class IndieAuthController extends Controller
             'client_id' => $request->input('client_id'),
             'state' => $request->input('state'),
         ];
-        $auth = $this->indieAuthService->verifyIndieAuthCode($data, $this->indieClient);
+        $auth = $this->indieAuthService->verifyIndieAuthCode($data, $this->client);
         if (array_key_exists('me', $auth)) {
             $scope = $auth['scope'] ?? '';
             $scopes = explode(' ', $scope);
