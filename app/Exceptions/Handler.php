@@ -65,7 +65,11 @@ class Handler extends ExceptionHandler
     protected function renderExceptionWithWhoops(Exception $exc)
     {
         $whoops = new \Whoops\Run;
-        $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler());
+        $handler = new \Whoops\Handler\PrettyPageHandler();
+        $handler->setEditor(function($file, $line) {
+            return "atom://open?file=$file&line=$line";
+        });
+        $whoops->pushHandler($handler);
 
         return new \Illuminate\Http\Response(
             $whoops->handleException($exc),
