@@ -3,11 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Article;
-use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Jonnybarnes\IndieWeb\Numbers;
-use Jonnybarnes\UnicodeTools\UnicodeTools;
-use League\CommonMark\CommonMarkConverter;
 
 class ArticlesController extends Controller
 {

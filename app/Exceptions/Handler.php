@@ -66,7 +66,7 @@ class Handler extends ExceptionHandler
     {
         $whoops = new \Whoops\Run;
         $handler = new \Whoops\Handler\PrettyPageHandler();
-        $handler->setEditor(function($file, $line) {
+        $handler->setEditor(function ($file, $line) {
             return "atom://open?file=$file&line=$line";
         });
         $whoops->pushHandler($handler);

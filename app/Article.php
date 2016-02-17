@@ -110,7 +110,7 @@ class Article extends Model
     }
 
     /**
-     * A link to the article, i.e. `/blog/1999/12/25/merry-christmas`
+     * A link to the article, i.e. `/blog/1999/12/25/merry-christmas`.
      *
      * @return string
      */

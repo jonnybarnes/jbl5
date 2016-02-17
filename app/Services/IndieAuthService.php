@@ -14,8 +14,7 @@ class IndieAuthService
      */
     public function getAuthorizationEndpoint($domain, $client)
     {
-        $domain = $client->normalizeMeURL($domain);
-        return $client->discoverAuthorizationEndpoint($domain);
+        return $client->discoverAuthorizationEndpoint($client->normalizeMeURL($domain));
     }
 
     /**
