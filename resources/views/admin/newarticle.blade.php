@@ -6,21 +6,23 @@ New Article « Admin CP
 
 @section('content')
 @if(isset($message))<p class="error">{{ $message }}</p>@endif
-<form action="/admin/blog/new" method="post" accept-charset="utf-8" id="newarticle">
+<form action="/admin/blog/new" method="post" accept-charset="utf-8" enctype="multipart/form-data" id="newarticle">
 <input type="hidden" name="_token" value="{{ csrf_token() }}">
 <label for="title">Title (URL):</label>
 <br>
-<input type="text" name="title" id="title" value="{{ Input::old('title') }}" placeholder="Title here">
+<input type="text" name="title" id="title" value="{{ old('title') }}" placeholder="Title here">
 <br>
-<input type="text" name="url" id="url" value="{{ Input::old('url') }}" placeholder="Article URL">
+<input type="text" name="url" id="url" value="{{ old('url') }}" placeholder="Article URL">
 <br>
 <label for="main">Main:</label>
 <br>
-<textarea name="main" id="main" placeholder="Article here">{{ Input::old('main') }}</textarea>
+<textarea name="main" id="main" placeholder="Article here">{{ old('main') }}</textarea>
 <br>
 <label for="published">Published:</label><input type="checkbox" name="published" id="published" value="1">
 <br>
-<input type="submit" name="save" value="Save">
+<p>Or you can upload an <code>.md</code> file:</p><input type="file" accept=".md" name="article">
+<br>
+<button type="submit" name="save">Save</button>
 </form>
 <h2>Preview</h2>
 @stop

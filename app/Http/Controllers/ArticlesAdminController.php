@@ -72,12 +72,19 @@ class ArticlesAdminController extends Controller
         if ($published == null) {
             $published = '0';
         }
+        //if a `.md` is attached use that for the main content.
+        $content = null; //set default value
+        if ($request->hasFile('article')) {
+            $file = $request->file('article')->openFile();
+            $content = $file->fread($file->getSize());
+        }
+        $main = $content ?? $request->input('main');
         try {
             $article = Article::create(
                 [
                     'url' => $request->input('url'),
                     'title' => $request->input('title'),
-                    'main' => $request->input('main'),
+                    'main' => $main,
                     'published' => $published,
                 ]
             );
