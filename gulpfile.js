@@ -1,5 +1,5 @@
 var gulp = require('gulp');
-var gzip = require('gulp-gzip');
+var zopfli = require('gulp-zopfli');
 var brotli = require('gulp-brotli');
 var elixir = require('laravel-elixir');
 
@@ -20,7 +20,7 @@ elixir(function(mix) {
         'assets/css/global.css',
         'assets/css/projects.css',
         'assets/css/alertify.css',
-        'assets/css/normalize.css',
+        'assets/css/sanitize.min.css',
         'assets/css/prism.css',
         'assets/js/form-save.js',
         'assets/js/links.js',
@@ -38,7 +38,7 @@ elixir(function(mix) {
 
 gulp.task('gzip-built-css', function() {
     return gulp.src('public/build/assets/css/*.css')
-        .pipe(gzip({ gzipOptions: { level: 9 }, append: true }))
+        .pipe(zopfli({ format: 'gzip', append: true }))
         .pipe(gulp.dest('public/build/assets/css/'));
 });
 
@@ -50,7 +50,7 @@ gulp.task('br-built-css', function() {
 
 gulp.task('gzip-built-js', function() {
     return gulp.src('public/build/assets/js/*.js')
-        .pipe(gzip({ gzipOptions: { level: 9 }, append: true }))
+        .pipe(zopfli({ format: 'gzip', append: true }))
         .pipe(gulp.dest('public/build/assets/js/'));
 });
 
@@ -73,7 +73,7 @@ gulp.task('bower', function() {
     //copy CSS files
     gulp.src([
             'bower_components/alertify.js/dist/css/alertify.css',
-            'bower_components/normalize-css/normalize.css',
+            'bower_components/sanitize-css/dist/sanitize.min.css',
         ])
         .pipe(gulp.dest('public/assets/css/'));
 });
