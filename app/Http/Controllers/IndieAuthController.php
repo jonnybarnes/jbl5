@@ -78,7 +78,7 @@ class IndieAuthController extends Controller
                 'indieauth'
             );
         }
-        $tokenEndpoint = $this->indieAuthService->discoverTokenEndpoint($request->input('me'), $this->client);
+        $tokenEndpoint = $this->indieAuthService->getTokenEndpoint($request->input('me'), $this->client);
         $redirectURL = 'https://' . config('url.longurl') . '/indieauth';
         $clientId = 'https://' . config('url.longurl') . '/notes/new';
         $data = [
