@@ -1,4 +1,4 @@
-body {
+html {
   background: url("/assets/img/escheresque.png"); }
 
 .map {
@@ -11,12 +11,21 @@ html {
   box-sizing: inherit; }
 
 #topheader {
-  text-align: center; }
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-flow: row;
+  -ms-flex-flow: row;
+  flex-flow: row; }
 
-nav a {
-  font-size: 1.5em;
-  padding-left: 2em;
-  padding-right: 1.7em; }
+#topheader a {
+  padding: 0.5em 1em; }
+
+nav {
+  padding-top: 0.5em; }
+
+.social-list {
+  padding-left: 2em; }
 
 .note {
   background-color: #eee8d5;
@@ -94,11 +103,14 @@ nav a {
   height: auto;
   image-orientation: from-image; }
 
-.post-info {
-  font-size: 0.8em; }
+article header {
+  margin-top: 0.5em;
+  margin-bottom: 0.8em; }
 
-h1 {
-  margin-bottom: 0; }
+.post-info {
+  font-size: 0.8em;
+  font-style: italic;
+  margin-top: -0.8em; }
 
 .contact {
   position: relative; }

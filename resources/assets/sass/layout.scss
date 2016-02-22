@@ -10,13 +10,20 @@ html {
 }
 
 #topheader {
-	text-align: center;
+	display: flex;
+	flex-flow: row;
 }
 
-nav a {
-	font-size: 1.5em;
+#topheader a {
+	padding: 0.5em 1em;
+}
+
+nav {
+	padding-top: 0.5em;
+}
+
+.social-list {
 	padding-left: 2em;
-	padding-right: 1.7em;
 }
 
 .note {
@@ -113,12 +120,16 @@ nav a {
 }
 
 //articles
-.post-info {
-	font-size: 0.8em;
+
+article header {
+	margin-top: 0.5em;
+	margin-bottom: 0.8em;
 }
 
-h1 {
-	margin-bottom: 0;
+.post-info {
+	font-size: 0.8em;
+	font-style: italic;
+	margin-top: -0.8em;
 }
 
 //contacts
