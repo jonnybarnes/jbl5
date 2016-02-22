@@ -89,7 +89,7 @@ class IndieAuthController extends Controller
             'client_id' => $clientId,
             'state' => $request->input('state'),
         ];
-        $token = $this->indieAuthService->getToken($data, $this->client);
+        $token = $this->indieAuthService->getAccessToken($data, $this->client);
 
         if (array_key_exists('access_token', $token)) {
             $cookie->queue('me', $token['me'], 86400);
