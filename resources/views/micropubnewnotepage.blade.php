@@ -9,6 +9,9 @@ New Note « Jonny Barnes
 @if($errors->endpoint->first() != '')
 <p class="error">{{ $errors->endpoint->first() }}</p>
 @endif
+@if($errors->indieauth->first() != '')
+<p class="error">{{ $errors->indieauth->first() }}</p>
+@endif
 @if(!$authed)
 <form action="/beginauth" method="post" id="login">
   <input type="hidden" name="_token" value="{{ csrf_token() }}">
