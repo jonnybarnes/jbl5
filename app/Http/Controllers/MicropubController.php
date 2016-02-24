@@ -5,9 +5,23 @@ namespace App\Http\Controllers;
 use App\Place;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Services\TokenService;
 
 class MicropubController extends Controller
 {
+    /**
+     * The token service container.
+     */
+    protected $tokenService;
+
+    /**
+     * Injest the dependency.
+     */
+    public function __construct(TokenService $tokenService)
+    {
+        $this->tokenService = $tokenService;
+    }
+
     /**
      * This function receives an API request, verifies the authenticity
      * then passes over the info to the relavent AdminController.
@@ -20,8 +34,7 @@ class MicropubController extends Controller
         $httpAuth = $request->header('Authorization');
         if (preg_match('/Bearer (.+)/', $httpAuth, $match)) {
             $token = $match[1];
-            $tokensController = new TokensController();
-            $tokenData = $tokensController->tokenValidity($token);
+            $tokenData = $this->tokenService->tokenValidity($token);
             if ($tokenData === false) {
                 $tokenData = ['scopes' => []];
             } //this is a quick hack so the next line doesn't error out
@@ -80,9 +93,7 @@ class MicropubController extends Controller
         $httpAuth = $request->header('Authorization');
         if (preg_match('/Bearer (.+)/', $httpAuth, $match)) {
             $token = $match[1];
-
-            $tokensController = new TokensController();
-            $valid = $tokensController->tokenValidity($token);
+            $valid = $this->tokenService->tokenValidity($token);
 
             if ($valid === false) {
                 return new Response('Invalid token', 400);

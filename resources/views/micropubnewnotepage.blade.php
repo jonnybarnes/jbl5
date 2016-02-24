@@ -12,7 +12,7 @@ New Note « Jonny Barnes
 @if($errors->indieauth->first() != '')
 <p class="error">{{ $errors->indieauth->first() }}</p>
 @endif
-@if(!$authed)
+@if($authed == false)
 <form action="/beginauth" method="post" id="login">
   <input type="hidden" name="_token" value="{{ csrf_token() }}">
   <fieldset>

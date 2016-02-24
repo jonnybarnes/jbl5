@@ -100,4 +100,16 @@ class IndieAuthService
 
         return;
     }
+
+    /**
+     * Determine the micropub endpoint.
+     *
+     * @param  string $domain
+     * @param  \IndieAuth\Client $client
+     * @return string The endpoint
+     */
+    public function discoverMicropubEndpoint($domain, $client)
+    {
+        return $client->discoverMicropubEndpoint($client->normalizeMeURL($domain));
+    }
 }

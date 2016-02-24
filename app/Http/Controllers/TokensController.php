@@ -2,112 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Filesystem\Filesystem;
+use App\Services\TokenService;
 
 class TokensController extends Controller
 {
     /**
-     * Return all the tokens.
+     * The token service container.
      *
-     * @return array
+     * @var string
      */
-    public function getAll()
-    {
-        $return = [];
-        $filesystem = new Filesystem();
-        $tokens = $filesystem->files(storage_path() . '/tokens/');
-        foreach ($tokens as $token) {
-            $tokenData = $filesystem->get($token);
-            $tmp = json_decode($tokenData);
-            $name = last(explode('/', $token));
-            $return[$name] = $tmp;
-        }
+    protected $tokenService;
 
-        return $return;
+    /**
+     * Inject the service dependency.
+     *
+     * @return void
+     */
+    public function __construct(TokenService $tokenService)
+    {
+        $this->tokenService = $tokenService;
     }
 
     /**
-     * Save token data to file and generate a random name. This
-     * name is what other pople see *as* the token.
+     * Show all the saved tokens.
      *
-     * @param  string  $me A URL of (normally) a personal homepage
-     * @param  string  $client_id  The API client that requested the token
-     * @param  array   £scopes The reuested scopes for the token
-     * @return string  The name of the token
+     * @return \Illuminate\View\Factory view
      */
-    public function saveToken($domain, $clientId, array $scopes)
+    public function showTokens()
     {
-        $filesystem = new Filesystem();
+        $tokens = $$his->tokenService->getAll();
 
-        $random = openssl_random_pseudo_bytes(32);
-        $hex = bin2hex($random);
-        $path = storage_path() . '/tokens/' . $hex;
-
-        $dateIssued = date('Y-m-d H:i:s');
-
-        $content = [
-            'me' => $domain,
-            'client_id' => $clientId,
-            'scopes' => $scopes,
-            'date_issued' => $dateIssued,
-            'valid' => 1,
-        ];
-        $json = json_encode($content);
-
-        $filesystem->put($path, $json);
-
-        return $hex;
+        return view('admin.listtokens', ['tokens' => $tokens]);
     }
 
     /**
-     * Check if a supplied token name matches any valid tokens on file.
+     * Show the form to delete a certain token.
      *
-     * @param  string The toke name
-     * @return mixed
+     * @param  string The token id
+     * @return \Illuminate\View\Factory view
      */
-    public function tokenValidity($token)
+    public function deleteToken($tokenId)
     {
-        $tokenData = $this->openToken($token);
-
-        if ($tokenData && $tokenData['valid'] == 1) {
-            return $tokenData;
-        }
-
-        return false;
+        return view('admin.deletetoken', ['id' => $tokenId]);
     }
 
     /**
-     * Reead and return the token data for a supplied token name.
+     * Process the request to delete a token.
      *
-     * @param  string The token anme
-     * @return mixed
+     * @param  string The token id
+     * @return \Illuminate\View\Factory view
      */
-    public function openToken($token)
+    public function postDeleteToken($tokenId)
     {
-        $filesystem = new Filesystem();
-        $file = storage_path() . '/tokens/' . $token;
-        //check token extists
-        if ($filesystem->exists($file)) {
-            $json = $filesystem->get($file);
+        $this->tokenService->deleteToken($tokenId);
 
-            return json_decode($json, true);
-        }
-
-        return false;
-    }
-
-    /**
-     * Delete a token from file.
-     *
-     * @param  string The token name
-     * @return bool
-     */
-    public function deleteToken($token)
-    {
-        $filesystem = new Filesystem();
-        $file = storage_path() . '/tokens/' . $token;
-        $success = $filesystem->delete($file);
-
-        return $success;
+        return view('admin.deletetokensuccess', ['id' => $tokenId]);
     }
 }

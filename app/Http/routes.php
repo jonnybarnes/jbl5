@@ -49,9 +49,9 @@ Route::group(['domain' => config('url.longurl'), 'middleware' => 'web'], functio
         Route::post('admin/note/edit/{id}', 'NotesAdminController@postEditNote');
 
         //Tokens
-        Route::get('admin/tokens', 'TokensAdminController@showTokens');
-        Route::get('admin/tokens/delete/{id}', 'TokensAdminController@deleteToken');
-        Route::post('admin/tokens/delete/{id}', 'TokensAdminController@postDeleteToken');
+        Route::get('admin/tokens', 'TokensController@showTokens');
+        Route::get('admin/tokens/delete/{id}', 'TokensController@deleteToken');
+        Route::post('admin/tokens/delete/{id}', 'TokensController@postDeleteToken');
 
         //Micropub Clients
         Route::get('admin/clients', 'ClientsAdminController@listClients');
