@@ -25,10 +25,10 @@ class MicropubClientController extends Controller
     /**
      * Inject the dependencies.
      */
-    public function __construct(IndieAuthService $indieAuthService, TokenService $tokenService)
+    public function __construct(IndieAuthService $indieAuthService = null, TokenService $tokenService = null)
     {
-        $this->indieAuthService = $indieAuthService;
-        $this->tokenService = $tokenService;
+        $this->indieAuthService = $indieAuthService ?? new IndieAuthService();
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     /**
@@ -41,6 +41,7 @@ class MicropubClientController extends Controller
     public function newNotePage(Request $request, Carbon $carbon)
     {
         $authed = false;
+        $syndication = null;
         if ($request->cookie('me') && $request->cookie('me') != 'loggedout') {
             $authed = true;
             $lastVerified = $carbon->createFromFormat(

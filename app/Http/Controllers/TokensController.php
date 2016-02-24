@@ -18,9 +18,9 @@ class TokensController extends Controller
      *
      * @return void
      */
-    public function __construct(TokenService $tokenService)
+    public function __construct(TokenService $tokenService = null)
     {
-        $this->tokenService = $tokenService;
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     /**
