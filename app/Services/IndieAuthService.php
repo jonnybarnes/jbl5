@@ -97,8 +97,6 @@ class IndieAuthService
                 $data['state']
             );
         }
-
-        return;
     }
 
     /**
