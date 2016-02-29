@@ -200,8 +200,6 @@ class NotesController extends Controller
         if (mb_substr($url, 0, 20) == 'http://pbs.twimg.com') {
             return str_replace('http://', 'https://', $url);
         }
-
-        return;
     }
 
     /**

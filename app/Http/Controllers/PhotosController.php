@@ -65,8 +65,6 @@ class PhotosController extends Controller
 
             return $photoFilenameSmall;
         }
-
-        return;
     }
 
     /**
@@ -92,7 +90,5 @@ class PhotosController extends Controller
         if (isset($ext)) {
             return '/assets/img/notes/note-' . $nb60id . '.' . $ext;
         }
-
-        return;
     }
 }
