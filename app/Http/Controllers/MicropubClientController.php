@@ -20,7 +20,7 @@ class MicropubClientController extends Controller
     /**
      * The token service container.
      */
-     protected $tokenService;
+    protected $tokenService;
 
     /**
      * Inject the dependencies.
@@ -389,7 +389,5 @@ class MicropubClientController extends Controller
         if (count($mpSyndicateTo) > 0) {
             return $mpSyndicateTo;
         }
-
-        return null;
     }
 }

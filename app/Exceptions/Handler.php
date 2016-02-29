@@ -57,7 +57,7 @@ class Handler extends ExceptionHandler
         if ($exc instanceof TokenMismatchException) {
             return redirect()->back()
                 ->withInput($request->except('password', '_token'))
-                =>withErrors('Validation Token has expired. Please try again', 'csrf');
+                ->withErrors('Validation Token has expired. Please try again', 'csrf');
         }
 
         return parent::render($request, $exc);
