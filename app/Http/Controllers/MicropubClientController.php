@@ -40,28 +40,11 @@ class MicropubClientController extends Controller
      */
     public function newNotePage(Request $request, Carbon $carbon)
     {
-        $authed = false;
-        $syndication = null;
-        if ($request->cookie('me') && $request->cookie('me') != 'loggedout') {
-            $authed = true;
-            $lastVerified = $carbon->createFromFormat(
-                'Y-m-d',
-                $request->cookie('token_last_verified'),
-                'Europe/London'
-            );
-            $diff = $lastVerified->diffInDays($carbon->now());
-            if ($diff >= 31) { //token is older than 31 days so check if still valid
-                if ($this->checkTokenValidity($request->cookie('token')) == true) {
-                    cookie()->queue('token_last_verified', date('Y-m-d'), 86400);
-                }
-            }
-            $syndicationTargets = $request->cookie('syndication');
-            $syndication = $this->parseSyndicationTargets($syndicationTargets);
-        }
+        $url = session('me');
+        $syndication = $this->parseSyndicationTargets(session('syndication'));
 
         return view('micropubnewnotepage', [
-            'authed' => $authed,
-            'url' => $request->cookie('me'),
+            'url' => $url,
             'syndication' => $syndication,
         ]);
     }
@@ -78,8 +61,8 @@ class MicropubClientController extends Controller
      */
     public function postNewNote(Request $request, IndieClient $indieClient, GuzzleClient $guzzleClient)
     {
-        $domain = $request->cookie('me');
-        $token = $request->cookie('token');
+        $domain = session('me');
+        $token = session('token');
 
         $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint(
             $domain,
@@ -120,8 +103,8 @@ class MicropubClientController extends Controller
         IndieClient $indieClient,
         GuzzleClient $guzzleClient
     ) {
-        $domain = $request->cookie('me');
-        $token = $request->cookie('token');
+        $domain = session('me');
+        $token = session('token');
         $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint($domain, $indieClient);
 
         if (! $micropubEndpoint) {
@@ -139,7 +122,9 @@ class MicropubClientController extends Controller
         $body = (string) $response->getBody();
         $syndication = str_replace(['&', '[]'], [';', ''], $body);
 
-        return redirect('notes/new')->withCookie('syndication', $syndication, 44640);
+        session(['syndication' => $syndication]);
+
+        return redirect('notes/new');
     }
 
     /**
@@ -249,8 +234,8 @@ class MicropubClientController extends Controller
      */
     public function postNewPlace(Request $request, IndieClient $indieClient, GuzzleClient $guzzleClient)
     {
-        $domain = $request->cookie('me');
-        $token = $request->cookie('token');
+        $domain = session('me');
+        $token = session('token');
 
         $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint($domain, $indieClient);
         if (! $micropubEndpoint) {
@@ -319,7 +304,7 @@ class MicropubClientController extends Controller
     }
 
     /**
-     * Make a request to the micripub endpoint requesting any nearby places.
+     * Make a request to the micropub endpoint requesting any nearby places.
      *
      * @param  \Illuminate\Http\Request $request
      * @param  \IndieAuth\Client $indieClient
@@ -335,8 +320,8 @@ class MicropubClientController extends Controller
         $latitude,
         $longitude
     ) {
-        $domain = $request->cookie('me');
-        $token = $request->cookie('token');
+        $domain = session('me');
+        $token = session('token');
         $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint($domain, $indieClient);
 
         if (! $micropubEndpoint) {
@@ -378,8 +363,11 @@ class MicropubClientController extends Controller
      * @param  string $syndicationTargets
      * @return array|null
      */
-    private function parseSyndicationTargets($syndicationTargets)
+    private function parseSyndicationTargets($syndicationTargets = null)
     {
+        if ($syndicationTargets === null) {
+            return;
+        }
         $mpSyndicateTo = [];
         $parts = explode(';', $syndicationTargets);
         foreach ($parts as $part) {

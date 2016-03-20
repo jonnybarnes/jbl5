@@ -29,4 +29,11 @@ class MicropubClientTest extends TestCase
         $this->visit($this->appurl . '/notes/new')
              ->see('IndieAuth');
     }
+
+    public function testClientPageRecentAuth()
+    {
+        $this->withSession(['me' => 'https://example.com'])
+             ->visit($this->appurl . '/notes/new')
+             ->see('https://example.com');
+    }
 }
