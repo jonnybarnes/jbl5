@@ -16,7 +16,7 @@ before_script:
   - psql -U travis -c 'create database travis_ci_test'
   - psql -U travis -d travis_ci_test -c 'create extension postgis'
   - cp .env.travis .env
-  - travis_retry composer self-update
+  - travis_retry composer self-update --preview
   - travis_retry composer install --no-interaction
   - php artisan key:generate
   - php artisan migrate
