@@ -79,7 +79,7 @@ class MicropubClientController extends Controller
             return redirect($location);
         }
 
-        return $response; //is this okay?
+        return redirect('notes/new')->withErrors('Endpoint didn’t create the note.', 'endpoint');
     }
 
     /**
