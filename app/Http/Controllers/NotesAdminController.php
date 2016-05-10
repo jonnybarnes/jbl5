@@ -3,12 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Note;
-use App\Place;
 use Validator;
 use Illuminate\Http\Request;
 use App\Services\NoteService;
-use App\Jobs\SyndicateToTwitter;
-use Jonnybarnes\IndieWeb\Numbers;
 
 class NotesAdminController extends Controller
 {
