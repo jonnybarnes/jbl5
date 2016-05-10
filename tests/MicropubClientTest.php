@@ -32,8 +32,11 @@ class MicropubClientTest extends TestCase
 
     public function testClientPageRecentAuth()
     {
-        $this->withSession(['me' => 'https://example.com'])
-             ->visit($this->appurl . '/notes/new')
-             ->see('https://example.com');
+        $this->withSession([
+            'me' => 'https://jbl5.dev',
+            'syndication' => 'mp-syndicate-to=twitter.com%2Fjbl5',
+        ])->visit($this->appurl . '/notes/new')
+          ->see('https://jbl5.dev')
+          ->see('twitter.com/jbl5');
     }
 }

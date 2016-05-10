@@ -2,68 +2,53 @@
 
 namespace App\Services;
 
-use Illuminate\Filesystem\Filesystem;
+use RuntimeException;
+use Lcobucci\JWT\Parser;
+use Lcobucci\JWT\Builder;
+use InvalidArgumentException;
+use Lcobucci\JWT\Signer\Hmac\Sha256;
 
 class TokenService
 {
     /**
-     * Save token data to file and generate a random name. This
-     * name is what other pople see *as* the token.
+     * Generate a JWT token.
      *
-     * @param  string  $domain A URL of (normally) a personal homepage
-     * @param  string  $client_id The API client that requested the token
-     * @param  array   $scopes The reuested scopes for the token
-     * @return string  The name of the token
+     * @param  array The data to be encoded
+     * @return string The signed token
      */
-    public function saveToken($domain, $clientId, array $scopes)
+    public function getNewToken(array $data): string
     {
-        $filesystem = new Filesystem();
-        $hex = bin2hex(random_bytes(32));
-        $path = storage_path() . '/tokens/' . $hex;
-        $json = json_encode([
-            'me' => $domain,
-            'client_id' => $clientId,
-            'scopes' => $scopes,
-            'date_issued' => date('Y-m-d H:i:s'),
-            'valid' => 1,
-        ]);
-        $filesystem->put($path, $json);
+        $signer = new Sha256();
+        $token = (new Builder())->set('me', $data['me'])
+            ->set('client_id', $data['client_id'])
+            ->set('scope', $data['scope'])
+            ->set('date_issued', time())
+            ->set('nonce', bin2hex(random_bytes(8)))
+            ->sign($signer, env('APP_KEY'))
+            ->getToken();
 
-        return $hex;
+        return $token;
     }
 
     /**
-     * Delete a token from file.
+     * Check the token signature is valid.
      *
-     * @param  string The token name
-     * @return bool
-     */
-    public function deleteToken($token)
-    {
-        $filesystem = new Filesystem();
-        $file = storage_path() . '/tokens/' . $token;
-
-        return $filesystem->delete($file);
-    }
-
-    /**
-     * Check if a supplied token name matches any valid tokens on file.
-     *
-     * @param  string The toke name
+     * @param  string The token
      * @return mixed
      */
-    public function tokenValidity($token)
+    public function validateToken($token)
     {
-        $filesystem = new Filesystem();
-        $file = storage_path() . '/tokens/' . $token;
-        //check token extists
-        if ($filesystem->exists($file)) {
-            $tokenData = json_decode($filesystem->get($file), true);
+        $signer = new Sha256();
+        try {
+            $token = (new Parser())->parse((string) $token);
+        } catch (InvalidArgumentException $e) {
+            return;
+        } catch (RuntimeException $e) {
+            return;
         }
-        if ($tokenData && $tokenData['valid'] == 1) {
-            return $tokenData;
+        if ($token->verify($signer, env('APP_KEY'))) {
+            //signuture valid
+            return $token;
         }
-
-        return false;
     }
 }

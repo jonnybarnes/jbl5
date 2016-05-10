@@ -26,4 +26,3 @@ before_script:
 
 script:
   - phpdbg -qrr vendor/bin/phpunit --coverage-text
-  - vendor/bin/phpdoccheck -d ./app/ --skip-classes

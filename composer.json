@@ -21,7 +21,7 @@
         "league/commonmark": "^0.13.0",
         "spatie/laravel-medialibrary": "^3.5",
         "league/flysystem-aws-s3-v3": "^1.0",
-        "phaza/laravel-postgis": "~3.0",
+        "phaza/laravel-postgis": "dev-small-fixes",
         "lcobucci/jwt": "^3.1"
     },
     "require-dev": {
@@ -31,9 +31,14 @@
         "symfony/css-selector": "2.8.*|3.0.*",
         "symfony/dom-crawler": "2.8.*|3.0.*",
         "barryvdh/laravel-debugbar": "~2.0",
-        "block8/php-docblock-checker": "^1.0",
         "filp/whoops": "~2.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/jonnybarnes/laravel-postgis"
+        }
+    ],
     "autoload": {
         "classmap": [
             "database"

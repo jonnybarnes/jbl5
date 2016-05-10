@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use IndieAuth\Client;
 use Illuminate\Http\Request;
+use App\Services\TokenService;
 use Illuminate\Cookie\CookieJar;
 use App\Services\IndieAuthService;
 
@@ -20,16 +21,25 @@ class IndieAuthController extends Controller
     protected $client;
 
     /**
+     * The Token handling service.
+     */
+    protected $tokenService;
+
+    /**
      * Inject the dependencies.
      *
      * @param  \App\Services\IndieAuthService $indieAuthService
      * @param  \IndieAuth\Client $client
      * @return void
      */
-    public function __construct(IndieAuthService $indieAuthService, Client $client)
-    {
-        $this->indieAuthService = $indieAuthService;
-        $this->client = $client;
+    public function __construct(
+        IndieAuthService $indieAuthService = null,
+        Client $client = null,
+        TokenService $tokenService = null
+    ) {
+        $this->indieAuthService = $indieAuthService ?? new IndieAuthService();
+        $this->client = $client ?? new Client();
+        $this->tokenService = $tokenService ?? new TokenService();
     }
 
     /**
@@ -63,16 +73,14 @@ class IndieAuthController extends Controller
 
     /**
      * Once they have verified themselves through the authorisation endpint
-     * the next step is retreiveing a token from the token endpoint. Here
-     * we request a token and then save it in a cookie on the user’s browser.
+     * the next step is retreiveing a token from the token endpoint.
      *
      * @param  \Illuminate\Http\Rrequest $request
-     * @param  \Illuminate\Cookie\CookieJar $cookie
      * @return \Illuminate\Routing\RedirectResponse redirect
      */
-    public function indieauth(Request $request, CookieJar $cookie)
+    public function indieauth(Request $request)
     {
-        if (session('state') != $request->input('state')) {
+        if ($request->session()->get('state') != $request->input('state')) {
             return redirect('/notes/new')->withErrors(
                 'Invalid <code>state</code> value returned from indieauth server',
                 'indieauth'
@@ -92,9 +100,8 @@ class IndieAuthController extends Controller
         $token = $this->indieAuthService->getAccessToken($data, $this->client);
 
         if (array_key_exists('access_token', $token)) {
-            $cookie->queue('me', $token['me'], 86400);
-            $cookie->queue('token', $token['access_token'], 86400);
-            $cookie->queue('token_last_verified', date('Y-m-d'), 86400);
+            $request->session()->put('me', $token['me']);
+            $request->session()->put('token', $token['access_token']);
 
             return redirect('/notes/new');
         }
@@ -110,23 +117,22 @@ class IndieAuthController extends Controller
      */
     public function tokenEndpoint(Request $request)
     {
-        $data = [
+        $authData = [
             'code' => $request->input('code'),
             'domain' => $request->input('me'),
             'redirect_url' => $request->input('redirect_uri'),
             'client_id' => $request->input('client_id'),
             'state' => $request->input('state'),
         ];
-        $auth = $this->indieAuthService->verifyIndieAuthCode($data, $this->client);
+        $auth = $this->indieAuthService->verifyIndieAuthCode($authData, $this->client);
         if (array_key_exists('me', $auth)) {
             $scope = $auth['scope'] ?? '';
-            $scopes = explode(' ', $scope);
-            $tokensController = new TokensController();
-            $token = $tokensController->saveToken(
-                $auth['me'],
-                $request->input('client_id'),
-                $scopes
-            );
+            $tokenData = [
+                'me' => $request->input('me'),
+                'client_id' => $request->input('client_id'),
+                'scope' => $auth['scope'],
+            ];
+            $token = $this->tokenService->getNewToken($tokenData);
             $content = http_build_query([
                 'me' => $request->input('me'),
                 'scopes' => $scopes,

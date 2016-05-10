@@ -46,7 +46,7 @@ class PlacesTest extends TestCase
      */
     public function testNearbyMethod()
     {
-        $nearby = \App\Place::near(53.49, -2.37, 1000);
+        $nearby = \App\Place::near(53.5, -2.38, 1000);
         $this->assertEquals('the-bridgewater-pub', $nearby[0]->slug);
     }
 }
