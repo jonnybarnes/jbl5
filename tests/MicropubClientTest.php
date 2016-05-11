@@ -16,7 +16,6 @@ class MicropubClientTest extends TestCase
     {
         parent::setUp();
         $this->appurl = config('app.url');
-        $this->controller = new \App\Http\Controllers\MicropubClientController();
     }
 
     /**
@@ -33,10 +32,10 @@ class MicropubClientTest extends TestCase
     public function testClientPageRecentAuth()
     {
         $this->withSession([
-            'me' => 'https://jbl5.dev',
+            'me' => $this->appurl,
             'syndication' => 'mp-syndicate-to=twitter.com%2Fjbl5',
         ])->visit($this->appurl . '/notes/new')
-          ->see('https://jbl5.dev')
+          ->see($this->appurl)
           ->see('twitter.com/jbl5');
     }
 }

@@ -18,9 +18,14 @@ class MicropubClientController extends Controller
     /**
      * Inject the dependencies.
      */
-    public function __construct(IndieAuthService $indieAuthService = null)
-    {
+    public function __construct(
+        IndieAuthService $indieAuthService = null,
+        IndieClient $indieClient = null,
+        GuzzleClient $guzzleClient = null
+    ) {
         $this->indieAuthService = $indieAuthService ?? new IndieAuthService();
+        $this->guzzleClient = $guzzleClient ?? new GuzzleClient();
+        $this->indieClient = $indieClient ?? new IndieClient();
     }
 
     /**
@@ -48,27 +53,22 @@ class MicropubClientController extends Controller
      * @todo   make sure this works with multiple syndication targets
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \IndieAuth\Client $indieClient
-     * @param  \GuzzleHttp\Client $guzzleClient
      * @return mixed
      */
-    public function postNewNote(
-        Request $request,
-        IndieClient $indieClient,
-        GuzzleClient $guzzleClient
-    ) {
+    public function postNewNote(Request $request)
+    {
         $domain = $request->session()->get('me');
         $token = $request->session()->get('token');
 
         $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint(
             $domain,
-            $indieClient
+            $this->indieClient
         );
         if (! $micropubEndpoint) {
             return redirect('notes/new')->withErrors('Unable to determine micropub API endpoint', 'endpoint');
         }
 
-        $response = $this->postNoteRequest($request, $micropubEndpoint, $token, $guzzleClient);
+        $response = $this->postNoteRequest($request, $micropubEndpoint, $token);
 
         if ($response->getStatusCode() == 201) {
             $location = $response->getHeader('Location');
@@ -94,21 +94,18 @@ class MicropubClientController extends Controller
      * @param  \GuzzleHttp\Client $guzzleClient
      * @return \Illuminate\Routing\Redirector redirect
      */
-    public function refreshSyndicationTargets(
-        Request $request,
-        IndieClient $indieClient,
-        GuzzleClient $guzzleClient
-    ) {
+    public function refreshSyndicationTargets(Request $request)
+    {
         $domain = $request->session()->get('me');
         $token = $request->session()->get('token');
-        $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint($domain, $indieClient);
+        $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint($domain, $this->indieClient);
 
         if (! $micropubEndpoint) {
             return redirect('notes/new')->withErrors('Unable to determine micropub API endpoint', 'endpoint');
         }
 
         try {
-            $response = $guzzleClient->get($micropubEndpoint, [
+            $response = $this->guzzleClient->get($micropubEndpoint, [
                 'headers' => ['Authorization' => 'Bearer ' . $token],
                 'query' => ['q' => 'syndicate-to'],
             ]);
@@ -129,14 +126,12 @@ class MicropubClientController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @param  string The Micropub endpoint to post to
      * @param  string The token to authenticate the request with
-     * @param  \GuzzleHttp\Client $client
      * @return \GuzzleHttp\Response $response | \Illuminate\RedirectFactory redirect
      */
     private function postNoteRequest(
         Request $request,
         $micropubEndpoint,
-        $token,
-        GuzzleClient $client
+        $token
     ) {
         $multipart = [
             [
@@ -191,7 +186,7 @@ class MicropubClientController extends Controller
             'Authorization' => 'Bearer ' . $token,
         ];
         try {
-            $response = $client->post($micropubEndpoint, [
+            $response = $this->guzzleClient->post($micropubEndpoint, [
                 'multipart' => $multipart,
                 'headers' => $headers,
             ]);
@@ -207,19 +202,14 @@ class MicropubClientController extends Controller
      * Create a new place.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \IndieAuth\Client $indieClient
-     * @param  \GuzzleHttp\Client $guzzleClient
      * @return mixed
      */
-    public function postNewPlace(
-        Request $request,
-        IndieClient $indieClient,
-        GuzzleClient $guzzleClient
-    ) {
+    public function postNewPlace(Request $request)
+    {
         $domain = $request->session()->get('me');
         $token = $request->session()->get('token');
 
-        $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint($domain, $indieClient);
+        $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint($domain, $this->indieClient);
         if (! $micropubEndpoint) {
             return (new Response(json_encode([
                 'error' => true,
@@ -228,7 +218,7 @@ class MicropubClientController extends Controller
             ->header('Content-Type', 'application/json');
         }
 
-        $place = $this->postPlaceRequest($request, $micropubEndpoint, $token, $guzzleClient);
+        $place = $this->postPlaceRequest($request, $micropubEndpoint, $token);
         if ($place === false) {
             return (new Response(json_encode([
                 'error' => true,
@@ -258,8 +248,7 @@ class MicropubClientController extends Controller
     private function postPlaceRequest(
         Request $request,
         $micropubEndpoint,
-        $token,
-        GuzzleClient $guzzleClient
+        $token
     ) {
         $formParams = [
             'h' => 'card',
@@ -271,7 +260,7 @@ class MicropubClientController extends Controller
             'Authorization' => 'Bearer ' . $token,
         ];
         try {
-            $response = $guzzleClient->request('POST', $micropubEndpoint, [
+            $response = $this->guzzleClient->request('POST', $micropubEndpoint, [
                 'form_params' => $formParams,
                 'headers' => $headers,
             ]);
@@ -289,29 +278,25 @@ class MicropubClientController extends Controller
      * Make a request to the micropub endpoint requesting any nearby places.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \IndieAuth\Client $indieClient
-     * @param  \GuzzleHttp\Client $guzzleClient
      * @param  string $latitude
      * @param  string $longitude
      * @return \Illuminate\Http\Response
      */
     public function nearbyPlaces(
         Request $request,
-        IndieClient $indieClient,
-        GuzzleClient $guzzleClient,
         $latitude,
         $longitude
     ) {
         $domain = $request->session()->get('me');
         $token = $request->session()->get('token');
-        $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint($domain, $indieClient);
+        $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint($domain, $this->indieClient);
 
         if (! $micropubEndpoint) {
             return;
         }
 
         try {
-            $response = $guzzleClient->get($micropubEndpoint, [
+            $response = $this->guzzleClient->get($micropubEndpoint, [
                 'headers' => ['Authorization' => 'Bearer ' . $token],
                 'query' => ['q' => 'geo:' . $latitude . ',' . $longitude],
             ]);
