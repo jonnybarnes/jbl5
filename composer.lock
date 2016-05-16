@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "46485443f132a77a75a596be292f0e76",
-    "content-hash": "aa8feb3e084325633ebff0456af88cab",
+    "hash": "80b39cea7cbcc201ede69e9507300bd1",
+    "content-hash": "2c91cbb03062e609c45874f88f2bd43f",
     "packages": [
         {
             "name": "anahkiasen/underscore-php",
@@ -176,6 +176,58 @@
             ],
             "description": "Cleans up microformats2 array structures",
             "time": "2014-10-06 23:11:15"
+        },
+        {
+            "name": "bosnadev/database",
+            "version": "0.16",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Bosnadev/Database.git",
+                "reference": "c2748d118415d30ce69b792448689285d01ffdb9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Bosnadev/Database/zipball/c2748d118415d30ce69b792448689285d01ffdb9",
+                "reference": "c2748d118415d30ce69b792448689285d01ffdb9",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/database": "~5.0",
+                "php": ">=5.4",
+                "ramsey/uuid": "~3.0"
+            },
+            "require-dev": {
+                "doctrine/dbal": "~2.5",
+                "mockery/mockery": "0.9.*",
+                "php": ">=5.4",
+                "phpunit/phpunit": "~4.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Bosnadev\\Database\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Mirza Pasic",
+                    "email": "mirza.pasic@edu.fit.ba"
+                },
+                {
+                    "name": "Peter Haza",
+                    "email": "peter.haza@gmail.com"
+                }
+            ],
+            "description": "Eloquent Extended, added some PostgreSql features",
+            "keywords": [
+                "database",
+                "eloquent",
+                "laravel",
+                "mysql",
+                "postgresql"
+            ],
+            "time": "2016-04-27 15:18:36"
         },
         {
             "name": "classpreloader/classpreloader",
@@ -2047,30 +2099,31 @@
         },
         {
             "name": "phaza/laravel-postgis",
-            "version": "dev-small-fixes",
+            "version": "dev-bosnadev",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jonnybarnes/laravel-postgis.git",
-                "reference": "6a5f0fc9215f894bc24bc78d4547621bcedb1fd8"
+                "reference": "3784528aa922a1b59b2db2aba7c59aebb4897c8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jonnybarnes/laravel-postgis/zipball/6a5f0fc9215f894bc24bc78d4547621bcedb1fd8",
-                "reference": "6a5f0fc9215f894bc24bc78d4547621bcedb1fd8",
+                "url": "https://api.github.com/repos/jonnybarnes/laravel-postgis/zipball/3784528aa922a1b59b2db2aba7c59aebb4897c8a",
+                "reference": "3784528aa922a1b59b2db2aba7c59aebb4897c8a",
                 "shasum": ""
             },
             "require": {
+                "bosnadev/database": "~0.16",
                 "geo-io/wkb-parser": "^1.0",
                 "illuminate/database": "^5.2",
                 "jmikola/geojson": "^1.0",
-                "phoenixgao/laravel-postgres-extended-schema": "^0.15.0",
                 "php": ">=5.5"
             },
             "require-dev": {
-                "codeclimate/php-test-reporter": "^0.3.2",
+                "codeclimate/php-test-reporter": "~0.3",
                 "illuminate/pagination": "~5.0",
                 "mockery/mockery": "0.9.*",
-                "phpunit/phpunit": "~4.5"
+                "phpunit/phpunit": "~4.5",
+                "satooshi/php-coveralls": "~1.0"
             },
             "type": "library",
             "autoload": {
@@ -2095,77 +2148,9 @@
             ],
             "description": "Postgis extensions for laravel. Aims to make it easy to work with geometries from laravel models",
             "support": {
-                "source": "https://github.com/jonnybarnes/laravel-postgis/tree/small-fixes"
+                "source": "https://github.com/jonnybarnes/laravel-postgis/tree/bosnadev"
             },
-            "time": "2016-05-04 15:09:32"
-        },
-        {
-            "name": "phoenixgao/laravel-postgres-extended-schema",
-            "version": "0.15",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/phoenixgao/laravel-postgres-extended-schema.git",
-                "reference": "7d1ef2962d1afbd65d70cbe22cb37cb47115c4fc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/phoenixgao/laravel-postgres-extended-schema/zipball/7d1ef2962d1afbd65d70cbe22cb37cb47115c4fc",
-                "reference": "7d1ef2962d1afbd65d70cbe22cb37cb47115c4fc",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "~5.0",
-                "php": ">=5.5",
-                "ramsey/uuid": "~2.8"
-            },
-            "require-dev": {
-                "doctrine/dbal": "~2.5",
-                "mockery/mockery": "0.9.*",
-                "php": ">=5.4",
-                "phpunit/phpunit": "~4.5",
-                "scrutinizer/ocular": "~1.1"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Bosnadev\\Database\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mirza Pasic",
-                    "email": "mirza.pasic@edu.fit.ba"
-                },
-                {
-                    "name": "Peter Haza",
-                    "email": "peter.haza@gmail.com"
-                },
-                {
-                    "name": "Xiang Gao",
-                    "email": "phoenix.x.gao@gmail.com"
-                }
-            ],
-            "description": "Laravel database schema extended, added some PostgreSql features",
-            "homepage": "https://github.com/phoenixgao/laravel-postgres-extended-schema",
-            "keywords": [
-                "blueprint",
-                "database",
-                "eloquent",
-                "laravel",
-                "mysql",
-                "postgresql",
-                "schema"
-            ],
-            "time": "2016-01-26 10:42:48"
+            "time": "2016-05-16 13:21:17"
         },
         {
             "name": "predis/predis",
@@ -2378,46 +2363,54 @@
         },
         {
             "name": "ramsey/uuid",
-            "version": "2.9.0",
+            "version": "3.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ramsey/uuid.git",
-                "reference": "b2ef4dd9584268d73f92f752a62bc24cd534dc9a"
+                "reference": "b4fe3b7387cb323fd15ad5837cae992422c9fa5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ramsey/uuid/zipball/b2ef4dd9584268d73f92f752a62bc24cd534dc9a",
-                "reference": "b2ef4dd9584268d73f92f752a62bc24cd534dc9a",
+                "url": "https://api.github.com/repos/ramsey/uuid/zipball/b4fe3b7387cb323fd15ad5837cae992422c9fa5c",
+                "reference": "b4fe3b7387cb323fd15ad5837cae992422c9fa5c",
                 "shasum": ""
             },
             "require": {
                 "paragonie/random_compat": "^1.0|^2.0",
-                "php": ">=5.3.3"
+                "php": ">=5.4"
             },
             "replace": {
                 "rhumsaa/uuid": "self.version"
             },
             "require-dev": {
-                "doctrine/dbal": ">=2.3",
+                "apigen/apigen": "^4.1",
+                "codeception/aspect-mock": "1.0.0",
+                "goaop/framework": "1.0.0-alpha.2",
+                "ircmaxell/random-lib": "^1.1",
                 "jakub-onderka/php-parallel-lint": "^0.9.0",
-                "moontoast/math": "~1.1",
-                "phpunit/phpunit": "~4.1|~5.0",
-                "satooshi/php-coveralls": "~0.6",
-                "squizlabs/php_codesniffer": "^2.3",
-                "symfony/console": "~2.3|~3.0"
+                "mockery/mockery": "^0.9.4",
+                "moontoast/math": "^1.1",
+                "phpunit/phpunit": "^4.7|^5.0",
+                "satooshi/php-coveralls": "^0.6.1",
+                "squizlabs/php_codesniffer": "^2.3"
             },
             "suggest": {
-                "doctrine/dbal": "Allow the use of a UUID as doctrine field type.",
-                "moontoast/math": "Support for converting UUID to 128-bit integer (in string form).",
-                "symfony/console": "Support for use of the bin/uuid command line tool."
+                "ext-libsodium": "Provides the PECL libsodium extension for use with the SodiumRandomGenerator",
+                "ext-uuid": "Provides the PECL UUID extension for use with the PeclUuidTimeGenerator and PeclUuidRandomGenerator",
+                "ircmaxell/random-lib": "Provides RandomLib for use with the RandomLibAdapter",
+                "moontoast/math": "Provides support for converting UUID to 128-bit integer (in string form).",
+                "ramsey/uuid-console": "A console application for generating UUIDs with ramsey/uuid",
+                "ramsey/uuid-doctrine": "Allows the use of Ramsey\\Uuid\\Uuid as Doctrine field type."
             },
-            "bin": [
-                "bin/uuid"
-            ],
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
             "autoload": {
                 "psr-4": {
-                    "Rhumsaa\\Uuid\\": "src/"
+                    "Ramsey\\Uuid\\": "src/"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2430,31 +2423,36 @@
                     "email": "marijn.huizendveld@gmail.com"
                 },
                 {
+                    "name": "Thibaud Fabre",
+                    "email": "thibaud@aztech.io"
+                },
+                {
                     "name": "Ben Ramsey",
-                    "homepage": "http://benramsey.com"
+                    "email": "ben@benramsey.com",
+                    "homepage": "https://benramsey.com"
                 }
             ],
-            "description": "A PHP 5.3+ library for generating RFC 4122 version 1, 3, 4, and 5 universally unique identifiers (UUID).",
+            "description": "Formerly rhumsaa/uuid. A PHP 5.4+ library for generating RFC 4122 version 1, 3, 4, and 5 universally unique identifiers (UUID).",
             "homepage": "https://github.com/ramsey/uuid",
             "keywords": [
                 "guid",
                 "identifier",
                 "uuid"
             ],
-            "time": "2016-03-22 18:20:19"
+            "time": "2016-04-24 00:30:41"
         },
         {
             "name": "spatie/laravel-glide",
-            "version": "2.3.1",
+            "version": "2.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-glide.git",
-                "reference": "db0f3a83e7d128bc0964887190af569430557b22"
+                "reference": "06bcfb85464a1202dfaa7494d1b1600c88c418e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-glide/zipball/db0f3a83e7d128bc0964887190af569430557b22",
-                "reference": "db0f3a83e7d128bc0964887190af569430557b22",
+                "url": "https://api.github.com/repos/spatie/laravel-glide/zipball/06bcfb85464a1202dfaa7494d1b1600c88c418e5",
+                "reference": "06bcfb85464a1202dfaa7494d1b1600c88c418e5",
                 "shasum": ""
             },
             "require": {
@@ -2484,7 +2482,7 @@
             ],
             "description": "A Glide Service Provider for Laravel",
             "homepage": "https://github.com/spatie/laravel-glide",
-            "time": "2016-05-11 21:10:33"
+            "time": "2016-05-13 14:56:07"
         },
         {
             "name": "spatie/laravel-medialibrary",
@@ -4269,20 +4267,23 @@
         },
         {
             "name": "phpunit/php-timer",
-            "version": "1.0.7",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-timer.git",
-                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b"
+                "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
-                "reference": "3e82f4e9fc92665fafd9157568e4dcb01d014e5b",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-timer/zipball/38e9124049cf1a164f1e4537caf19c99bf1eb260",
+                "reference": "38e9124049cf1a164f1e4537caf19c99bf1eb260",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4|~5"
             },
             "type": "library",
             "autoload": {
@@ -4306,7 +4307,7 @@
             "keywords": [
                 "timer"
             ],
-            "time": "2015-06-21 08:01:12"
+            "time": "2016-05-12 18:03:57"
         },
         {
             "name": "phpunit/php-token-stream",
@@ -4359,16 +4360,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.8.24",
+            "version": "4.8.25",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "a1066c562c52900a142a0e2bbf0582994671385e"
+                "reference": "6d1588a6542a52ed89636e5a9876bc7502bbb853"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/a1066c562c52900a142a0e2bbf0582994671385e",
-                "reference": "a1066c562c52900a142a0e2bbf0582994671385e",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/6d1588a6542a52ed89636e5a9876bc7502bbb853",
+                "reference": "6d1588a6542a52ed89636e5a9876bc7502bbb853",
                 "shasum": ""
             },
             "require": {
@@ -4382,7 +4383,7 @@
                 "phpunit/php-code-coverage": "~2.1",
                 "phpunit/php-file-iterator": "~1.4",
                 "phpunit/php-text-template": "~1.2",
-                "phpunit/php-timer": ">=1.0.6",
+                "phpunit/php-timer": "^1.0.6",
                 "phpunit/phpunit-mock-objects": "~2.3",
                 "sebastian/comparator": "~1.1",
                 "sebastian/diff": "~1.2",
@@ -4427,7 +4428,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-03-14 06:16:08"
+            "time": "2016-05-10 18:47:12"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
