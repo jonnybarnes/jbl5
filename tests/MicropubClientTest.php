@@ -3,14 +3,17 @@
 namespace App\Tests;
 
 use TestCase;
+use Lcobucci\JWT\Builder;
+use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class MicropubClientTest extends TestCase
 {
+    use DatabaseTransactions;
+
     protected $appurl;
-    protected $controller;
 
     public function setUp()
     {
@@ -37,5 +40,31 @@ class MicropubClientTest extends TestCase
         ])->visit($this->appurl . '/notes/new')
           ->see($this->appurl)
           ->see('twitter.com/jbl5');
+    }
+
+    public function testClientCreatesNewNote()
+    {
+        $note = 'Note from PHPUnite test';
+        $this->withSession([
+            'me' => $this->appurl,
+            'token' => $this->getToken()
+        ])->visit($this->appurl . '/notes/new')
+          ->type($note, 'content')
+          ->press('Submit');
+        $this->seeInDatabase('notes', ['note' => $note]);
+    }
+
+    private function getToken()
+    {
+        $signer = new Sha256();
+        $token = (new Builder())
+            ->set('client_id', 'https://quill.p3k.io')
+            ->set('me', 'https://jbl5.dev')
+            ->set('scope', 'post')
+            ->set('issued_at', time())
+            ->sign($signer, env('APP_KEY'))
+            ->getToken();
+
+        return $token;
     }
 }
