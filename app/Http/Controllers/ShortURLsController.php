@@ -23,7 +23,7 @@ class ShortURLsController extends Controller
      */
     public function baseURL()
     {
-        return redirect('https://' . config('url.longurl'));
+        return redirect(config('app.url'));
     }
 
     /**
@@ -73,9 +73,7 @@ class ShortURLsController extends Controller
             $type = 'blog/s';
         }
 
-        $redirect = 'https://' . config('url.longurl') . '/' . $type .'/' . $postId;
-
-        return redirect($redirect);
+        return redirect(config('app.url') . '/' . $type . '/' . $postId);
     }
 
     /**
@@ -114,7 +112,7 @@ class ShortURLsController extends Controller
         }
 
         return 'This id was never used.
-        Old redirects are lcoated at
+        Old redirects are located at
         <code>
             <a href="https://jonnybarnes.net/assets/old-shorturls.json">old-shorturls.json</a>
         </code>.';

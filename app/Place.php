@@ -118,7 +118,7 @@ class Place extends Model
      */
     public function getLongurlAttribute()
     {
-        return 'https://' . config('url.longurl') . '/places/' . $this->slug;
+        return config('app.url') . '/places/' . $this->slug;
     }
 
     /**
@@ -128,6 +128,6 @@ class Place extends Model
      */
     public function getShorturlAttribute()
     {
-        return 'https://' . config('url.shorturl') . '/places/' . $this->slug;
+        return config('app.shorturl') . '/places/' . $this->slug;
     }
 }

@@ -30,8 +30,8 @@ class IndieAuthService
         $domain = $client->normalizeMeURL($domain);
         $state = bin2hex(openssl_random_pseudo_bytes(16));
         session(['state' => $state]);
-        $redirectURL = 'https://' . config('url.longurl') . '/indieauth';
-        $clientId = 'https://' . config('url.longurl') . '/notes/new';
+        $redirectURL = config('app.url') . '/indieauth';
+        $clientId = config('app.url') . '/notes/new';
         $scope = 'post';
         $authorizationURL = $client->buildAuthorizationURL(
             $authEndpoint,

@@ -8,7 +8,6 @@ use HTMLPurifier;
 use App\WebMention;
 use GuzzleHttp\Client;
 use HTMLPurifier_Config;
-use Jonnybarnes\IndieWeb\Numbers;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Jonnybarnes\WebmentionsParser\Parser;
@@ -38,12 +37,10 @@ class ProcessWebMention extends Job implements ShouldQueue
      * Execute the job.
      *
      * @param  \Jonnybarnes\WebmentionsParser\Parser $parser
-     * @param  \Jonnybarnes\IndieWeb\Numbers $numbers
      * @return void
      */
-    public function handle(Parser $parser, Numbers $numbers)
+    public function handle(Parser $parser)
     {
-        $target = 'https://' . config('url.longurl') . '/notes/' . $numbers->numto60($this->note->id);
         $sourceURL = parse_url($this->source);
         $baseURL = $sourceURL['scheme'] . '://' . $sourceURL['host'];
         $remoteContent = $this->getRemoteContent($this->source);
@@ -57,7 +54,7 @@ class ProcessWebMention extends Job implements ShouldQueue
                 //we switch for each type of mention (reply/like/repost)
                 switch ($webmention->type) {
                     case 'reply':
-                        if ($parser->checkInReplyTo($microformats, $target) == false) {
+                        if ($parser->checkInReplyTo($microformats, $note->longurl) == false) {
                             //it doesn't so delete
                             $webmention->delete();
 
@@ -74,7 +71,7 @@ class ProcessWebMention extends Job implements ShouldQueue
                         return true;
                         break;
                     case 'like':
-                        if ($parser->checkLikeOf($microformats, $target) == false) {
+                        if ($parser->checkLikeOf($microformats, $note->longurl) == false) {
                             //it doesn't so delete
                             $webmention->delete();
 
@@ -82,7 +79,7 @@ class ProcessWebMention extends Job implements ShouldQueue
                         } //note we don't need to do anything if it still is a like
                         break;
                     case 'repost':
-                        if ($parser->checkRepostOf($microformats, $target) == false) {
+                        if ($parser->checkRepostOf($microformats, $note->longurl) == false) {
                             //it doesn't so delete
                             $webmention->delete();
 
@@ -95,13 +92,13 @@ class ProcessWebMention extends Job implements ShouldQueue
         //no wemention in db so create new one
         $webmention = new WebMention();
         //check it is in fact a reply
-        if ($parser->checkInReplyTo($microformats, $target)) {
+        if ($parser->checkInReplyTo($microformats, $note->longurl)) {
             $content = $parser->replyContent($microformats);
             $this->saveImage($content);
             $content['reply'] = $this->filterHTML($content['reply']);
             $content = serialize($content);
             $webmention->source = $this->source;
-            $webmention->target = $target;
+            $webmention->target = $note->longurl;
             $webmention->commentable_id = $this->note->id;
             $webmention->commentable_type = 'App\Note';
             $webmention->type = 'reply';
@@ -109,13 +106,13 @@ class ProcessWebMention extends Job implements ShouldQueue
             $webmention->save();
 
             return true;
-        } elseif ($parser->checkLikeOf($microformats, $target)) {
+        } elseif ($parser->checkLikeOf($microformats, $note->longurl)) {
             //it is a like
             $content = $parser->likeContent($microformats);
             $this->saveImage($content);
             $content = serialize($content);
             $webmention->source = $this->source;
-            $webmention->target = $target;
+            $webmention->target = $note->longurl;
             $webmention->commentable_id = $this->note->id;
             $webmention->commentable_type = 'App\Note';
             $webmention->type = 'like';
@@ -123,13 +120,13 @@ class ProcessWebMention extends Job implements ShouldQueue
             $webmention->save();
 
             return true;
-        } elseif ($parser->checkRepostOf($microformats, $target)) {
+        } elseif ($parser->checkRepostOf($microformats, $note->longurl)) {
             //it is a repost
             $content = $parser->repostContent($microformats);
             $this->saveImage($content);
             $content = serialize($content);
             $webmention->source = $this->source;
-            $webmention->target = $target;
+            $webmention->target = $note->longurl;
             $webmention->commentable_id = $this->note->id;
             $webmention->commentable_type = 'App\Note';
             $webmention->type = 'repost';

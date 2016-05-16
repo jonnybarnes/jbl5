@@ -127,7 +127,7 @@ class Note extends Model implements HasMedia
      */
     public function getLongurlAttribute()
     {
-        return 'https://' . config('url.longurl') . '/notes/' . $this->nb60id;
+        return config('app.url') . '/notes/' . $this->nb60id;
     }
 
     /**
@@ -137,7 +137,7 @@ class Note extends Model implements HasMedia
      */
     public function getShorturlAttribute()
     {
-        return 'https://' . config('url.shorturl') . '/notes/' . $this->nb60id;
+        return config('app.shorturl') . '/notes/' . $this->nb60id;
     }
 
     /**

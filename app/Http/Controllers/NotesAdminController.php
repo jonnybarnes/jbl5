@@ -91,9 +91,8 @@ class NotesAdminController extends Controller
         $note->save();
 
         if ($request->input('webmentions')) {
-            $longurl = 'https://' . config('url.longurl') . '/note/' . $noteId;
             $wmc = new WebMentionsController();
-            $wmc->send($note, $longurl);
+            $wmc->send($note);
         }
 
         return view('admin.editnotesuccess', ['id' => $noteId]);
