@@ -11,9 +11,9 @@ services:
 php:
   - 7.0
   - nightly
-  matrix:
-    allow_failures:
-      - nightly
+matrix:
+  allow_failures:
+    - php: nightly
 
 before_script:
   - psql -U travis -c 'create database travis_ci_test'
