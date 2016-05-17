@@ -11,8 +11,6 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class MicropubClientTest extends TestCase
 {
-    use DatabaseTransactions;
-
     protected $appurl;
 
     public function setUp()
@@ -42,6 +40,9 @@ class MicropubClientTest extends TestCase
           ->see('twitter.com/jbl5');
     }
 
+    /**
+     * This currently creates a new note that stays in the database.
+     */
     public function testClientCreatesNewNote()
     {
         $faker = \Faker\Factory::create();
@@ -53,6 +54,7 @@ class MicropubClientTest extends TestCase
           ->type($note, 'content')
           ->press('Submit');
         $this->seeInDatabase('notes', ['note' => $note]);
+
     }
 
     private function getToken()
@@ -60,7 +62,7 @@ class MicropubClientTest extends TestCase
         $signer = new Sha256();
         $token = (new Builder())
             ->set('client_id', 'https://quill.p3k.io')
-            ->set('me', 'https://jbl5.dev')
+            ->set('me', $this->appurl)
             ->set('scope', 'post')
             ->set('issued_at', time())
             ->sign($signer, env('APP_KEY'))
