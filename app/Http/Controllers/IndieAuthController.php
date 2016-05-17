@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use IndieAuth\Client;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use App\Services\TokenService;
 use Illuminate\Cookie\CookieJar;
 use App\Services\IndieAuthService;
