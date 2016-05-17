@@ -92,7 +92,7 @@ class IndieAuthController extends Controller
         $data = [
             'endpoint' => $tokenEndpoint,
             'code' => $request->input('code'),
-            'domain' => $request->input('me'),
+            'me' => $request->input('me'),
             'redirect_url' => $redirectURL,
             'client_id' => $clientId,
             'state' => $request->input('state'),
@@ -119,7 +119,7 @@ class IndieAuthController extends Controller
     {
         $authData = [
             'code' => $request->input('code'),
-            'domain' => $request->input('me'),
+            'me' => $request->input('me'),
             'redirect_url' => $request->input('redirect_uri'),
             'client_id' => $request->input('client_id'),
             'state' => $request->input('state'),
