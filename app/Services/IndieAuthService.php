@@ -69,7 +69,7 @@ class IndieAuthService
         return $client->getAccessToken(
             $data['endpoint'],
             $data['code'],
-            $data['domain'],
+            $data['me'],
             $data['redirect_url'],
             $data['client_id'],
             $data['state']
