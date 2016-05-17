@@ -86,12 +86,12 @@ class IndieAuthService
      */
     public function verifyIndieAuthCode(array $data, $client)
     {
-        $authEndpoint = $client->discoverAuthorizationEndpoint($data['domain']);
+        $authEndpoint = $client->discoverAuthorizationEndpoint($data['me']);
         if ($authEndpoint) {
             return $client->verifyIndieAuthCode(
                 $authEndpoint,
                 $data['code'],
-                $data['domain'],
+                $data['me'],
                 $data['redirect_url'],
                 $data['client_id'],
                 $data['state']
