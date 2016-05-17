@@ -6,10 +6,13 @@ use App\Note;
 use App\Place;
 use Illuminate\Http\Request;
 use App\Jobs\SyndicateToTwitter;
+use Illuminate\Foundation\Bus\DispatchesJobs;
 use App\Http\Controllers\WebMentionsController;
 
 class NoteService
 {
+    use DispatchesJobs;
+
     /**
      * Create a new note.
      *
