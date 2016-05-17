@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Note;
-use App\Place;
 use Validator;
 use Illuminate\Http\Request;
-use App\Jobs\SyndicateToTwitter;
-use Jonnybarnes\IndieWeb\Numbers;
+use App\Services\NoteService;
 
 class NotesAdminController extends Controller
 {
@@ -16,7 +14,7 @@ class NotesAdminController extends Controller
      *
      * @return \Illuminate\View\Factory view
      */
-    public function newNote()
+    public function newNotePage()
     {
         return view('admin.newnote');
     }
@@ -26,7 +24,7 @@ class NotesAdminController extends Controller
      *
      * @return \Illuminate\View\Factory view
      */
-    public function listNotes()
+    public function listNotesPage()
     {
         $notes = Note::select('id', 'note')->orderBy('id', 'desc')->get();
         foreach ($notes as $note) {
@@ -42,7 +40,7 @@ class NotesAdminController extends Controller
      * @param  string The note id
      * @return \Illuminate\View\Factory view
      */
-    public function editNote($noteId)
+    public function editNotePage($noteId)
     {
         $note = Note::find($noteId);
         $note->originalNote = $note->getOriginal('note');
@@ -54,10 +52,9 @@ class NotesAdminController extends Controller
      * Process a request to make a new note.
      *
      * @param Illuminate\Http\Request $request
-     * @param string The client id that made the API call
      * @todo  Sort this mess out
      */
-    public function postNewNote(Request $request, $clientId = null)
+    public function createNote(Request $request)
     {
         $validator = Validator::make(
             $request->all(),
@@ -65,71 +62,17 @@ class NotesAdminController extends Controller
             ['photosize' => 'At least one uploaded file exceeds size limit of 5MB']
         );
         if ($validator->fails()) {
-            if ($clientId === null) {
-                return redirect('/admin/note/new')
-                    ->withErrors($validator)
-                    ->withInput();
-            }
-            // Client Id is set, so this was made by a micropub client
-            return new Response('The attached picture’s filesize is too large', 400);
+            return redirect('/admin/note/new')
+                ->withErrors($validator)
+                ->withInput();
         }
 
-        $numbers = new Numbers();
+        $note = $this->noteService->createNote($request);
 
-        try {
-            $note = Note::create(
-                [
-                    'note' => $request->input('content'),
-                    'in_reply_to' => $request->input('in-reply-to'),
-                    'client_id' => $clientId,
-                ]
-            );
-        } catch (\Exception $e) {
-            $msg = $e->getMessage(); //do something
-
-            return 'Error saving note' . $msg;
-        }
-
-        $realId = $numbers->numto60($note->id);
-        $longurl = 'https://' . config('url.longurl') . '/notes/' . $realId;
-        $shorturl = 'https://' . config('url.shorturl') . '/t/' . $numbers->numto60($note->id);
-
-        $placeSlug = $request->input('location');
-        if ($placeSlug !== null && $placeSlug !== 'no-location') {
-            $place = Place::where('slug', '=', $placeSlug)->first();
-            $note->place()->associate($place);
-            $note->save();
-        }
-
-        //add images to media library
-        if ($request->hasFile('photo')) {
-            $files = $request->file('photo');
-            foreach ($files as $file) {
-                $note->addMedia($file)->toMediaLibraryOnDisk('images', 's3');
-            }
-        }
-
-        if ($request->input('webmentions')) {
-            $wmc = new WebMentionsController();
-            $wmc->send($note, $longurl);
-        }
-
-        if ((is_array($request->input('mp-syndicate-to'))
-                &&
-            in_array('twitter.com/jonnybarnes', $request->input('mp-syndicate-to')))
-            ||
-            ($request->input('mp-syndicate-to') == 'twitter.com/jonnybarnes')
-            ||
-            ($request->input('twitter') == true)
-        ) {
-            $this->dispatch(new SyndicateToTwitter($note));
-        }
-
-        if ($clientId) {
-            return $longurl;
-        }
-
-        return view('admin.newnotesuccess', ['id' => $note->id, 'shorturl' => $shorturl]);
+        return view('admin.newnotesuccess', [
+            'id' => $note->id,
+            'shorturl' => $note->shorturl,
+        ]);
     }
 
     /**
@@ -139,7 +82,7 @@ class NotesAdminController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\View\Factory view
      */
-    public function postEditNote($noteId, Request $request)
+    public function editNote($noteId, Request $request)
     {
         //update note data
         $note = Note::find($noteId);
@@ -148,35 +91,10 @@ class NotesAdminController extends Controller
         $note->save();
 
         if ($request->input('webmentions')) {
-            $longurl = 'https://' . config('url.longurl') . '/note/' . $noteId;
             $wmc = new WebMentionsController();
-            $wmc->send($note, $longurl);
+            $wmc->send($note);
         }
 
         return view('admin.editnotesuccess', ['id' => $noteId]);
-    }
-
-    /**
-     * Get the relavent location information from the input.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return string | null
-     */
-    private function getLocation(Request $request)
-    {
-        if ($request->input('confirmlocation')) {
-            if ($request->input('location')) {
-                $location = $request->input('location');
-                if ($request->input('address')) {
-                    $location .= ':' . $request->input('address');
-                }
-
-                return $location;
-            }
-
-            return;
-        }
-
-        return;
     }
 }

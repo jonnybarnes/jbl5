@@ -110,4 +110,24 @@ class Place extends Model
 
         return explode(' ', $latlng[1])[0];
     }
+
+    /**
+     * The Long URL for a place.
+     *
+     * @return string
+     */
+    public function getLongurlAttribute()
+    {
+        return config('app.url') . '/places/' . $this->slug;
+    }
+
+    /**
+     * The Short URL for a place.
+     *
+     * @return string
+     */
+    public function getShorturlAttribute()
+    {
+        return config('app.shorturl') . '/places/' . $this->slug;
+    }
 }

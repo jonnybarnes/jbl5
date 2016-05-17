@@ -6,9 +6,12 @@
   "devDependencies": {
     "gulp": "~3.9",
     "gulp-brotli": "^1.0.1",
-    "gulp-zopfli": "^1.0.0"
+    "gulp-zopfli": "^1.0.0",
+    "laravel-elixir": "^5.0.0"
   },
-  "dependencies": {
-    "laravel-elixir": "^4.0.0"
+  "private": true,
+  "scripts": {
+    "prod": "gulp --production",
+    "dev": "gulp watch"
   }
 }

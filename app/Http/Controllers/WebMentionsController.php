@@ -69,17 +69,16 @@ class WebMentionsController extends Controller
      * Send a webmention.
      *
      * @param  \App\Note  $note
-     * @param  string  The source URL on this site
      * @return array   An array of successful then failed URLs
      */
-    public function send(Note $note, $source)
+    public function send(Note $note)
     {
         //grab the URLs
         $urlsInReplyTo = explode(' ', $note->in_reply_to);
         $urlsNote = $this->getLinks($note->note);
         $urls = array_filter(array_merge($urlsInReplyTo, $urlsNote)); //filter out none URLs
         foreach ($urls as $url) {
-            $this->dispatch(new SendWebMentions($url, $source));
+            $this->dispatch(new SendWebMentions($url, $note->longurl));
         }
     }
 

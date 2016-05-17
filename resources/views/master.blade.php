@@ -9,9 +9,9 @@
   <link rel="openid.server" href="https://indieauth.com/openid">
   <link rel="openid.delegate" href="https://jonnybarnes.uk">
   <link rel="authorization_endpoint" href="https://indieauth.com/auth">
-  <link rel="token_endpoint" href="https://{{ config('url.longurl') }}/api/token">
-  <link rel="micropub" href="https://{{ config('url.longurl') }}/api/post">
-  <link rel="webmention" href="https://{{ config('url.longurl') }}/webmention">
+  <link rel="token_endpoint" href="{{ config('app.url') }}/api/token">
+  <link rel="micropub" href="{{ config('app.url') }}/api/post">
+  <link rel="webmention" href="{{ config('app.url') }}/webmention">
   <link rel="shortcut icon" href="/assets/img/jmb-bw.png">
   <link rel="pgpkey" href="/assets/jonnybarnes-public-key-ecc.asc">
 </head>

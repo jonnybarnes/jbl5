@@ -2,16 +2,16 @@
 
 /*
 |--------------------------------------------------------------------------
-| Routes File
+| Application Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you will register all of the routes in an application.
+| Here is where you can register all of the routes for an application.
 | It's a breeze. Simply tell Laravel the URIs it should respond to
 | and give it the controller to call when that URI is requested.
 |
 */
 
-Route::group(['domain' => config('url.longurl'), 'middleware' => 'web'], function () {
+Route::group(['domain' => config('url.longurl')], function () {
     //Static homepage
     Route::get('/', function () {
         return view('homepage');
@@ -42,16 +42,16 @@ Route::group(['domain' => config('url.longurl'), 'middleware' => 'web'], functio
         Route::post('admin/blog/delete/{id}', 'ArticlesAdminController@postDeleteArticle');
 
         //Notes
-        Route::get('admin/note/new', 'NotesAdminController@newNote');
-        Route::get('admin/note/edit', 'NotesAdminController@listNotes');
-        Route::get('admin/note/edit/{id}', 'NotesAdminController@editNote');
-        Route::post('admin/note/new', 'NotesAdminController@postNewNote');
-        Route::post('admin/note/edit/{id}', 'NotesAdminController@postEditNote');
+        Route::get('admin/note/new', 'NotesAdminController@newNotePage');
+        Route::get('admin/note/edit', 'NotesAdminController@listNotesPage');
+        Route::get('admin/note/edit/{id}', 'NotesAdminController@editNotePage');
+        Route::post('admin/note/new', 'NotesAdminController@createNote');
+        Route::post('admin/note/edit/{id}', 'NotesAdminController@editNote');
 
         //Tokens
-        Route::get('admin/tokens', 'TokensAdminController@showTokens');
-        Route::get('admin/tokens/delete/{id}', 'TokensAdminController@deleteToken');
-        Route::post('admin/tokens/delete/{id}', 'TokensAdminController@postDeleteToken');
+        Route::get('admin/tokens', 'TokensController@showTokens');
+        Route::get('admin/tokens/delete/{id}', 'TokensController@deleteToken');
+        Route::post('admin/tokens/delete/{id}', 'TokensController@postDeleteToken');
 
         //Micropub Clients
         Route::get('admin/clients', 'ClientsAdminController@listClients');
@@ -71,11 +71,11 @@ Route::group(['domain' => config('url.longurl'), 'middleware' => 'web'], functio
         Route::post('admin/contacts/delete/{id}', 'ContactsAdminController@postDeleteContact');
 
         //Places
-        Route::get('admin/places/new', 'PlacesAdminController@newPlace');
-        Route::get('admin/places/edit', 'PlacesAdminController@listPlaces');
-        Route::get('admin/places/edit/{id}', 'PlacesAdminController@editPlace');
-        Route::post('admin/places/new', 'PlacesAdminController@postNewPlace');
-        Route::post('admin/places/edit/{id}', 'PlacesAdminController@postEditPlace');
+        Route::get('admin/places/new', 'PlacesAdminController@newPlacePage');
+        Route::get('admin/places/edit', 'PlacesAdminController@listPlacesPage');
+        Route::get('admin/places/edit/{id}', 'PlacesAdminController@editPlacePage');
+        Route::post('admin/places/new', 'PlacesAdminController@createPlace');
+        Route::post('admin/places/edit/{id}', 'PlacesAdminController@editPlace');
     });
 
     //Blog pages using ArticlesController
@@ -97,7 +97,7 @@ Route::group(['domain' => config('url.longurl'), 'middleware' => 'web'], functio
     //indieauth
     Route::any('beginauth', 'IndieAuthController@beginauth');
     Route::get('indieauth', 'IndieAuthController@indieauth');
-    Route::get('api/post', 'IndieAuthController@tokenEndpoint');
+    Route::get('api/token', 'IndieAuthController@tokenEndpoint');
     Route::get('logout', 'IndieAuthController@indieauthLogout');
 
     //micropub endoints
@@ -128,7 +128,7 @@ Route::group(['domain' => config('url.longurl'), 'middleware' => 'web'], functio
 });
 
 //Short URL
-Route::group(['domain' => config('url.shorturl'), 'middleware' => 'web'], function () {
+Route::group(['domain' => config('url.shorturl')], function () {
     Route::get('/', 'ShortURLsController@baseURL');
     Route::get('@', 'ShortURLsController@twitter');
     Route::get('+', 'ShortURLsController@googlePlus');
@@ -147,19 +147,4 @@ Route::group(['domain' => config('url.shorturl'), 'middleware' => 'web'], functi
             'id' => '[0-9A-HJ-NP-Z_a-km-z]{4}',
         ]
     );
-});
-
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| This route group applies the "web" middleware group to every route
-| it contains. The "web" middleware group is defined in your HTTP
-| kernel and includes session state, CSRF protection, and more.
-|
-*/
-
-Route::group(['middleware' => ['web']], function () {
-    //
 });

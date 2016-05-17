@@ -2,56 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Cookie\CookieJar;
+use App\Services\IndieAuthService;
 use IndieAuth\Client as IndieClient;
 use GuzzleHttp\Client as GuzzleClient;
 
 class MicropubClientController extends Controller
 {
     /**
+     * The IndieAuth service container.
+     */
+    protected $indieAuthService;
+
+    /**
+     * Inject the dependencies.
+     */
+    public function __construct(
+        IndieAuthService $indieAuthService = null,
+        IndieClient $indieClient = null,
+        GuzzleClient $guzzleClient = null
+    ) {
+        $this->indieAuthService = $indieAuthService ?? new IndieAuthService();
+        $this->guzzleClient = $guzzleClient ?? new GuzzleClient();
+        $this->indieClient = $indieClient ?? new IndieClient();
+    }
+
+    /**
      * Display the new notes form.
      *
-     * @param  \Illuminate\Cookie\CookieJar $cookie
      * @param  \Illuminate\Http\Request $request
-     * @param  \Carbon\Carbon $carbon
      * @return \Illuminate\View\Factory view
      */
-    public function newNotePage(CookieJar $cookie, Request $request, Carbon $carbon)
+    public function newNotePage(Request $request)
     {
-        $authed = false;
-        $url = '';
-        $syndication = false;
-        if ($request->cookie('me') && $request->cookie('me') != 'loggedout') {
-            $authed = true;
-            $url = $request->cookie('me');
-            $lastChecked = $request->cookie('token_last_verified');
-            $then = $carbon->createFromFormat('Y-m-d', $lastChecked, 'Europe/London');
-            $diff = $then->diffInDays($carbon->now());
-            if ($diff >= 31) {
-                $valid = $this->checkTokenValidity($request->cookie('token'));
-                if ($valid == true) {
-                    $cookie->queue('token_last_verified', date('Y-m-d'), 86400);
-                }
-            }
-            $syndicationTargets = $request->cookie('syndication');
-            if ($syndicationTargets) {
-                $mpSyndicateTo = [];
-                $parts = explode(';', $syndicationTargets);
-                foreach ($parts as $part) {
-                    $target = explode('=', $part);
-                    $mpSyndicateTo[] = urldecode($target[1]);
-                }
-                if (count($mpSyndicateTo) != 0) {
-                    $syndication = $mpSyndicateTo;
-                }
-            }
-        }
+        $url = $request->session()->get('me');
+        $syndication = $this->parseSyndicationTargets(
+            $request->session()->get('syndication')
+        );
 
         return view('micropubnewnotepage', [
-            'authed' => $authed,
             'url' => $url,
             'syndication' => $syndication,
         ]);
@@ -63,21 +53,22 @@ class MicropubClientController extends Controller
      * @todo   make sure this works with multiple syndication targets
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \IndieAuth\Client $indieClient
-     * @param  \GuzzleHttp\Client $guzzleClient
      * @return mixed
      */
-    public function postNewNote(Request $request, IndieClient $indieClient, GuzzleClient $guzzleClient)
+    public function postNewNote(Request $request)
     {
-        $domain = $request->cookie('me');
-        $token = $request->cookie('token');
+        $domain = $request->session()->get('me');
+        $token = $request->session()->get('token');
 
-        $micropubEndpoint = $indieClient->discoverMicropubEndpoint($domain);
+        $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint(
+            $domain,
+            $this->indieClient
+        );
         if (! $micropubEndpoint) {
-            return redirect('notes/new')->with('error', 'Unable to determine micropub API endpoint');
+            return redirect('notes/new')->withErrors('Unable to determine micropub API endpoint', 'endpoint');
         }
 
-        $response = $this->postNoteRequest($request, $micropubEndpoint, $token, $guzzleClient);
+        $response = $this->postNoteRequest($request, $micropubEndpoint, $token);
 
         if ($response->getStatusCode() == 201) {
             $location = $response->getHeader('Location');
@@ -88,38 +79,33 @@ class MicropubClientController extends Controller
             return redirect($location);
         }
 
-        return $response;
+        return redirect('notes/new')->withErrors('Endpoint didn’t create the note.', 'endpoint');
     }
 
     /**
      * We make a request to the micropub endpoint requesting syndication targets
-     * and store these in a cookie.
+     * and store them in the session.
      *
      * @todo better handling of response regarding mp-syndicate-to
      *       and syndicate-to
      *
-     * @param  \Illuminate\Cookie\CookieJar $cookie
      * @param  \Illuminate\Http\Request $request
      * @param  \IndieAuth\Client $indieClient
      * @param  \GuzzleHttp\Client $guzzleClient
      * @return \Illuminate\Routing\Redirector redirect
      */
-    public function refreshSyndicationTargets(
-        CookieJar $cookie,
-        Request $request,
-        IndieClient $indieClient,
-        GuzzleClient $guzzleClient
-    ) {
-        $domain = $request->cookie('me');
-        $token = $request->cookie('token');
-        $micropubEndpoint = $indieClient->discoverMicropubEndpoint($domain);
+    public function refreshSyndicationTargets(Request $request)
+    {
+        $domain = $request->session()->get('me');
+        $token = $request->session()->get('token');
+        $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint($domain, $this->indieClient);
 
         if (! $micropubEndpoint) {
             return redirect('notes/new')->withErrors('Unable to determine micropub API endpoint', 'endpoint');
         }
 
         try {
-            $response = $guzzleClient->get($micropubEndpoint, [
+            $response = $this->guzzleClient->get($micropubEndpoint, [
                 'headers' => ['Authorization' => 'Bearer ' . $token],
                 'query' => ['q' => 'syndicate-to'],
             ]);
@@ -129,26 +115,9 @@ class MicropubClientController extends Controller
         $body = (string) $response->getBody();
         $syndication = str_replace(['&', '[]'], [';', ''], $body);
 
-        $cookie->queue('syndication', $syndication, 44640);
+        $request->session()->put('syndication', $syndication);
 
         return redirect('notes/new');
-    }
-
-    /**
-     * Check the token is still a valid token.
-     *
-     * @param  string The token
-     * @return bool
-     */
-    public function checkTokenValidity($token)
-    {
-        $tokensController = new TokensController();
-
-        if ($tokensController->tokenValidity($token) === false) {
-            return false;
-        }
-
-        return true; //we don't want to return the token data, just bool
     }
 
     /**
@@ -157,14 +126,12 @@ class MicropubClientController extends Controller
      * @param  \Illuminate\Http\Request $request
      * @param  string The Micropub endpoint to post to
      * @param  string The token to authenticate the request with
-     * @param  \GuzzleHttp\Client $client
      * @return \GuzzleHttp\Response $response | \Illuminate\RedirectFactory redirect
      */
     private function postNoteRequest(
         Request $request,
         $micropubEndpoint,
-        $token,
-        GuzzleClient $client
+        $token
     ) {
         $multipart = [
             [
@@ -219,16 +186,14 @@ class MicropubClientController extends Controller
             'Authorization' => 'Bearer ' . $token,
         ];
         try {
-            $response = $client->post($micropubEndpoint, [
+            $response = $this->guzzleClient->post($micropubEndpoint, [
                 'multipart' => $multipart,
                 'headers' => $headers,
             ]);
         } catch (\GuzzleHttp\Exception\BadResponseException $e) {
-            $this->cleanUpTmp();
-
-            return redirect('notes/new')->with('error', 'There was a bad response from the micropub endpoint.');
+            return redirect('notes/new')
+                ->withErrors('There was a bad response from the micropub endpoint.', 'endpoint');
         }
-        $this->cleanUpTmp();
 
         return $response;
     }
@@ -237,16 +202,14 @@ class MicropubClientController extends Controller
      * Create a new place.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \IndieAuth\Client $indieClient
-     * @param  \GuzzleHttp\Client $guzzleClient
      * @return mixed
      */
-    public function postNewPlace(Request $request, IndieClient $indieClient, GuzzleClient $guzzleClient)
+    public function postNewPlace(Request $request)
     {
-        $domain = $request->cookie('me');
-        $token = $request->cookie('token');
+        $domain = $request->session()->get('me');
+        $token = $request->session()->get('token');
 
-        $micropubEndpoint = $indieClient->discoverMicropubEndpoint($domain);
+        $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint($domain, $this->indieClient);
         if (! $micropubEndpoint) {
             return (new Response(json_encode([
                 'error' => true,
@@ -255,7 +218,7 @@ class MicropubClientController extends Controller
             ->header('Content-Type', 'application/json');
         }
 
-        $place = $this->postPlaceRequest($request, $micropubEndpoint, $token, $guzzleClient);
+        $place = $this->postPlaceRequest($request, $micropubEndpoint, $token);
         if ($place === false) {
             return (new Response(json_encode([
                 'error' => true,
@@ -285,8 +248,7 @@ class MicropubClientController extends Controller
     private function postPlaceRequest(
         Request $request,
         $micropubEndpoint,
-        $token,
-        GuzzleClient $guzzleClient
+        $token
     ) {
         $formParams = [
             'h' => 'card',
@@ -298,7 +260,7 @@ class MicropubClientController extends Controller
             'Authorization' => 'Bearer ' . $token,
         ];
         try {
-            $response = $guzzleClient->request('POST', $micropubEndpoint, [
+            $response = $this->guzzleClient->request('POST', $micropubEndpoint, [
                 'form_params' => $formParams,
                 'headers' => $headers,
             ]);
@@ -313,30 +275,28 @@ class MicropubClientController extends Controller
     }
 
     /**
-     * Make a request to the micripub endpoint requesting any nearby places.
+     * Make a request to the micropub endpoint requesting any nearby places.
      *
      * @param  \Illuminate\Http\Request $request
-     * @param  \IndieAuth\Client $indieClient
-     * @param  \GuzzleHttp\Client $guzzleClient
+     * @param  string $latitude
+     * @param  string $longitude
      * @return \Illuminate\Http\Response
      */
     public function nearbyPlaces(
         Request $request,
-        IndieClient $indieClient,
-        GuzzleClient $guzzleClient,
         $latitude,
         $longitude
     ) {
-        $domain = $request->cookie('me');
-        $token = $request->cookie('token');
-        $micropubEndpoint = $indieClient->discoverMicropubEndpoint($domain);
+        $domain = $request->session()->get('me');
+        $token = $request->session()->get('token');
+        $micropubEndpoint = $this->indieAuthService->discoverMicropubEndpoint($domain, $this->indieClient);
 
         if (! $micropubEndpoint) {
             return;
         }
 
         try {
-            $response = $guzzleClient->get($micropubEndpoint, [
+            $response = $this->guzzleClient->get($micropubEndpoint, [
                 'headers' => ['Authorization' => 'Bearer ' . $token],
                 'query' => ['q' => 'geo:' . $latitude . ',' . $longitude],
             ]);
@@ -349,17 +309,25 @@ class MicropubClientController extends Controller
     }
 
     /**
-     * Delete all the files in the temporary media folder.
+     * Parse the syndication targets retreived from a cookie, to a form that can
+     * be used in a view.
      *
-     * @return void
+     * @param  string $syndicationTargets
+     * @return array|null
      */
-    private function cleanUpTmp()
+    private function parseSyndicationTargets($syndicationTargets = null)
     {
-        $files = glob(storage_path() . '/media-tmp/*') ?: [];
-        foreach ($files as $file) {
-            if (is_file($file)) {
-                unlink($file);
-            }
+        if ($syndicationTargets === null) {
+            return;
+        }
+        $mpSyndicateTo = [];
+        $parts = explode(';', $syndicationTargets);
+        foreach ($parts as $part) {
+            $target = explode('=', $part);
+            $mpSyndicateTo[] = urldecode($target[1]);
+        }
+        if (count($mpSyndicateTo) > 0) {
+            return $mpSyndicateTo;
         }
     }
 }

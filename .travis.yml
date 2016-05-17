@@ -11,12 +11,15 @@ services:
 php:
   - 7.0
   - nightly
+matrix:
+  allow_failures:
+    - php: nightly
 
 before_script:
   - psql -U travis -c 'create database travis_ci_test'
   - psql -U travis -d travis_ci_test -c 'create extension postgis'
   - cp .env.travis .env
-  - travis_retry composer self-update
+  - travis_retry composer self-update --preview
   - travis_retry composer install --no-interaction
   - php artisan key:generate
   - php artisan migrate
@@ -26,4 +29,3 @@ before_script:
 
 script:
   - phpdbg -qrr vendor/bin/phpunit --coverage-text
-  - vendor/bin/phpdoccheck -d ./app/ --skip-classes

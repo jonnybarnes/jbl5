@@ -121,6 +121,26 @@ class Note extends Model implements HasMedia
     }
 
     /**
+     * The Long URL for a note.
+     *
+     * @return string
+     */
+    public function getLongurlAttribute()
+    {
+        return config('app.url') . '/notes/' . $this->nb60id;
+    }
+
+    /**
+     * The Short URL for a note.
+     *
+     * @return string
+     */
+    public function getShorturlAttribute()
+    {
+        return config('app.shorturl') . '/notes/' . $this->nb60id;
+    }
+
+    /**
      * Get the relavent client name assocaited with the client id.
      *
      * @return string|null

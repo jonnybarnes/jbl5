@@ -30,8 +30,8 @@ class IndieAuthService
         $domain = $client->normalizeMeURL($domain);
         $state = bin2hex(openssl_random_pseudo_bytes(16));
         session(['state' => $state]);
-        $redirectURL = 'https://' . config('url.longurl') . '/indieauth';
-        $clientId = 'https://' . config('url.longurl') . '/notes/new';
+        $redirectURL = config('app.url') . '/indieauth';
+        $clientId = config('app.url') . '/notes/new';
         $scope = 'post';
         $authorizationURL = $client->buildAuthorizationURL(
             $authEndpoint,
@@ -97,7 +97,17 @@ class IndieAuthService
                 $data['state']
             );
         }
+    }
 
-        return;
+    /**
+     * Determine the micropub endpoint.
+     *
+     * @param  string $domain
+     * @param  \IndieAuth\Client $client
+     * @return string The endpoint
+     */
+    public function discoverMicropubEndpoint($domain, $client)
+    {
+        return $client->discoverMicropubEndpoint($client->normalizeMeURL($domain));
     }
 }

@@ -142,7 +142,7 @@ class NotesController extends Controller
         $numbers = new Numbers();
         $realId = $numbers->numto60($decId);
 
-        $url = 'https://' . config('url.longurl') . '/notes/' . $realId;
+        $url = config('app.url') . '/notes/' . $realId;
 
         return redirect($url);
     }
@@ -200,8 +200,6 @@ class NotesController extends Controller
         if (mb_substr($url, 0, 20) == 'http://pbs.twimg.com') {
             return str_replace('http://', 'https://', $url);
         }
-
-        return;
     }
 
     /**

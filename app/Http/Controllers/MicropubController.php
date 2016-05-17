@@ -5,12 +5,43 @@ namespace App\Http\Controllers;
 use App\Place;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Services\NoteService;
+use App\Services\TokenService;
+use App\Services\PlaceService;
 
 class MicropubController extends Controller
 {
     /**
+     * The Token service container.
+     */
+    protected $tokenService;
+
+    /**
+     * The Note service container.
+     */
+    protected $noteService;
+
+    /**
+     * The Place service container.
+     */
+    protected $placeService;
+
+    /**
+     * Injest the dependency.
+     */
+    public function __construct(
+        TokenService $tokenService = null,
+        NoteService $noteService = null,
+        PlaceService $placeService = null
+    ) {
+        $this->tokenService = $tokenService ?? new TokenService();
+        $this->noteService = $noteService ?? new NoteService();
+        $this->placeService = $placeService ?? new PlaceService();
+    }
+
+    /**
      * This function receives an API request, verifies the authenticity
-     * then passes over the info to the relavent AdminController.
+     * then passes over the info to the relavent Service class.
      *
      * @param  \Illuminate\Http\Request request
      * @return \Illuminate\Http\Response
@@ -20,36 +51,26 @@ class MicropubController extends Controller
         $httpAuth = $request->header('Authorization');
         if (preg_match('/Bearer (.+)/', $httpAuth, $match)) {
             $token = $match[1];
-            $tokensController = new TokensController();
-            $tokenData = $tokensController->tokenValidity($token);
-            if ($tokenData === false) {
-                $tokenData = ['scopes' => []];
-            } //this is a quick hack so the next line doesn't error out
+            $tokenData = $this->tokenService->validateToken($token);
+            if ($tokenData->hasClaim('scope')) {
+                $scopes = explode(' ', $tokenData->getClaim('scope'));
+                if (array_search('post', $scopes) !== false) {
+                    $clientId = $tokenData->getClaim('client_id');
+                    $type = $request->input('h');
+                    if ($type == 'entry') {
+                        $note = $this->noteService->createNote($request, $clientId);
+                        $content = 'Note created at ' . $note->longurl;
 
-            if (in_array('post', $tokenData['scopes'])) { //this may need double checking
-                $clientId = $tokenData['client_id'];
-                $type = $request->input('h');
-                if ($type == 'entry') {
-                    $admin = new NotesAdminController();
-                    $longurl = $admin->postNewNote($request, $clientId);
-                    $content = 'Note created at ' . $longurl;
-
-                    return (new Response($content, 201))
-                                      ->header('Location', $longurl);
-                }
-                if ($type == 'card') {
-                    $admin = new PlacesAdminController();
-                    $longurl = $admin->postNewPlace($request);
-                    if ($longurl === null) {
-                        return (new Response(json_encode([
-                            'error' => true,
-                            'message' => 'Unable to create place.',
-                        ]), 400))->header('Content-Type', 'application/json');
+                        return (new Response($content, 201))
+                                      ->header('Location', $note->longurl);
                     }
-                    $content = 'Place created at ' . $longurl;
+                    if ($type == 'card') {
+                        $place = $this->placeService->createPlace($request);
+                        $content = 'Place created at ' . $place->longurl;
 
-                    return (new Response($content, 201))
-                                      ->header('Location', $longurl);
+                        return (new Response($content, 201))
+                                      ->header('Location', $place->longurl);
+                    }
                 }
             }
             $content = http_build_query([
@@ -66,7 +87,7 @@ class MicropubController extends Controller
     }
 
     /**
-     * A GET request has been made to api/post with an accompanying
+     * A GET request has been made to `api/post` with an accompanying
      * token, here we check wether the token is valid and respond
      * appropriately. Further if the request has the query parameter
      * synidicate-to we respond with the known syndication endpoints.
@@ -80,11 +101,9 @@ class MicropubController extends Controller
         $httpAuth = $request->header('Authorization');
         if (preg_match('/Bearer (.+)/', $httpAuth, $match)) {
             $token = $match[1];
+            $valid = $this->tokenService->validateToken($token);
 
-            $tokensController = new TokensController();
-            $valid = $tokensController->tokenValidity($token);
-
-            if ($valid === false) {
+            if ($valid === null) {
                 return new Response('Invalid token', 400);
             }
             //we have a valid token, is `syndicate-to` set?
@@ -104,14 +123,14 @@ class MicropubController extends Controller
                 $longitude = $latlng[1];
                 $places = Place::near($latitude, $longitude, 1000);
 
-                return (new Response($places->toJson(), 200))
+                return (new Response(json_encode($places), 200))
                         ->header('Content-Type', 'application/json');
             }
             //nope, just return the token
             $content = http_build_query([
-                'me' => $valid['me'],
-                'scopes' => $valid['scopes'],
-                'client_id' => $valid['client_id'],
+                'me' => $valid->getClaim('me'),
+                'scope' => $valid->getClaim('scope'),
+                'client_id' => $valid->getClaim('client_id'),
             ]);
 
             return (new Response($content, 200))

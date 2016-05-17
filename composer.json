@@ -14,14 +14,15 @@
         "guzzlehttp/guzzle": "~6.0",
         "predis/predis": "~1.0",
         "thujohn/twitter": "~2.0",
-        "mf2/mf2": "~0.2",
+        "mf2/mf2": "~0.3",
         "martinbean/laravel-sluggable-trait": "0.2.*",
-        "indieauth/client": "0.1.*",
+        "indieauth/client": "~0.1",
         "ezyang/htmlpurifier": "~4.6",
         "league/commonmark": "^0.13.0",
         "spatie/laravel-medialibrary": "^3.5",
         "league/flysystem-aws-s3-v3": "^1.0",
-        "phaza/laravel-postgis": "~3.0"
+        "phaza/laravel-postgis": "dev-bosnadev",
+        "lcobucci/jwt": "^3.1"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -30,9 +31,14 @@
         "symfony/css-selector": "2.8.*|3.0.*",
         "symfony/dom-crawler": "2.8.*|3.0.*",
         "barryvdh/laravel-debugbar": "~2.0",
-        "block8/php-docblock-checker": "^1.0",
         "filp/whoops": "~2.0"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/jonnybarnes/laravel-postgis"
+        }
+    ],
     "autoload": {
         "classmap": [
             "database"
@@ -54,13 +60,11 @@
             "php artisan key:generate"
         ],
         "post-install-cmd": [
-            "php artisan clear-compiled",
+            "Illuminate\\Foundation\\ComposerScripts::postInstall",
             "php artisan optimize"
         ],
-        "pre-update-cmd": [
-            "php artisan clear-compiled"
-        ],
         "post-update-cmd": [
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
             "php artisan optimize"
         ]
     },

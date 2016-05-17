@@ -13,7 +13,7 @@ class PlacesAdminController extends Controller
      *
      * @return \Illuminate\View\Factory view
      */
-    public function listPlaces()
+    public function listPlacesPage()
     {
         $places = Place::all();
 
@@ -25,7 +25,7 @@ class PlacesAdminController extends Controller
      *
      * @return \Illuminate\View\Factory view
      */
-    public function newPlace()
+    public function newPlacePage()
     {
         return view('admin.newplace');
     }
@@ -36,7 +36,7 @@ class PlacesAdminController extends Controller
      * @param  string The place id
      * @return \Illuminate\View\Factory view
      */
-    public function editPlace($placeId)
+    public function editPlacePage($placeId)
     {
         $place = Place::findOrFail($placeId);
 
@@ -55,43 +55,12 @@ class PlacesAdminController extends Controller
     /**
      * Process a request to make a new place.
      *
-     * @param Illuminate\Http\Request $request
-     * @return mixed
+     * @param  Illuminate\Http\Request $request
+     * @return Illuminate\View\Factory view
      */
-    public function postNewPlace(Request $request)
+    public function createPlace(Request $request)
     {
-        //we should check if this is a micropub request
-        $micropub = ($request->path() == 'api/post') ? true : false;
-        //we’ll either have latitude and longitude sent seperately (/admin)
-        //or together on a geo-link (micropub)
-        if ($request->input('geo') !== null) {
-            $parts = explode(':', $request->input('geo'));
-            $latlng = explode(',', $parts[1]);
-            $latitude = $latlng[0];
-            $longitude = $latlng[1];
-        }
-        if ($request->input('latitude') !== null) {
-            $latitude = $request->input('latitude');
-            $longitude = $request->input('longitude');
-        }
-        $place = new Place();
-        $place->name = $request->input('name');
-        $place->description = $request->input('description');
-        $place->location = new Point((float) $latitude, (float) $longitude);
-        try {
-            $place->save();
-        } catch (PDOException $e) {
-            if ($micropub) {
-                return;
-            }
-
-            return back()->withInput();
-        }
-        if ($micropub) {
-            $slug = Place::where('name', $place->name)->value('slug');
-
-            return 'https://' . config('url.longurl') . '/places/' . $slug;
-        }
+        $this->placeService->createPlace($request);
 
         return view('admin.newplacesuccess');
     }
@@ -103,7 +72,7 @@ class PlacesAdminController extends Controller
      * @param Illuminate\Http\Request $request
      * @return Illuminate\View\Factory view
      */
-    public function postEditPlace($placeId, Request $request)
+    public function editPlace($placeId, Request $request)
     {
         $place = Place::findOrFail($placeId);
         $place->name = $request->name;
