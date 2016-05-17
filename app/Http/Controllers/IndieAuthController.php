@@ -135,7 +135,7 @@ class IndieAuthController extends Controller
             $token = $this->tokenService->getNewToken($tokenData);
             $content = http_build_query([
                 'me' => $request->input('me'),
-                'scopes' => $scopes,
+                'scope' => $scope,
                 'access_token' => $token,
             ]);
 
