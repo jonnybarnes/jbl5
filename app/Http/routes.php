@@ -97,7 +97,7 @@ Route::group(['domain' => config('url.longurl')], function () {
     //indieauth
     Route::any('beginauth', 'IndieAuthController@beginauth');
     Route::get('indieauth', 'IndieAuthController@indieauth');
-    Route::get('api/token', 'IndieAuthController@tokenEndpoint');
+    Route::post('api/token', 'IndieAuthController@tokenEndpoint');
     Route::get('logout', 'IndieAuthController@indieauthLogout');
 
     //micropub endoints
