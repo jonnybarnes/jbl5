@@ -44,7 +44,8 @@ class MicropubClientTest extends TestCase
 
     public function testClientCreatesNewNote()
     {
-        $note = 'Note from PHPUnite test';
+        $faker = \Faker\Factory::create();
+        $note = 'Fake note from PHPUnit: ' . $faker->text;
         $this->withSession([
             'me' => $this->appurl,
             'token' => $this->getToken()
